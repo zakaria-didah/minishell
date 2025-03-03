@@ -18,10 +18,10 @@ bonus: $(all_obj)
 	@cc	$(FLAGS)	-o	$@	-c	$<
 	
 clean:
-	rm	-f	$(all_obj)
+	@rm	-f	$(all_obj)
 
 fclean:	clean
-	rm	-f	$(NAME)
+	@rm	-f	$(NAME)
 
 re:	fclean	$(NAME)
 

@@ -72,5 +72,7 @@ t_list				*ft_lstmap(t_list *lst, void *(*f)(void *),
 						void (*del)(void *));
 char				**ft_arrjoin(char **s1, char *s2);
 size_t				ft_arrlen(char **arr);
+char				*ft_revstrnstr(const char *haystack, const char *needle,
+						size_t len);
 
 #endif
