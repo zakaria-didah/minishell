@@ -30,7 +30,7 @@ char	**ft_arrjoin(char **s1, char *s2)
 	i = 0;
 	if (!s2)
 		return (s1);
-	arr = ft_calloc(sizeof(char *), (ft_arrlen(s1) + 2));
+	arr = ft_calloc(sizeof(char *)* (ft_arrlen(s1) + 2));
 	while (s1 && s1[i])
 	{
 		arr[i] = ft_strdup(s1[i]);

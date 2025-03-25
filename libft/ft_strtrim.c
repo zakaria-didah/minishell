@@ -19,7 +19,7 @@ static char	*new_str(const char *s1, size_t start, size_t len)
 
 	if (len <= 0 || start >= ft_strlen(s1))
 		return (ft_strdup(""));
-	str = ft_calloc(len + 1, sizeof(char));
+	str = ft_calloc((len + 1)* sizeof(char));
 	if (!str)
 		return (NULL);
 	i = 0;

@@ -23,7 +23,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 		return (ft_strdup(""));
 	if (len > ft_strlen(s + start))
 		len = ft_strlen(s + start);
-	new = ft_calloc(len + 1, sizeof(char));
+	new = ft_calloc((len + 1)* sizeof(char));
 	if (!new)
 		return (NULL);
 	i = 0;
@@ -32,5 +32,5 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 		new[i] = s[start + i];
 		i++;
 	}
-	return (new);
+	return (new[i] = 0, new);
 }

@@ -12,7 +12,21 @@
 
 #include "libft.h"
 
-static int	count_words(const char *s, char c)
+int	is_in(char c, const char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	count_words(const char *s, char *c)
 {
 	int	i;
 	int	count;
@@ -21,32 +35,32 @@ static int	count_words(const char *s, char c)
 	count = 0;
 	while (s[i])
 	{
-		while (s[i] == c)
+		while (s[i] && is_in(s[i], c))
 			i++;
 		if (s[i])
 			count++;
-		while (s[i] && s[i] != c)
+		while (s[i] && !is_in(s[i], c))
 			i++;
 	}
 	return (count);
 }
 
-char	*create_word(char *s, char c, int *j)
+char	*create_word(const char *s, const char *c, int *j)
 {
 	int		i;
 	char	*str;
 
-	while (s[*j] == c)
+	while (s[*j] && is_in(s[*j], c))
 		(*j)++;
 	i = *j;
-	while (s[i] && s[i] != c)
+	while (s[i] && !is_in(s[i], c))
 		i++;
 	str = ft_substr(s, *j, i - *j);
 	*j = i;
-	return (str);
+	return (str); 
 }
 
-char	**ft_split(const char *s, char c)
+char	**ft_split(const char *s, char *charset)
 {
 	int		words_len;
 	char	**words;
@@ -55,19 +69,15 @@ char	**ft_split(const char *s, char c)
 
 	if (!s)
 		return (NULL);
-	words_len = count_words(s, c);
-	words = ft_calloc(words_len + 1, sizeof(char *));
-	if (!words)
-		return (NULL);
+	words_len = count_words(s, charset);
+	words = ft_calloc((words_len + 1) * sizeof(char *));
 	i = 0;
 	j = 0;
 	while (i < words_len)
 	{
-		words[i] = create_word((char *)s, c, &j);
-		if (!words[i])
-			return (free_garb(), NULL);
+		words[i] = create_word(s, charset, &j);
 		i++;
 	}
-	words[i] = 0;
+	words[i] = NULL;
 	return (words);
 }

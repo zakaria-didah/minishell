@@ -15,11 +15,19 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include "libft.h"
+
+typedef struct s_mem
+{
+	size_t offset;
+	size_t size;
+	char *mempool;
+}t_mem;
+
 
 typedef struct s_garb
 {
 	void			*ptr;
-
 	struct s_garb	*prev;
 	struct s_garb	*next;
 }					t_garb;
@@ -28,9 +36,13 @@ void				ft_remove(void *ptr);
 void				_link_list(t_garb *node);
 t_garb				**_get_head(void);
 void				*add_garb(void *ptr);
-void				*ft_calloc(size_t count, size_t size);
-void				free_garb(void);
+void				*ft_calloc(size_t size);
+void				ft_free(void);
 size_t				list_len_(t_garb *head);
 void				*ft_bzero_(void *s, size_t n);
+t_list				**arena_head(void);
+t_mem				*realloc_arena(void);
+void				dealloc_arena(void);
+
 
 #endif

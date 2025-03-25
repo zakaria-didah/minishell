@@ -15,12 +15,37 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
+void	cleanup(void **ptr)
+{
+	free(*ptr);
+}
+// will explain later
+# define auto_free __attribute__((cleanup(cleanup)))
+
+// a boolean type
+typedef enum s_bool
+{
+	FALSE,
+	TRUE
+} t_bool;
+
+typedef enum s_status
+{
+	SUCCESS,
+	ERROR,
+	FAILURE
+
+} t_status;
+
+
+// a structure to store the bultin functions with hash table algorithm
 typedef struct s_bultin
 {
 	char *name;
 	int (*func)(char *line);
 } t_bultin;
 
+// a structure to store the env variables and global variables
 typedef struct t_var
 {
 	char **env;
@@ -31,65 +56,70 @@ typedef struct t_var
 	char *user;
 	char *host;
 	t_bultin *bultin;
-	
+
 } t_var;
 
+extern t_var *var;
 
-extern t_var	*var;
 
-typedef struct s_env
+// token types
+typedef enum token_type
 {
-	char *name;
-	char *value;
-	struct s_env *next;
-
-} t_env;
-
-typedef struct s_redir
-{
-	char *file;
-	int type;
-	struct s_redir *next;
-
-} t_redir;
-
-typedef struct s_pipe
-{
-	char *cmd;
-	struct s_pipe *next;
-
-} t_pipe;
-
-typedef enum flag{
 	CMD,
-	option,
-	arg,
-	pipe,
-	red_in,
-	red_out,
-	expand
-} flag;
+	WSPACE,
+	PIPE,
+	RED_IN,
+	RED_OUT,
+	DOLLAR,
+	DQUOTE,
+	SQUOTE,
+	BQUOTE,
+	WORD,
+	B_SLASH,
+	HDOC,
+	APPEND
 
+} token_type;
+
+typedef struct s_token
+{
+	char *value;
+	token_type type;
+} t_token;
+
+// a structure to store the command line
 typedef struct s_cmd
 {
-	int value;
-	char *cmd;
-	struct s_cmd *next;
-
+	char **args;
+	char *in;
+	char *out;
+	int append;
+	char *hdoc;
 } t_cmd;
 
 //......utiles......
-void	ft_exit(int status);
-char *get_prompt(void);
-void	ft_cd(char *line);
-int	init(char **env);
-void	ft_export(char *line);
+int	ft_exit(char *line);
+char	*get_prompt(void);
+t_bultin	**get_bin(void);
+int	ft_cd(char *line);
+int	init(void);
+int	ft_export(char *line);
 int	ft_echo(char *line);
-void	ft_env(void);
-void	ft_unset(char *line);
-void	ft_exec(char *line);
+int	ft_env(char *line);
+int	ft_unset(char *line);
+// int	ft_exec(char *line);
 
 //......parsing......
 
-
 #endif
+
+
+/*
+I know the filesystem is a bit messy, but I'm working on it.
+I'll try to make it more organized when I'm done eating.
+Don't miss with the momry management, it's a bit tricky, and it may blow up.
+the final parsing phase is not stable and under construction, due to the lack of ideas. do we use AST or not? .
+if u want to add a global variable, please add it to the t_var structure.
+if u want to add a bultin function, please add it to the t_bultin structure.
+use this header file to give feedback, suggestions, or to ask for help. I don't use README files, that technology is outdated.
+*/

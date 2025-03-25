@@ -37,7 +37,7 @@ void	_link_list(t_garb *node)
 	}
 }
 
-void	free_garb(void)
+void	ft_free(void)
 {
 	t_garb	*tmp;
 	t_garb	*head;
@@ -48,15 +48,15 @@ void	free_garb(void)
 		tmp = head;
 		head = head->next;
 		free(tmp->ptr);
-		free(tmp);
 	}
+	dealloc_arena();
 }
 
 void	*add_garb(void *ptr)
 {
 	t_garb	*node;
 
-	node = malloc(sizeof(t_garb));
+	node = ft_calloc(sizeof(t_garb));
 	if (!node)
 		return (NULL);
 	node->ptr = ptr;
@@ -66,18 +66,120 @@ void	*add_garb(void *ptr)
 	return (ptr);
 }
 
-void	*ft_calloc(size_t count, size_t size)
+t_list	**arena_head(void)
 {
-	void	*tmp;
+	static t_list	*lst = NULL;
+	t_mem			*mem ;
 
-	tmp = NULL;
-	if (size && count > ((size_t)(-1)) / size)
+	if (!lst)
+	{
+		mem = malloc(sizeof(t_mem));
+		mem->offset = 0;
+		mem->size = 1024;
+		mem->mempool = malloc(mem->size);
+		ft_bzero(mem->mempool, mem->size);
+		lst = malloc(sizeof(t_list));
+		lst->content = mem;
+		lst->next = NULL;
+	}
+	return (&lst);
+}
+
+t_mem	*realloc_arena(void)
+{
+	t_list	*arena;
+	t_mem	*new;
+
+	new = malloc(sizeof(t_mem));
+	arena = ft_lstlast(*arena_head());
+	new->size = ((t_mem *)arena->content)->size *2;
+	new->mempool = malloc(new->size);
+	ft_bzero(new->mempool, new->size);
+	new->offset = 0;
+	arena->next = malloc(sizeof(t_list));
+	arena->next->content = new;
+	arena->next->next = NULL;
+	return (new);
+}
+
+void	dealloc_arena(void)
+{
+	t_list	*alloc;
+	t_list	*tmp;
+
+	alloc = *arena_head();
+	while (alloc)
+	{
+		free(((t_mem *)(alloc->content))->mempool);
+		free(alloc->content);
+		tmp = alloc;
+		alloc = alloc->next;
+		free(tmp);
+	}
+}
+
+void reset_arena(void)
+{
+	t_list	*alloc;
+	t_mem	*mem;
+
+	alloc = *arena_head();
+	while (alloc)
+	{
+		mem = alloc->content;
+		ft_bzero(mem->mempool, mem->size);
+		mem->offset = 0;
+		alloc = alloc->next;
+	}
+}
+
+int clear_arena(void)
+{
+	t_list	*alloc;
+	t_list *tmp;
+	t_mem	*mem;
+
+	alloc = *arena_head();
+	while (alloc)
+	{
+
+		mem = alloc->content;
+		if (mem->offset ==0){
+			ft_remove(mem->mempool);
+			free(mem);
+			if (!tmp){
+				*arena_head()=alloc->next;
+			}
+			else{
+				tmp->next = alloc->next;
+			}
+			free(alloc);
+		}
+		tmp = alloc;
+		alloc = alloc->next;
+	}
+	return (1);
+}
+
+void	*ft_calloc(size_t size)
+{
+	void	*ptr;
+	t_mem	*alloc;
+
+	if (size <= 64)
+	{
+		alloc = (t_mem *)ft_lstlast(*arena_head())->content;
+		if (alloc->offset + size > alloc->size)
+			alloc = realloc_arena();
+		ptr = alloc->mempool + alloc->offset;
+		alloc->offset += size;
+		return (ptr);
+	}
+	ptr = malloc(size);
+	if (!ptr)
 		return (NULL);
-	tmp = malloc(size * count);
-	if (!tmp)
-		return (NULL);
-	ft_bzero_(tmp, size * count);
-	if (!add_garb(tmp))
-		return (free(tmp), NULL);
-	return (tmp);
+	ft_bzero_(ptr, size);
+	if (!add_garb(ptr))
+		return (free(ptr), NULL);
+	return (ptr);
 }
