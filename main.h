@@ -34,11 +34,12 @@ typedef enum s_status
 	SUCCESS,
 	ERROR,
 	FAILURE
-
+	
 } t_status;
 
 
 // a structure to store the bultin functions with hash table algorithm
+// if u want to add a global variable, please add it to the t_var structure.
 typedef struct s_bultin
 {
 	char *name;
@@ -119,7 +120,5 @@ I know the filesystem is a bit messy, but I'm working on it.
 I'll try to make it more organized when I'm done eating.
 Don't miss with the momry management, it's a bit tricky, and it may blow up.
 the final parsing phase is not stable and under construction, due to the lack of ideas. do we use AST or not? .
-if u want to add a global variable, please add it to the t_var structure.
-if u want to add a bultin function, please add it to the t_bultin structure.
 use this header file to give feedback, suggestions, or to ask for help. I don't use README files, that technology is outdated.
 */
