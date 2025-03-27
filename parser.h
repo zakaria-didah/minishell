@@ -9,6 +9,6 @@
 
 typedef enum { false, true } bool;
 
-int parse(char *line);
+t_list *parse(t_list *head);
 
 #endif
