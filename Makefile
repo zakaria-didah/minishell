@@ -1,7 +1,7 @@
-SRC= main.c parser.c signals.c utiles.c
+SRC= main.c parser.c signals.c utiles.c exec.c
 OBJ= $(SRC:.c=.o)
 CC= cc
-CFLAGS=  -g
+CFLAGS=  -g3
 LDFLAGS= -lreadline 
 lib= libft/libft.a
 NAME= minishell
@@ -15,7 +15,7 @@ $(NAME): $(lib) $(OBJ)
 
 $(lib):
 	@echo "Compiling libft"
-	@make -C libft
+	@make -C libft bonus
 
 clean:
 	@echo "Cleaning"
