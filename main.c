@@ -1,33 +1,30 @@
 #include "main.h"
 
-t_bultin	**get_bin(void)
+t_var	*var = NULL;
+
+// t_bultin	**get_bin(void)
+// {
+// 	static t_bultin	builtin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
+// 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
+// 			{NULL, NULL}};
+
+// 	return (&builtin);
+// }
+
+int	ft_unset(char **args)
 {
-	static t_bultin	builtin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
-			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-			{NULL, NULL}};
-
-	return (&builtin);
-}
-
-t_var		*var = NULL;
-
-int	ft_unset(char *line)
-{
-	char	**arg;
 	int		i;
 
-	arg = ft_split(line + 5, ' ');
 	i = 0;
-	while (arg[i])
+	while (args[i])
 	{
-		unsetenv(arg[i++]);
+		unsetenv(args[i++]);
 	}
 	return (true);
 }
 
-int	ft_export(char *line)
+int	ft_export(char **args)
 {
-	char	**args;
 	char	*value;
 	char	*name;
 	int		i;
@@ -35,14 +32,13 @@ int	ft_export(char *line)
 
 	i = 0;
 	j = 0;
-	args = ft_split(line + 6, ' ');
 	while (args[i])
 	{
 		while (args[i][j] && args[i][j] != '=')
 		{
 			j++;
 		}
-		value = ft_strtrim(args[i] + j + 1, "\"\'");
+		value = args[i]+j+1;
 		name = args[i];
 		name[j] = '\0';
 		setenv(name, value, 1);
@@ -52,52 +48,64 @@ int	ft_export(char *line)
 	ft_remove(args);
 }
 
-
 /*echo have been redone and it's about to be redone again */
-int	ft_echo(char *line)
+int	ft_echo(char **args)
 {
-	// char *str;
-	// int i;
-	// int j;
-	// char *var;
-	// i = 0;
-	// //str = ft_strtrim(line + 4, " \"\'");
-	// if ()
-	// while (str[i] != '\0')
-	// {
-	// 	ft_putstr_fd(line, STDOUT_FILENO);
-	// 	if (flag){
-	// 		write(STDOUT_FILENO, &str[i], 1);
-	// 	}
-	// }
-	// write(STDOUT_FILENO, "\n", 1);
-	// ft_remove(str);
+	char *str;
+	int i;
+	int j;
+	char *var;
+	int new_line= 0;
+	i = 0;
+	if (ft_strncmp(args[i], "-n", 3) == 0)
+		new_line = TRUE;
+	while (args[i])
+	{
+		if (new_line)
+			ft_putstr_fd(args[++i], STDOUT_FILENO);
+		i++;
+	}
+	if (new_line)
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
 }
 
-int	ft_cd(char *line)
+void ft_error(char *s){
+	size_t len = ft_strlen(var->curr_cmd)+3;
+	char prefix[len];
+	ft_strlcat(prefix, var->curr_cmd, len);
+	ft_strlcat(prefix, ": ", len);
+	ft_putstr_fd(prefix, STDERR_FILENO);
+	if (s){
+		ft_putstr_fd(s,STDERR_FILENO);
+	}
+	ft_putendl_fd(strerror(errno), STDERR_FILENO);
+}
+
+int	ft_cd(char **args)
 {
 	char	*path;
 	char	*home;
-
-	path = ft_strtrim(line + 2, " ");
-	if (ft_strncmp(path, "~", 1) == 0)
-	{
-		home = ft_strdup(getenv("HOME"));
-		path = ft_strjoin(home, path + 1);
-		ft_remove(home);
-	}
-	if (path[0] == '\0')
-	{
-		home = ft_strdup(getenv("HOME"));
-		chdir(home);
-		ft_remove(home);
+	int stat = 0;
+	if (ft_arrlen(args) > 1)
+		return (ft_error(NULL),ERROR);
+	if (args && args[0]){
+		if (args[0][0] == '~')
+		{
+			home = getenv("HOME");
+			path = ft_strjoin(home, args[0] + 1);
+		}else if (args[0][0] == '-' && args[0][1] == '\0'){
+			path = var->oldpwd;
+		}
+		else 
+			path = args[0];
 	}
 	else
-	{
-		chdir(path);
+		path = getenv("HOME");
+	stat = chdir(path);
+	if (stat != SUCCESS){
+		return (ft_error(ft_strjoin(args[0], ": ")), ERROR);
 	}
-	ft_remove(path);
 }
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
@@ -112,11 +120,20 @@ char	*get_prompt(void)
 	return (prompt);
 }
 
-int	init(void)
+void add_slash_to_path(char **path){
+	int i = 0;
+	while (path[i]){
+		path[i] = ft_strjoin(path[i], "/");
+		i++;
+	}
+}
+
+int	init(char **env)
 {
 	signal(SIGINT, sigint_handler);
-	var->env = getenv("ENV");
-	var->path = ft_split(getenv("PATH"), ':');
+	var->env = join_args(env);
+	var->path = ft_split(getenv("PATH"), ":");
+	add_slash_to_path(var->path);
 	var->pwd = getenv("PWD");
 	var->oldpwd = getenv("OLDPWD");
 	var->home = getenv("HOME");
@@ -124,14 +141,15 @@ int	init(void)
 	return (0);
 }
 
-int	main(void)
+int	main(int ac, char **av, char **env)
 {
 	ssize_t	read;
 	size_t	len;
 	char	*line;
+	setbuf(stdout, NULL);
 
 	var = ft_calloc(sizeof(t_var));
-	init();
+	init(env);
 	len = 0;
 	while (true)
 	{

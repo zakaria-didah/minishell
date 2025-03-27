@@ -14,12 +14,10 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+#include <errno.h>
 
-void	cleanup(void **ptr)
-{
-	free(*ptr);
-}
 // will explain later
+void cleanup(void *ptr);
 # define auto_free __attribute__((cleanup(cleanup)))
 
 // a boolean type
@@ -43,19 +41,20 @@ typedef enum s_status
 typedef struct s_bultin
 {
 	char *name;
-	int (*func)(char *line);
+	int (*func)(char **args);
 } t_bultin;
 
 // a structure to store the env variables and global variables
 typedef struct t_var
 {
-	char **env;
+	char *env;
 	char **path;
 	char *pwd;
 	char *oldpwd;
 	char *home;
 	char *user;
 	char *host;
+	char *curr_cmd;
 	t_bultin *bultin;
 
 } t_var;
@@ -99,17 +98,18 @@ typedef struct s_cmd
 } t_cmd;
 
 //......utiles......
-int	ft_exit(char *line);
+int	ft_exit(char **args);
 char	*get_prompt(void);
-t_bultin	**get_bin(void);
-int	ft_cd(char *line);
-int	init(void);
-int	ft_export(char *line);
-int	ft_echo(char *line);
-int	ft_env(char *line);
-int	ft_unset(char *line);
-// int	ft_exec(char *line);
-
+int	ft_cd(char **args);
+int	init(char **env);
+int	ft_export(char **args);
+int	ft_echo(char **args);
+int	ft_env(char **args);
+int	ft_unset(char **args);
+void throw_error(char *line);
+int	exec(t_list *line);
+int	pass_the_input(char *line);
+char	*join_args(char **args);
 //......parsing......
 
 #endif
