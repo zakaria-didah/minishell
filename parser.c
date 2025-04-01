@@ -76,6 +76,26 @@ it tokenize the input string and return a list of tokens
 it may look over complicated but it's just a simple tokenizer
 i know it's not readdable but i will fix it later...
 */
+
+char	*handel_dollar(int *i, char *input)
+{
+	int		start;
+	char	tmp;
+	char	*res;
+
+	start = 0;
+	start = ++(*i);
+	while ((isalnum(input[*i]) || input[*i] == '_'))
+	{
+		(*i)++;
+	}
+	tmp = input[*i];
+	input[*i] = 0;
+	res = getenv(input + start);
+	input[*i] = tmp;
+	return (res);
+}
+
 t_list	*tokenize(char *input)
 {
 	t_token	*token;
@@ -84,6 +104,7 @@ t_list	*tokenize(char *input)
 	int		j;
 	int		start;
 	char	quote;
+	char	*expand;
 
 	head = NULL;
 	i = 0;
@@ -99,20 +120,20 @@ t_list	*tokenize(char *input)
 		if (input[i] == '|')
 		{
 			token->type = PIPE;
-			token->value = strdup("|");
+			token->value = ft_strdup("|");
 		}
 		else if (input[i] == '<')
 		{
 			if (input[i + 1] && input[i + 1] == '<')
 			{
 				token->type = HDOC;
-				token->value = strdup("<<");
+				token->value = ft_strdup("<<");
 				i++;
 			}
 			else
 			{
 				token->type = RED_IN;
-				token->value = strdup("<");
+				token->value = ft_strdup("<");
 			}
 		}
 		else if (input[i] == '>')
@@ -132,19 +153,39 @@ t_list	*tokenize(char *input)
 		else if (input[i] == '$')
 		{
 			token->type = DOLLAR;
-			start = ++i;
-			while (isalnum(input[i]) || input[i] == '_')
-				i++;
-			token->value = strndup(input + start, i - start);
+			expand = handel_dollar(&i, input);
+			token->value = expand;
 		}
-		else if (input[i] == '"' || input[i] == '\'')
+		else if (input[i] == '"')
+		{
+			quote = input[i++];
+			start = i;
+			while (input[i] && input[i] != quote)
+			{
+				if (input[i] == '$')
+				{
+					token->value = ft_strjoin(token->value, ft_substr(input,
+								start, i - start));
+					token->value = ft_strjoin(token->value, handel_dollar(&i,
+								input));
+					start = i;
+					i--;
+				}
+				i++;
+			}
+			token->type = DQUOTE;
+			token->value = ft_strjoin(token->value, ft_substr(input, start, i
+						- start));
+			i++;
+		}
+		else if (input[i] == '\'')
 		{
 			quote = input[i++];
 			start = i;
 			while (input[i] && input[i] != quote)
 				i++;
-			token->type = DQUOTE;
-			token->value = strndup(input + start, i - start);
+			token->type = SQUOTE;
+			token->value = ft_substr(input, start, i - start);
 			i++;
 		}
 		else
@@ -153,7 +194,7 @@ t_list	*tokenize(char *input)
 			while (input[i] && !strchr(" |<>$", input[i]))
 				i++;
 			token->type = WORD;
-			token->value = strndup(input + start, i - start);
+			token->value = ft_substr(input, start, i - start);
 		}
 		ft_lstadd_back(&head, ft_lstnew(token));
 	}
@@ -176,7 +217,7 @@ t_list	*parse(t_list *tokens)
 	while (tokens)
 	{
 		cmd = ft_calloc(sizeof(t_cmd));
-		cmd->args = ft_calloc(sizeof(char *) * (ft_lstsize(tokens)+1));
+		cmd->args = ft_calloc(sizeof(char *) * (ft_lstsize(tokens) + 1));
 		token = tokens->content;
 		while (tokens && token && token->type != PIPE)
 		{
@@ -242,7 +283,7 @@ t_list	*parse(t_list *tokens)
 					}
 					else
 					{
-						throw_error(NULL); 
+						throw_error(NULL);
 					}
 				}
 				else
@@ -293,6 +334,8 @@ int	pass_the_input(char *line)
 	char		*l;
 
 	line = ft_strtrim(line, " ");
+	if (!*line)
+		return (SUCCESS);
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);

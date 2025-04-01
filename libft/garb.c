@@ -12,70 +12,45 @@
 
 #include "garb.h"
 
-t_garb	**_get_head(void)
-{
-	static t_garb	*head = NULL;
 
-	return (&head);
-}
-
-void	_link_list(t_garb *node)
+void	ft_remove(void *ptr)
 {
 	t_garb	**head;
+	t_garb	*tmp;
 
 	head = _get_head();
-	if (!*head)
+	tmp = *head;
+	if (tmp && tmp->ptr == ptr)
 	{
-		(*head) = node;
+		(*head) = tmp->next;
+		if (*head)
+			(*head)->prev = NULL;
+		return (free(tmp->ptr));
 	}
-	else
+	while (tmp)
 	{
-		node->prev = NULL;
-		node->next = *head;
-		(*head)->prev = node;
-		*head = node;
+		if (tmp->ptr == ptr)
+		{
+			if (tmp->prev)
+				tmp->prev->next = tmp->next;
+			if (tmp->next)
+				tmp->next->prev = tmp->prev;
+			return (free(tmp->ptr));
+		}
+		tmp = tmp->next;
 	}
-}
-
-void	ft_free(void)
-{
-	t_garb	*tmp;
-	t_garb	*head;
-
-	head = *_get_head();
-	while (head)
-	{
-		tmp = head;
-		head = head->next;
-		free(tmp->ptr);
-	}
-	dealloc_arena();
-}
-
-void	*add_garb(void *ptr)
-{
-	t_garb	*node;
-
-	node = ft_calloc(sizeof(t_garb));
-	if (!node)
-		return (NULL);
-	node->ptr = ptr;
-	node->prev = NULL;
-	node->next = NULL;
-	_link_list(node);
-	return (ptr);
 }
 
 t_list	**arena_head(void)
 {
 	static t_list	*lst = NULL;
-	t_mem			*mem ;
+	t_mem			*mem;
 
 	if (!lst)
 	{
 		mem = malloc(sizeof(t_mem));
 		mem->offset = 0;
-		mem->size = 1024;
+		mem->size = ARENA_SIZE;
 		mem->mempool = malloc(mem->size);
 		ft_bzero(mem->mempool, mem->size);
 		lst = malloc(sizeof(t_list));
@@ -92,7 +67,7 @@ t_mem	*realloc_arena(void)
 
 	new = malloc(sizeof(t_mem));
 	arena = ft_lstlast(*arena_head());
-	new->size = ((t_mem *)arena->content)->size *2;
+	new->size = ((t_mem *)arena->content)->size * 2;
 	new->mempool = malloc(new->size);
 	ft_bzero(new->mempool, new->size);
 	new->offset = 0;
@@ -118,7 +93,7 @@ void	dealloc_arena(void)
 	}
 }
 
-void reset_arena(void)
+void	reset_arena(void)
 {
 	t_list	*alloc;
 	t_mem	*mem;
@@ -133,24 +108,26 @@ void reset_arena(void)
 	}
 }
 
-int clear_arena(void)
+int	clear_arena(void)
 {
 	t_list	*alloc;
-	t_list *tmp;
+	t_list	*tmp;
 	t_mem	*mem;
 
 	alloc = *arena_head();
 	while (alloc)
 	{
-
 		mem = alloc->content;
-		if (mem->offset ==0){
+		if (mem->offset == 0)
+		{
 			ft_remove(mem->mempool);
 			free(mem);
-			if (!tmp){
-				*arena_head()=alloc->next;
+			if (!tmp)
+			{
+				*arena_head() = alloc->next;
 			}
-			else{
+			else
+			{
 				tmp->next = alloc->next;
 			}
 			free(alloc);
@@ -165,8 +142,8 @@ void	*ft_calloc(size_t size)
 {
 	void	*ptr;
 	t_mem	*alloc;
-
-	if (size <= 64)
+	static int i= 0;
+	if (size <= CHUNK)
 	{
 		alloc = (t_mem *)ft_lstlast(*arena_head())->content;
 		if (alloc->offset + size > alloc->size)
@@ -175,10 +152,16 @@ void	*ft_calloc(size_t size)
 		alloc->offset += size;
 		return (ptr);
 	}
+	int fd = open("test.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
+	ft_putnbr_fd(i, fd);
+	ft_putchar_fd(' ', fd);
+	ft_putnbr_fd(size, fd);
+	ft_putchar_fd('\n', fd);
+	close(fd);
 	ptr = malloc(size);
 	if (!ptr)
 		return (NULL);
-	ft_bzero_(ptr, size);
+	ft_bzero(ptr, size);
 	if (!add_garb(ptr))
 		return (free(ptr), NULL);
 	return (ptr);

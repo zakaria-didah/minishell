@@ -2,18 +2,9 @@
 
 t_var	*var = NULL;
 
-// t_bultin	**get_bin(void)
-// {
-// 	static t_bultin	builtin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
-// 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-// 			{NULL, NULL}};
-
-// 	return (&builtin);
-// }
-
 int	ft_unset(char **args)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (args[i])
@@ -38,7 +29,7 @@ int	ft_export(char **args)
 		{
 			j++;
 		}
-		value = args[i]+j+1;
+		value = args[i] + j + 1;
 		name = args[i];
 		name[j] = '\0';
 		setenv(name, value, 1);
@@ -51,33 +42,41 @@ int	ft_export(char **args)
 /*echo have been redone and it's about to be redone again */
 int	ft_echo(char **args)
 {
-	char *str;
-	int i;
-	int j;
-	char *var;
-	int new_line= 0;
+	char	*str;
+	int		i;
+	int		j;
+	char	*var;
+	int		new_line;
+
+	new_line = 0;
 	i = 0;
 	if (ft_strncmp(args[i], "-n", 3) == 0)
-		new_line = TRUE;
-	while (args[i])
 	{
-		if (new_line)
-			ft_putstr_fd(args[++i], STDOUT_FILENO);
+		new_line = TRUE;
 		i++;
 	}
-	if (new_line)
+	while (args[i])
+	{
+		ft_putstr_fd(args[i++], STDOUT_FILENO);
+		ft_putchar_fd(' ', STDOUT_FILENO);
+	}
+	if (!new_line)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
 }
 
-void ft_error(char *s){
-	size_t len = ft_strlen(var->curr_cmd)+3;
-	char prefix[len];
-	ft_strlcat(prefix, var->curr_cmd, len);
+void	ft_error(char *s)
+{
+	size_t	len;
+	char	prefix[len];
+
+	len = ft_strlen(var->curr_cmd) + 3;
+	ft_strlcpy(prefix, var->curr_cmd, len);
 	ft_strlcat(prefix, ": ", len);
 	ft_putstr_fd(prefix, STDERR_FILENO);
-	if (s){
-		ft_putstr_fd(s,STDERR_FILENO);
+	if (s)
+	{
+		ft_putstr_fd(s, STDERR_FILENO);
 	}
 	ft_putendl_fd(strerror(errno), STDERR_FILENO);
 }
@@ -86,26 +85,28 @@ int	ft_cd(char **args)
 {
 	char	*path;
 	char	*home;
-	int stat = 0;
+	int		stat;
+
+	stat = 0;
 	if (ft_arrlen(args) > 1)
-		return (ft_error(NULL),ERROR);
-	if (args && args[0]){
+		return (ft_error(NULL), ERROR);
+	if (args && args[0])
+	{
 		if (args[0][0] == '~')
 		{
 			home = getenv("HOME");
 			path = ft_strjoin(home, args[0] + 1);
-		}else if (args[0][0] == '-' && args[0][1] == '\0'){
-			path = var->oldpwd;
 		}
-		else 
+		else if (args[0][0] == '-' && args[0][1] == '\0')
+			path = var->oldpwd;
+		else
 			path = args[0];
 	}
 	else
 		path = getenv("HOME");
 	stat = chdir(path);
-	if (stat != SUCCESS){
+	if (stat != SUCCESS)
 		return (ft_error(ft_strjoin(args[0], ": ")), ERROR);
-	}
 }
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
@@ -120,9 +121,13 @@ char	*get_prompt(void)
 	return (prompt);
 }
 
-void add_slash_to_path(char **path){
-	int i = 0;
-	while (path[i]){
+void	add_slash_to_path(char **path)
+{
+	int	i;
+
+	i = 0;
+	while (path[i])
+	{
 		path[i] = ft_strjoin(path[i], "/");
 		i++;
 	}
@@ -131,7 +136,7 @@ void add_slash_to_path(char **path){
 int	init(char **env)
 {
 	signal(SIGINT, sigint_handler);
-	var->env = join_args(env);
+	var->env = env;
 	var->path = ft_split(getenv("PATH"), ":");
 	add_slash_to_path(var->path);
 	var->pwd = getenv("PWD");
@@ -146,8 +151,11 @@ int	main(int ac, char **av, char **env)
 	ssize_t	read;
 	size_t	len;
 	char	*line;
-	setbuf(stdout, NULL);
 
+	setbuf(stdout, NULL);
+	if (ac != 1)
+		return (ft_putendl_fd("minishell: no arguments", STDERR_FILENO),
+			FAILURE);
 	var = ft_calloc(sizeof(t_var));
 	init(env);
 	len = 0;

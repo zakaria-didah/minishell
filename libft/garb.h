@@ -13,17 +13,19 @@
 #ifndef GARB_H
 # define GARB_H
 
+# include "libft.h"
 # include <stdlib.h>
 # include <unistd.h>
-# include "libft.h"
+
+# define CHUNK 100
+# define ARENA_SIZE 10240
 
 typedef struct s_mem
 {
-	size_t offset;
-	size_t size;
-	char *mempool;
-}t_mem;
-
+	size_t			offset;
+	size_t			size;
+	char			*mempool;
+}					t_mem;
 
 typedef struct s_garb
 {
@@ -39,10 +41,8 @@ void				*add_garb(void *ptr);
 void				*ft_calloc(size_t size);
 void				ft_free(void);
 size_t				list_len_(t_garb *head);
-void				*ft_bzero_(void *s, size_t n);
 t_list				**arena_head(void);
 t_mem				*realloc_arena(void);
 void				dealloc_arena(void);
-
 
 #endif

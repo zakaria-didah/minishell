@@ -19,7 +19,7 @@ static char	*new_str(const char *s1, size_t start, size_t len)
 
 	if (len <= 0 || start >= ft_strlen(s1))
 		return (ft_strdup(""));
-	str = ft_calloc((len + 1)* sizeof(char));
+	str = ft_calloc((len + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -56,9 +56,9 @@ char	*ft_strtrim(const char *s1, const char *set)
 	j = ft_strlen(s1) - 1;
 	if (ft_strlen(s1) == 0)
 		return (ft_strdup(""));
-	while (to_trim(set, s1[i]))
+	while (s1[i] && to_trim(set, s1[i]))
 		i++;
-	while (to_trim(set, s1[j]))
+	while (j && to_trim(set, s1[j]))
 		j--;
 	return (new_str(s1, i, j - i + 1));
 }

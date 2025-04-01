@@ -16,16 +16,14 @@ char	*ft_strjoin(const char *s1, const char *s2)
 {
 	char	*str;
 
-	if (!s1 || !s2)
+	if (!s1 && !s2)
 		return (NULL);
-	str = ft_calloc(sizeof(char)* (ft_strlen(s1) + ft_strlen(s2) + 1));
-	if (!str)
-		return (NULL);
-	ft_strlcat(str, s1, ft_strlen(s1) + 1);
-	if (!str)
-		return (NULL);
-	ft_strlcat(str, s2, ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!str)
-		return (NULL);
+	int s1_len = ft_strlen(s1);
+	int s2_len = ft_strlen(s2);
+	str = ft_calloc(sizeof(char) * (s1_len + s2_len + 1));
+	if (s1)
+		ft_strlcpy(str, s1, s1_len + 1);
+	if (s2)
+		ft_strlcat(str, s2, s1_len + s2_len + 1);
 	return (str);
 }

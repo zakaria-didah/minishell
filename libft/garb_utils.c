@@ -25,45 +25,56 @@ size_t	list_len_(t_garb *head)
 	return (i);
 }
 
-void	ft_remove(void *ptr)
+void	*add_garb(void *ptr)
 {
-	t_garb	**head;
-	t_garb	*tmp;
+	t_garb	*node;
 
-	head = _get_head();
-	tmp = *head;
-	if (tmp && tmp->ptr == ptr)
-	{
-		(*head) = tmp->next;
-		if (*head)
-			(*head)->prev = NULL;
-		return (free(tmp->ptr), free(tmp));
-	}
-	while (tmp)
-	{
-		if (tmp->ptr == ptr)
-		{
-			if (tmp->prev)
-				tmp->prev->next = tmp->next;
-			if (tmp->next)
-				tmp->next->prev = tmp->prev;
-			return (free(tmp->ptr), free(tmp));
-		}
-		tmp = tmp->next;
-	}
+	node = ft_calloc(sizeof(t_garb));
+	if (!node)
+		return (NULL);
+	node->ptr = ptr;
+	node->prev = NULL;
+	node->next = NULL;
+	_link_list(node);
+	return (ptr);
 }
 
-void	*ft_bzero_(void *s, size_t n)
+void	ft_free(void)
 {
-	unsigned char	*str;
-	size_t			i;
+	t_garb	*tmp;
+	t_garb	*head;
 
-	i = 0;
-	str = (unsigned char *)s;
-	while (i < n)
+	head = *_get_head();
+	while (head)
 	{
-		str[i] = 0;
-		i++;
+		tmp = head;
+		head = head->next;
+		free(tmp->ptr);
 	}
-	return (s);
+	dealloc_arena();
+}
+
+t_garb	**_get_head(void)
+{
+	static t_garb	*head = NULL;
+
+	return (&head);
+}
+
+void	_link_list(t_garb *node)
+{
+	t_garb	**head;
+
+	head = _get_head();
+	if (!*head)
+	{
+		(*head) = node;
+	}
+	else
+	{
+		node->prev = NULL;
+		node->next = *head;
+		(*head)->prev = node;
+		*head = node;
+	}
 }

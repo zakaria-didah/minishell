@@ -7,7 +7,6 @@
 
 int	main(void)
 {
-	char *line = ft_calloc(30);
-	ft_remove(line);
-	ft_free();
+    printf("%s\n", getenv("DISPLAY"));
+
 }

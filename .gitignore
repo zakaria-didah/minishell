@@ -1,3 +1,6 @@
+# My gitignore 
+minishell
+
 # Prerequisites
 *.d
 
@@ -41,6 +44,7 @@
 *.su
 *.idb
 *.pdb
+*.supp
 
 # Kernel Module Compile Results
 *.mod*
@@ -58,3 +62,15 @@ dkms.conf
 
 # ...
 *.txt
+*.log
+*.csv
+*.json
+*.xml
+*.yml
+*.yaml
+*.zip
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tar.xz
+*.tar
