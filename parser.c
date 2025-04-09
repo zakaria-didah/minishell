@@ -154,6 +154,8 @@ t_list	*tokenize(char *input)
 		{
 			token->type = DOLLAR;
 			expand = handel_dollar(&i, input);
+			if (!expand)
+				expand = ft_strdup("");
 			token->value = expand;
 		}
 		else if (input[i] == '"')
@@ -342,7 +344,7 @@ int	pass_the_input(char *line)
 	while (buildin[i].name)
 	{
 		cmd = ((t_cmd *)cmd_lst->content)->args[0];
-		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(buildin[i].name)) == 0)
+		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
 		{
 			var->curr_cmd = cmd;
 			return (buildin[i].func(++((t_cmd *)cmd_lst->content)->args));

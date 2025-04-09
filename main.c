@@ -39,7 +39,7 @@ int	ft_export(char **args)
 	ft_remove(args);
 }
 
-/*echo have been redone and it's about to be redone again */
+
 int	ft_echo(char **args)
 {
 	char	*str;
@@ -50,7 +50,7 @@ int	ft_echo(char **args)
 
 	new_line = 0;
 	i = 0;
-	if (ft_strncmp(args[i], "-n", 3) == 0)
+	if (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
 	{
 		new_line = TRUE;
 		i++;
