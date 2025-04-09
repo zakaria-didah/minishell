@@ -1,4 +1,4 @@
-SRC= main.c parser.c signals.c utiles.c exec.c
+SRC= main.c parser.c signals.c utiles.c exec.c ft_echo.c
 OBJ= $(SRC:.c=.o)
 CC= cc
 CFLAGS=  -g3
