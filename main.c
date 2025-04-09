@@ -40,30 +40,30 @@ int	ft_export(char **args)
 }
 
 
-int	ft_echo(char **args)
-{
-	char	*str;
-	int		i;
-	int		j;
-	char	*var;
-	int		new_line;
+// int	ft_echo(char **args)
+// {
+// 	char	*str;
+// 	int		i;
+// 	int		j;
+// 	char	*var;
+// 	int		new_line;
 
-	new_line = 0;
-	i = 0;
-	if (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
-	{
-		new_line = TRUE;
-		i++;
-	}
-	while (args[i])
-	{
-		ft_putstr_fd(args[i++], STDOUT_FILENO);
-		ft_putchar_fd(' ', STDOUT_FILENO);
-	}
-	if (!new_line)
-		ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
-}
+// 	new_line = 0;
+// 	i = 0;
+// 	if (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
+// 	{
+// 		new_line = TRUE;
+// 		i++;
+// 	}
+// 	while (args[i])
+// 	{
+// 		ft_putstr_fd(args[i++], STDOUT_FILENO);
+// 		ft_putchar_fd(' ', STDOUT_FILENO);
+// 	}
+// 	if (!new_line)
+// 		ft_putchar_fd('\n', STDOUT_FILENO);
+// 	return (0);
+// }
 
 void	ft_error(char *s)
 {
