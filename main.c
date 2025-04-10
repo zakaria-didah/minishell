@@ -28,7 +28,7 @@ int	ft_export(char **args)
 		while (args[i][j] && args[i][j] != '=')
 		{
 			j++;
-		}
+		} 
 		value = args[i] + j + 1;
 		name = args[i];
 		name[j] = '\0';

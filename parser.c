@@ -71,11 +71,6 @@ t_bool	wildcard(char *txt, char *pat)
 		return ;
 	return (TRUE);
 }
-/*
-it tokenize the input string and return a list of tokens
-it may look over complicated but it's just a simple tokenizer
-i know it's not readdable but i will fix it later...
-*/
 
 char	*handel_dollar(int *i, char *input)
 {
@@ -96,6 +91,9 @@ char	*handel_dollar(int *i, char *input)
 	return (res);
 }
 
+/*
+A func to tokenize the input.
+*/
 t_list	*tokenize(char *input)
 {
 	t_token	*token;
@@ -103,7 +101,6 @@ t_list	*tokenize(char *input)
 	int		i;
 	int		j;
 	int		start;
-	char	quote;
 	char	*expand;
 
 	head = NULL;
@@ -160,9 +157,8 @@ t_list	*tokenize(char *input)
 		}
 		else if (input[i] == '"')
 		{
-			quote = input[i++];
-			start = i;
-			while (input[i] && input[i] != quote)
+			start = i++;
+			while (input[i] && input[i] != '"')
 			{
 				if (input[i] == '$')
 				{
@@ -175,6 +171,8 @@ t_list	*tokenize(char *input)
 				}
 				i++;
 			}
+			if (input[i] != '"')
+				return (throw_error(NULL), NULL);
 			token->type = DQUOTE;
 			token->value = ft_strjoin(token->value, ft_substr(input, start, i
 						- start));
@@ -182,10 +180,11 @@ t_list	*tokenize(char *input)
 		}
 		else if (input[i] == '\'')
 		{
-			quote = input[i++];
-			start = i;
-			while (input[i] && input[i] != quote)
+			start = i++;
+			while (input[i] && input[i] != '\'')
 				i++;
+			if (input[i] != '\'')
+				return (throw_error(NULL), NULL);
 			token->type = SQUOTE;
 			token->value = ft_substr(input, start, i - start);
 			i++;
@@ -193,7 +192,7 @@ t_list	*tokenize(char *input)
 		else
 		{
 			start = i;
-			while (input[i] && !strchr(" |<>$", input[i]))
+			while (input[i] && !strchr(" |<>$\"'", input[i]))
 				i++;
 			token->type = WORD;
 			token->value = ft_substr(input, start, i - start);
@@ -204,7 +203,7 @@ t_list	*tokenize(char *input)
 }
 
 /*
-this shit is experimental...
+A func to parse the input
 */
 
 t_list	*parse(t_list *tokens)
@@ -341,6 +340,8 @@ int	pass_the_input(char *line)
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
+	if (!cmd_lst)
+		return (FAILURE);
 	while (buildin[i].name)
 	{
 		cmd = ((t_cmd *)cmd_lst->content)->args[0];

@@ -32,17 +32,16 @@ typedef enum s_status
 	SUCCESS,
 	ERROR,
 	FAILURE
-
 } t_status;
 
 // a structure to store the bultin functions with hash table algorithm
-// if u want to add a global variable, please add it to the t_var structure.
 typedef struct s_bultin
 {
 	char *name;
 	int (*func)(char **args);
 } t_bultin;
 
+// if u want to add a global variable, please add it to the t_var structure.
 // a structure to store the env variables and global variables
 typedef struct t_var
 {
@@ -68,12 +67,11 @@ typedef enum token_type
 	PIPE,
 	RED_IN,
 	RED_OUT,
-	DOLLAR,
-	DQUOTE,
-	SQUOTE,
+	DQUOTE = 34,
+	DOLLAR = 36,
+	SQUOTE = 39,
 	BQUOTE,
 	WORD,
-	B_SLASH,
 	HDOC,
 	APPEND
 
@@ -111,7 +109,6 @@ char	*join_args(char **args);
 //......parsing......
 
 #endif
-
 
 /*
 I know the filesystem is a bit messy, but I'm working on it.
