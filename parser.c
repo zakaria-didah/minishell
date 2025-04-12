@@ -351,16 +351,17 @@ bool	exec_buildin(t_list *cmdlst)
 	int			i;
 
 	i = 0;
+	cmd = ((t_cmd *)cmdlst->content)->args[0];
 	while (buildin[i].name)
 	{
-		cmd = ((t_cmd *)cmdlst->content)->args[0];
 		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
 		{
 			var->curr_cmd = cmd;
-			if (((t_cmd *)cmdlst->content)->out){
+			if (((t_cmd *)cmdlst->content)->out)
 				red_out(((t_cmd *)cmdlst->content)->out);
-			}
-			return (buildin[i].func(++((t_cmd *)cmdlst->content)->args));
+			if (((t_cmd *)cmdlst->content)->append)
+				append(((t_cmd *)cmdlst->content)->out);
+			return (buildin[i].func(++((t_cmd *)cmdlst->content)->args), true);
 		}
 		i++;
 	}

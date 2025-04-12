@@ -19,7 +19,7 @@ int	red_out(char *file)
 {
 	int	fd;
 
-	fd = open_file(file, red);
+	fd = open_file(file, RED_OUT);
 	dup2(fd, STDOUT_FILENO);
 	return (TRUE);
 }
@@ -28,7 +28,7 @@ t_bool	append(char *file)
 {
 	int	fd;
 
-	fd = open_file(file, append);
+	fd = open_file(file, APPEND);
 	dup2(fd, STDOUT_FILENO);
 	return (TRUE);
 }

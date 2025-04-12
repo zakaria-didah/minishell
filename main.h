@@ -27,12 +27,6 @@ typedef enum s_bool
 	TRUE
 } t_bool;
 
-typedef enum 
-{
-	red,
-	append
-} flag_for_open;
-
 typedef enum s_status
 {
 	SUCCESS,
@@ -72,14 +66,14 @@ typedef enum token_type
 	WSPACE,
 	PIPE,
 	RED_IN,
-	RED_OUT,
+	RED_OUT =  0,
+	APPEND = 1,
 	DQUOTE = 34,
 	DOLLAR = 36,
 	SQUOTE = 39,
 	BQUOTE,
 	WORD,
-	HDOC,
-	APPEND
+	HDOC
 
 } token_type;
 
@@ -112,13 +106,11 @@ void	throw_error(char *line);
 int	exec(t_list *line);
 int	pass_the_input(char *line);
 char	*join_args(char **args);
-
 char	*find_cmd(char *cmd);
 void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
-
-
 int	red_out(char *file);
+t_bool	append(char *file);
 //......parsing......
 
 #endif

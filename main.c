@@ -133,6 +133,11 @@ char	*get_prompt(void)
 	char	*cwd;
 
 	cwd = getcwd(NULL, 0);
+	//printf("%s\n", cwd);
+	if (!cwd){
+		cwd = getenv("OLDPWD");
+		printf("%s\n", cwd);
+	}
 	prompt = ft_strrchr(cwd, '/') + 1;
 	prompt = ft_strjoin(prompt, "$> ");
 	free(cwd);
