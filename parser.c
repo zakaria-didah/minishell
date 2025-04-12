@@ -71,11 +71,25 @@ t_bool	wildcard(char *txt, char *pat)
 		return TRUE;
 	return (TRUE);
 }
-/*
-it tokenize the input string and return a list of tokens
-it may look over complicated but it's just a simple tokenizer
-i know it's not readdable but i will fix it later...
-*/
+
+char	*ft_getenv(char *name)
+{
+	int		i;
+	char	*env;
+
+	i = 0;
+	while (var->env[i])
+	{
+		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
+		{
+			env = ft_strchr(var->env[i], '=');
+			if (env)
+				return (ft_strdup(env + 1));
+		}
+		i++;
+	}
+	return (NULL);
+}
 
 char	*handel_dollar(int *i, char *input)
 {
@@ -91,11 +105,14 @@ char	*handel_dollar(int *i, char *input)
 	}
 	tmp = input[*i];
 	input[*i] = 0;
-	res = getenv(input + start);
+	res = ft_getenv(input + start);
 	input[*i] = tmp;
 	return (res);
 }
 
+/*
+A func to tokenize the input.
+*/
 t_list	*tokenize(char *input)
 {
 	t_token	*token;
@@ -103,7 +120,6 @@ t_list	*tokenize(char *input)
 	int		i;
 	int		j;
 	int		start;
-	char	quote;
 	char	*expand;
 
 	head = NULL;
@@ -161,9 +177,8 @@ t_list	*tokenize(char *input)
 		}
 		else if (input[i] == '"')
 		{
-			quote = input[i++];
-			start = i;
-			while (input[i] && input[i] != quote)
+			start = i++;
+			while (input[i] && input[i] != '"')
 			{
 				if (input[i] == '$')
 				{
@@ -176,6 +191,8 @@ t_list	*tokenize(char *input)
 				}
 				i++;
 			}
+			if (input[i] != '"')
+				return (throw_error(NULL), NULL);
 			token->type = DQUOTE;
 			token->value = ft_strjoin(token->value, ft_substr(input, start, i
 						- start));
@@ -183,10 +200,11 @@ t_list	*tokenize(char *input)
 		}
 		else if (input[i] == '\'')
 		{
-			quote = input[i++];
-			start = i;
-			while (input[i] && input[i] != quote)
+			start = i++;
+			while (input[i] && input[i] != '\'')
 				i++;
+			if (input[i] != '\'')
+				return (throw_error(NULL), NULL);
 			token->type = SQUOTE;
 			token->value = ft_substr(input, start, i - start);
 			i++;
@@ -205,7 +223,7 @@ t_list	*tokenize(char *input)
 }
 
 /*
-this shit is experimental...
+A func to parse the input
 */
 
 t_list	*parse(t_list *tokens)
@@ -324,17 +342,38 @@ t_list	*parse(t_list *tokens)
 	return (cmd_lst);
 }
 
-int	pass_the_input(char *line)
+bool	exec_buildin(t_list *cmdlst)
 {
-	int			i;
-	int			res;
-	char		*cmd;
 	t_bultin	buildin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
 			{NULL}};
-	t_list		*head;
-	t_list		*cmd_lst;
-	char		*l;
+	char		*cmd;
+	int			i;
+
+	i = 0;
+	while (buildin[i].name)
+	{
+		cmd = ((t_cmd *)cmdlst->content)->args[0];
+		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
+		{
+			var->curr_cmd = cmd;
+			if (((t_cmd *)cmdlst->content)->out){
+				red_out(((t_cmd *)cmdlst->content)->out);
+			}
+			return (buildin[i].func(++((t_cmd *)cmdlst->content)->args));
+		}
+		i++;
+	}
+	return FALSE; 
+}
+
+int	pass_the_input(char *line)
+{
+	int		i;
+	int		res;
+	t_list	*head;
+	t_list	*cmd_lst;
+	char	*l;
 
 	line = ft_strtrim(line, " ");
 	if (!*line)
@@ -342,19 +381,10 @@ int	pass_the_input(char *line)
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
-	while (buildin[i].name)
-	{
-		cmd = ((t_cmd *)cmd_lst->content)->args[0];
-		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
-		{
-			var->curr_cmd = cmd;
-			if (((t_cmd *)cmd_lst->content)->out){
-				red_out(((t_cmd *)cmd_lst->content)->out);
-			}
-			return (buildin[i].func(++((t_cmd *)cmd_lst->content)->args));
-		}
-		i++;
-	}
+	if (!cmd_lst)
+		return (FAILURE);
+	if(exec_buildin(cmd_lst))
+		return SUCCESS;
 	exec(cmd_lst);
 	return (0);
 }

@@ -5,11 +5,27 @@ t_var	*var = NULL;
 int	ft_unset(char **args)
 {
 	int	i;
+	int	j;
 
 	i = 0;
+	j = 0;
 	while (args[i])
 	{
-		unsetenv(args[i++]);
+		while (var->env[j])
+		{
+			if (ft_strncmp(var->env[j], args[i], ft_strlen(args[i])) == 0)
+			{
+				while (var->env[j])
+				{
+					var->env[j] = var->env[j + 1];
+					j++;
+				}
+				break ;
+			}
+			j++;
+		}
+		i++;
+		j = 0;
 	}
 	return (true);
 }
@@ -21,49 +37,25 @@ int	ft_export(char **args)
 	int		i;
 	int		j;
 
+	value = NULL;
+	name = NULL;
 	i = 0;
 	j = 0;
 	while (args[i])
 	{
 		while (args[i][j] && args[i][j] != '=')
+			j++;
+		name = ft_substr(args[i], 0, j);
+		if (args[i][j] == '=')
 		{
 			j++;
+			value = args[i] + j;
 		}
-		value = args[i] + j + 1;
-		name = args[i];
-		name[j] = '\0';
-		setenv(name, value, 1);
+		ft_setenv(name, value);
 		j = 0;
 		i++;
 	}
-	ft_remove(args);
 }
-
-
-// int	ft_echo(char **args)
-// {
-// 	char	*str;
-// 	int		i;
-// 	int		j;
-// 	char	*var;
-// 	int		new_line;
-
-// 	new_line = 0;
-// 	i = 0;
-// 	if (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
-// 	{
-// 		new_line = TRUE;
-// 		i++;
-// 	}
-// 	while (args[i])
-// 	{
-// 		ft_putstr_fd(args[i++], STDOUT_FILENO);
-// 		ft_putchar_fd(' ', STDOUT_FILENO);
-// 	}
-// 	if (!new_line)
-// 		ft_putchar_fd('\n', STDOUT_FILENO);
-// 	return (0);
-// }
 
 void	ft_error(char *s)
 {
@@ -81,32 +73,58 @@ void	ft_error(char *s)
 	ft_putendl_fd(strerror(errno), STDERR_FILENO);
 }
 
+int	ft_setenv(char *name, char *value)
+{
+	var->env = ft_arrjoin(var->env, ft_strjoin(name, value));
+	return (SUCCESS);
+}
+
+int	edit_env(char *name, char *value, t_bool APPEND)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (var->env[i])
+	{
+		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
+		{
+			var->env[i] = ft_strjoin(name, value);
+			return (SUCCESS);
+		}
+		i++;
+	}
+	if (APPEND)
+		return (ft_setenv(name, value));
+	return (FAILURE);
+}
+
 int	ft_cd(char **args)
 {
 	char	*path;
 	char	*home;
 	int		stat;
+	char	*tmp;
 
 	stat = 0;
 	if (ft_arrlen(args) > 1)
 		return (ft_error(NULL), ERROR);
 	if (args && args[0])
 	{
-		if (args[0][0] == '~')
-		{
-			home = getenv("HOME");
-			path = ft_strjoin(home, args[0] + 1);
-		}
-		else if (args[0][0] == '-' && args[0][1] == '\0')
-			path = var->oldpwd;
-		else
-			path = args[0];
+		path = args[0];
 	}
 	else
-		path = getenv("HOME");
+		return (throw_error("cd: [relative or absolute path]"), ERROR);
 	stat = chdir(path);
 	if (stat != SUCCESS)
 		return (ft_error(ft_strjoin(args[0], ": ")), ERROR);
+	var->oldpwd = var->pwd;
+	tmp = getcwd(NULL, 0);
+	var->pwd = ft_strdup(tmp);
+	free(tmp);
+	edit_env("PWD=", var->pwd, true);
+	edit_env("OLDPWD=", var->oldpwd, true);
 }
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
@@ -115,8 +133,8 @@ char	*get_prompt(void)
 	char	*cwd;
 
 	cwd = getcwd(NULL, 0);
-	prompt = ft_strrchr(cwd, '/');
-	prompt = ft_strjoin(prompt + 1, "$ ");
+	prompt = ft_strrchr(cwd, '/') + 1;
+	prompt = ft_strjoin(prompt, "$> ");
 	free(cwd);
 	return (prompt);
 }
