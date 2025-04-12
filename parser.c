@@ -72,6 +72,25 @@ t_bool	wildcard(char *txt, char *pat)
 	return (TRUE);
 }
 
+char	*ft_getenv(char *name)
+{
+	int		i;
+	char	*env;
+
+	i = 0;
+	while (var->env[i])
+	{
+		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
+		{
+			env = ft_strchr(var->env[i], '=');
+			if (env)
+				return (ft_strdup(env + 1));
+		}
+		i++;
+	}
+	return (NULL);
+}
+
 char	*handel_dollar(int *i, char *input)
 {
 	int		start;
@@ -86,7 +105,7 @@ char	*handel_dollar(int *i, char *input)
 	}
 	tmp = input[*i];
 	input[*i] = 0;
-	res = getenv(input + start);
+	res = ft_getenv(input + start);
 	input[*i] = tmp;
 	return (res);
 }
@@ -192,7 +211,7 @@ t_list	*tokenize(char *input)
 		else
 		{
 			start = i;
-			while (input[i] && !strchr(" |<>$\"'", input[i]))
+			while (input[i] && !strchr(" |<>$", input[i]))
 				i++;
 			token->type = WORD;
 			token->value = ft_substr(input, start, i - start);
@@ -322,17 +341,35 @@ t_list	*parse(t_list *tokens)
 	return (cmd_lst);
 }
 
-int	pass_the_input(char *line)
+bool	exec_buildin(t_list *cmdlst)
 {
-	int			i;
-	int			res;
-	char		*cmd;
 	t_bultin	buildin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
 			{NULL}};
-	t_list		*head;
-	t_list		*cmd_lst;
-	char		*l;
+	char		*cmd;
+	int			i;
+
+	i = 0;
+	while (buildin[i].name)
+	{
+		cmd = ((t_cmd *)cmdlst->content)->args[0];
+		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
+		{
+			var->curr_cmd = cmd;
+			return (buildin[i].func(++((t_cmd *)cmdlst->content)->args));
+		}
+		i++;
+	}
+	return FALSE; 
+}
+
+int	pass_the_input(char *line)
+{
+	int		i;
+	int		res;
+	t_list	*head;
+	t_list	*cmd_lst;
+	char	*l;
 
 	line = ft_strtrim(line, " ");
 	if (!*line)
@@ -342,16 +379,8 @@ int	pass_the_input(char *line)
 	cmd_lst = parse(head);
 	if (!cmd_lst)
 		return (FAILURE);
-	while (buildin[i].name)
-	{
-		cmd = ((t_cmd *)cmd_lst->content)->args[0];
-		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
-		{
-			var->curr_cmd = cmd;
-			return (buildin[i].func(++((t_cmd *)cmd_lst->content)->args));
-		}
-		i++;
-	}
+	if(exec_buildin(cmd_lst))
+		return SUCCESS;
 	exec(cmd_lst);
 	return (0);
 }

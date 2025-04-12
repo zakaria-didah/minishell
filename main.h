@@ -106,6 +106,12 @@ void	throw_error(char *line);
 int	exec(t_list *line);
 int	pass_the_input(char *line);
 char	*join_args(char **args);
+
+char	*find_cmd(char *cmd);
+void	add_slash_to_path(char **path);
+int	ft_setenv(char *name, char *value);
+
+
 //......parsing......
 
 #endif
