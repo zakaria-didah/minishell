@@ -57,6 +57,9 @@ int	exec(t_list *head)
 	if (child_pid == 0)
 	{
 		var->curr_cmd = cmd;
+		if (((t_cmd *)head->content)->out){
+			red_out(((t_cmd *)head->content)->out);
+		}
 		execv(cmd, ((t_cmd *)head->content)->args);
 		perror("shit happend\n");
 		exit(1);

@@ -27,6 +27,12 @@ typedef enum s_bool
 	TRUE
 } t_bool;
 
+typedef enum 
+{
+	red,
+	append
+} flag_for_open;
+
 typedef enum s_status
 {
 	SUCCESS,
@@ -108,6 +114,7 @@ void	throw_error(char *line);
 int	exec(t_list *line);
 int	pass_the_input(char *line);
 char	*join_args(char **args);
+int	red_out(char *file);
 //......parsing......
 
 #endif

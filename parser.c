@@ -68,7 +68,7 @@ t_bool	wildcard(char *txt, char *pat)
 	while (j < m && pat[j] == '*')
 		j++;
 	if (j == m)
-		return ;
+		return TRUE;
 	return (TRUE);
 }
 /*
@@ -148,6 +148,7 @@ t_list	*tokenize(char *input)
 			{
 				token->type = RED_OUT;
 				token->value = ft_strdup(">");
+				i++;
 			}
 		}
 		else if (input[i] == '$')
@@ -347,6 +348,9 @@ int	pass_the_input(char *line)
 		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
 		{
 			var->curr_cmd = cmd;
+			if (((t_cmd *)cmd_lst->content)->out){
+				red_out(((t_cmd *)cmd_lst->content)->out);
+			}
 			return (buildin[i].func(++((t_cmd *)cmd_lst->content)->args));
 		}
 		i++;
