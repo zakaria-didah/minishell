@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/13 11:53:00 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/13 16:02:13 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,18 @@ char	*ft_getenv(char *name)
 	}
 	return (NULL);
 }
+
+int	ft_env(char **args)
+{
+	int	i;
+
+	i = 0;
+	(void)args;
+	while (var->env[i])
+		ft_putendl_fd(var->env[i++], STDOUT_FILENO);
+	return (TRUE);
+}
+
 int	edit_env(char *name, char *value, t_bool APPEND)
 {
 	int	i;
