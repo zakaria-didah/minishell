@@ -1,6 +1,7 @@
 #ifndef MINISHELL_MAIN_H
 # define MINISHELL_MAIN_H
 
+# include "get_next_line.h"
 # include "libft/libft.h"
 # include "parser.h"
 # include "signals.h"
@@ -66,7 +67,7 @@ typedef enum token_type
 	WSPACE,
 	PIPE,
 	RED_IN,
-	RED_OUT =  0,
+	RED_OUT = 0,
 	APPEND = 1,
 	DQUOTE = 34,
 	DOLLAR = 36,
@@ -89,7 +90,7 @@ typedef struct s_cmd
 	char **args;
 	char *in;
 	char *out;
-	int append;
+	int *append;
 	char *hdoc;
 } t_cmd;
 
@@ -111,11 +112,17 @@ void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
 int	red_out(char *file);
 t_bool	append(char *file);
-char *ft_getenv(char *name);
+char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
+int	red_in(char *file);
+int	redirect(t_list *head);
+void ft_error(char *error);
+void	ft_strerror(char *s);
+
 //......parsing......
 
 #endif
+
 
 /*
 I know the filesystem is a bit messy, but I'm working on it.

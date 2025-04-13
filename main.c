@@ -27,22 +27,7 @@ int	ft_export(char **args)
 		j = 0;
 		i++;
 	}
-}
-
-void	ft_error(char *s)
-{
-	size_t	len;
-	char	prefix[ft_strlen(var->curr_cmd) + 3];
-
-	len = ft_strlen(var->curr_cmd) + 3;
-	ft_strlcpy(prefix, var->curr_cmd, len);
-	ft_strlcat(prefix, ": ", len);
-	ft_putstr_fd(prefix, STDERR_FILENO);
-	if (s)
-	{
-		ft_putstr_fd(s, STDERR_FILENO);
-	}
-	ft_putendl_fd(strerror(errno), STDERR_FILENO);
+	return SUCCESS;
 }
 
 int	ft_cd(char **args)
@@ -54,7 +39,7 @@ int	ft_cd(char **args)
 
 	stat = 0;
 	if (ft_arrlen(args) > 1)
-		return (ft_error(NULL), ERROR);
+		return (ft_strerror(NULL), ERROR);
 	if (args && args[0])
 	{
 		path = args[0];
@@ -63,7 +48,7 @@ int	ft_cd(char **args)
 		return (throw_error("cd: [relative or absolute path]"), ERROR);
 	stat = chdir(path);
 	if (stat != SUCCESS)
-		return (ft_error(ft_strjoin(args[0], ": ")), ERROR);
+		return (ft_strerror(ft_strjoin(args[0], ": ")), ERROR);
 	var->oldpwd = var->pwd;
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
@@ -71,7 +56,7 @@ int	ft_cd(char **args)
 	var->pwd = ft_strdup(tmp);
 	free(tmp);
 	edit_env("PWD=", var->pwd, true);
-	edit_env("OLDPWD=", var->oldpwd, true);
+	return edit_env("OLDPWD=", var->oldpwd, true), SUCCESS;
 }
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
@@ -82,7 +67,6 @@ char	*get_prompt(void)
 
 	option = 0;
 	cwd = getcwd(NULL, 0);
-	// printf("%s\n", cwd);
 	if (!cwd)
 	{
 		option = TRUE;
@@ -144,4 +128,5 @@ int	main(int ac, char **av, char **env)
 		pass_the_input(line);
 		free(line);
 	}
+	return 0;
 }
