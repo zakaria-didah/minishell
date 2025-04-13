@@ -60,29 +60,9 @@ int	ft_exit(char **args)
 		TRUE);
 }
 
-void	throw_error(char *line)
-{
-	char	prefix[] = "minishell: ";
 
-	if (line)
-	{
-		ft_putstr_fd(prefix, 2);
-		ft_putstr_fd(line, 2);
-		return ;
-	}
-	ft_putstr_fd("minishell: syntax error\n", 2);
-}
 
-int	ft_env(char **args)
-{
-	int	i;
 
-	i = 0;
-	(void)args;
-	while (var->env[i])
-		ft_putendl_fd(var->env[i++], STDOUT_FILENO);
-	return (TRUE);
-}
 
 bool	wildCard(char *txt, char *pat)
 {

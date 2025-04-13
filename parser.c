@@ -68,11 +68,9 @@ t_bool	wildcard(char *txt, char *pat)
 	while (j < m && pat[j] == '*')
 		j++;
 	if (j == m)
-		return TRUE;
+		return (TRUE);
 	return (TRUE);
 }
-
-
 
 char	*handel_dollar(int *i, char *input)
 {
@@ -133,6 +131,7 @@ t_list	*tokenize(char *input)
 			{
 				token->type = RED_IN;
 				token->value = ft_strdup("<");
+				i++;
 			}
 		}
 		else if (input[i] == '>')
@@ -324,6 +323,19 @@ t_list	*parse(t_list *tokens)
 	}
 	return (cmd_lst);
 }
+int	redirect(t_list *head)
+{
+	int	status;
+
+	status = SUCCESS;
+	if (((t_cmd *)head->content)->out)
+		status = red_out(((t_cmd *)head->content)->out);
+	if (((t_cmd *)head->content)->append)
+		status = append(((t_cmd *)head->content)->out);
+	if (((t_cmd *)head->content)->in)
+		status = red_in(((t_cmd *)head->content)->in);
+	return (status);
+}
 
 bool	exec_buildin(t_list *cmdlst)
 {
@@ -332,7 +344,10 @@ bool	exec_buildin(t_list *cmdlst)
 			{NULL}};
 	char		*cmd;
 	int			i;
+	int			exit_stat;
+	pid_t		child = 0;
 
+	exit_stat = SUCCESS;
 	i = 0;
 	cmd = ((t_cmd *)cmdlst->content)->args[0];
 	while (buildin[i].name)
@@ -340,15 +355,21 @@ bool	exec_buildin(t_list *cmdlst)
 		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
 		{
 			var->curr_cmd = cmd;
-			if (((t_cmd *)cmdlst->content)->out)
-				red_out(((t_cmd *)cmdlst->content)->out);
-			if (((t_cmd *)cmdlst->content)->append)
-				append(((t_cmd *)cmdlst->content)->out);
-			return (buildin[i].func(++((t_cmd *)cmdlst->content)->args), true);
+			if (i != 5)
+				child = fork();
+			if (child < 0)
+				ft_error(NULL);
+			if (child == 0){
+				redirect(cmdlst);
+				exit_stat = buildin[i].func(++((t_cmd *)cmdlst->content)->args),
+					exit(exit_stat);
+			}
+			else
+				return (wait(NULL), true);
 		}
 		i++;
 	}
-	return FALSE; 
+	return (FALSE);
 }
 
 int	pass_the_input(char *line)
@@ -367,8 +388,8 @@ int	pass_the_input(char *line)
 	cmd_lst = parse(head);
 	if (!cmd_lst)
 		return (FAILURE);
-	if(exec_buildin(cmd_lst))
-		return SUCCESS;
+	if (exec_buildin(cmd_lst))
+		return (SUCCESS);
 	exec(cmd_lst);
 	return (0);
 }
