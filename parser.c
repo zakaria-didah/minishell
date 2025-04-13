@@ -72,24 +72,7 @@ t_bool	wildcard(char *txt, char *pat)
 	return (TRUE);
 }
 
-char	*ft_getenv(char *name)
-{
-	int		i;
-	char	*env;
 
-	i = 0;
-	while (var->env[i])
-	{
-		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
-		{
-			env = ft_strchr(var->env[i], '=');
-			if (env)
-				return (ft_strdup(env + 1));
-		}
-		i++;
-	}
-	return (NULL);
-}
 
 char	*handel_dollar(int *i, char *input)
 {

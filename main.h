@@ -111,6 +111,8 @@ void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
 int	red_out(char *file);
 t_bool	append(char *file);
+char *ft_getenv(char *name);
+int	edit_env(char *name, char *value, t_bool APPEND);
 //......parsing......
 
 #endif
