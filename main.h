@@ -1,7 +1,7 @@
 #ifndef MINISHELL_MAIN_H
 # define MINISHELL_MAIN_H
 
-# include "get_next_line.h"
+// # include "get_next_line.h"
 # include "libft/libft.h"
 # include "parser.h"
 # include "signals.h"

@@ -336,12 +336,24 @@ int	redirect(t_list *head)
 		status = red_in(((t_cmd *)head->content)->in);
 	return (status);
 }
+int	ft_pwd(char **argv)
+{
+	char	*pwd;
+
+	if (argv[0] && argv[0][0] == '-')
+		return (ft_putstr_fd("minishell: pwd: no options", 1), FAILURE);
+	pwd = getcwd(NULL, 0);
+	if (!pwd)
+		return (perror("minishell: pwd"), FAILURE);
+	printf("%s\n", pwd);
+	return (SUCCESS);
+}
 
 bool	exec_buildin(t_list *cmdlst)
 {
 	t_bultin	buildin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-			{NULL}};
+			{"pwd", ft_pwd},{NULL}};
 	char		*cmd;
 	int			i;
 	int			exit_stat;
