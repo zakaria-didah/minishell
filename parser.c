@@ -68,14 +68,9 @@ t_bool	wildcard(char *txt, char *pat)
 	while (j < m && pat[j] == '*')
 		j++;
 	if (j == m)
-		return ;
+		return (TRUE);
 	return (TRUE);
 }
-/*
-it tokenize the input string and return a list of tokens
-it may look over complicated but it's just a simple tokenizer
-i know it's not readdable but i will fix it later...
-*/
 
 char	*handel_dollar(int *i, char *input)
 {
@@ -91,11 +86,14 @@ char	*handel_dollar(int *i, char *input)
 	}
 	tmp = input[*i];
 	input[*i] = 0;
-	res = getenv(input + start);
+	res = ft_getenv(input + start);
 	input[*i] = tmp;
 	return (res);
 }
 
+/*
+A func to tokenize the input.
+*/
 t_list	*tokenize(char *input)
 {
 	t_token	*token;
@@ -103,7 +101,6 @@ t_list	*tokenize(char *input)
 	int		i;
 	int		j;
 	int		start;
-	char	quote;
 	char	*expand;
 
 	head = NULL;
@@ -134,6 +131,7 @@ t_list	*tokenize(char *input)
 			{
 				token->type = RED_IN;
 				token->value = ft_strdup("<");
+				i++;
 			}
 		}
 		else if (input[i] == '>')
@@ -148,6 +146,7 @@ t_list	*tokenize(char *input)
 			{
 				token->type = RED_OUT;
 				token->value = ft_strdup(">");
+				i++;
 			}
 		}
 		else if (input[i] == '$')
@@ -160,9 +159,8 @@ t_list	*tokenize(char *input)
 		}
 		else if (input[i] == '"')
 		{
-			quote = input[i++];
-			start = i;
-			while (input[i] && input[i] != quote)
+			start = i++;
+			while (input[i] && input[i] != '"')
 			{
 				if (input[i] == '$')
 				{
@@ -175,6 +173,8 @@ t_list	*tokenize(char *input)
 				}
 				i++;
 			}
+			if (input[i] != '"')
+				return (throw_error(NULL), NULL);
 			token->type = DQUOTE;
 			token->value = ft_strjoin(token->value, ft_substr(input, start, i
 						- start));
@@ -182,10 +182,11 @@ t_list	*tokenize(char *input)
 		}
 		else if (input[i] == '\'')
 		{
-			quote = input[i++];
-			start = i;
-			while (input[i] && input[i] != quote)
+			start = i++;
+			while (input[i] && input[i] != '\'')
 				i++;
+			if (input[i] != '\'')
+				return (throw_error(NULL), NULL);
 			token->type = SQUOTE;
 			token->value = ft_substr(input, start, i - start);
 			i++;
@@ -204,7 +205,7 @@ t_list	*tokenize(char *input)
 }
 
 /*
-this shit is experimental...
+A func to parse the input
 */
 
 t_list	*parse(t_list *tokens)
@@ -322,18 +323,62 @@ t_list	*parse(t_list *tokens)
 	}
 	return (cmd_lst);
 }
-
-int	pass_the_input(char *line)
+int	redirect(t_list *head)
 {
-	int			i;
-	int			res;
-	char		*cmd;
+	int	status;
+
+	status = SUCCESS;
+	if (((t_cmd *)head->content)->out)
+		status = red_out(((t_cmd *)head->content)->out);
+	if (((t_cmd *)head->content)->append)
+		status = append(((t_cmd *)head->content)->out);
+	if (((t_cmd *)head->content)->in)
+		status = red_in(((t_cmd *)head->content)->in);
+	return (status);
+}
+
+bool	exec_buildin(t_list *cmdlst)
+{
 	t_bultin	buildin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
 			{NULL}};
-	t_list		*head;
-	t_list		*cmd_lst;
-	char		*l;
+	char		*cmd;
+	int			i;
+	int			exit_stat;
+	pid_t		child = 0;
+
+	exit_stat = SUCCESS;
+	i = 0;
+	cmd = ((t_cmd *)cmdlst->content)->args[0];
+	while (buildin[i].name)
+	{
+		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
+		{
+			var->curr_cmd = cmd;
+			if (i != 5)
+				child = fork();
+			if (child < 0)
+				ft_error(NULL);
+			if (child == 0){
+				redirect(cmdlst);
+				exit_stat = buildin[i].func(++((t_cmd *)cmdlst->content)->args),
+					exit(exit_stat);
+			}
+			else
+				return (wait(NULL), true);
+		}
+		i++;
+	}
+	return (FALSE);
+}
+
+int	pass_the_input(char *line)
+{
+	int		i;
+	int		res;
+	t_list	*head;
+	t_list	*cmd_lst;
+	char	*l;
 
 	line = ft_strtrim(line, " ");
 	if (!*line)
@@ -341,16 +386,10 @@ int	pass_the_input(char *line)
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
-	while (buildin[i].name)
-	{
-		cmd = ((t_cmd *)cmd_lst->content)->args[0];
-		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
-		{
-			var->curr_cmd = cmd;
-			return (buildin[i].func(++((t_cmd *)cmd_lst->content)->args));
-		}
-		i++;
-	}
+	if (!cmd_lst)
+		return (FAILURE);
+	if (exec_buildin(cmd_lst))
+		return (SUCCESS);
 	exec(cmd_lst);
 	return (0);
 }

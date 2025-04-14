@@ -1,6 +1,7 @@
 #ifndef MINISHELL_MAIN_H
 # define MINISHELL_MAIN_H
 
+# include "get_next_line.h"
 # include "libft/libft.h"
 # include "parser.h"
 # include "signals.h"
@@ -32,17 +33,16 @@ typedef enum s_status
 	SUCCESS,
 	ERROR,
 	FAILURE
-
 } t_status;
 
 // a structure to store the bultin functions with hash table algorithm
-// if u want to add a global variable, please add it to the t_var structure.
 typedef struct s_bultin
 {
 	char *name;
 	int (*func)(char **args);
 } t_bultin;
 
+// if u want to add a global variable, please add it to the t_var structure.
 // a structure to store the env variables and global variables
 typedef struct t_var
 {
@@ -67,15 +67,14 @@ typedef enum token_type
 	WSPACE,
 	PIPE,
 	RED_IN,
-	RED_OUT,
-	DOLLAR,
-	DQUOTE,
-	SQUOTE,
+	RED_OUT = 0,
+	APPEND = 1,
+	DQUOTE = 34,
+	DOLLAR = 36,
+	SQUOTE = 39,
 	BQUOTE,
 	WORD,
-	B_SLASH,
-	HDOC,
-	APPEND
+	HDOC
 
 } token_type;
 
@@ -91,7 +90,7 @@ typedef struct s_cmd
 	char **args;
 	char *in;
 	char *out;
-	int append;
+	int *append;
 	char *hdoc;
 } t_cmd;
 
@@ -108,6 +107,18 @@ void	throw_error(char *line);
 int	exec(t_list *line);
 int	pass_the_input(char *line);
 char	*join_args(char **args);
+char	*find_cmd(char *cmd);
+void	add_slash_to_path(char **path);
+int	ft_setenv(char *name, char *value);
+int	red_out(char *file);
+t_bool	append(char *file);
+char	*ft_getenv(char *name);
+int	edit_env(char *name, char *value, t_bool APPEND);
+int	red_in(char *file);
+int	redirect(t_list *head);
+void ft_error(char *error);
+void	ft_strerror(char *s);
+
 //......parsing......
 
 #endif

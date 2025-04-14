@@ -54,9 +54,10 @@ int	exec(t_list *head)
 	child_pid = fork();
 	if (child_pid < 0)
 		exit(-1);
+	var->curr_cmd = cmd;
 	if (child_pid == 0)
 	{
-		var->curr_cmd = cmd;
+		redirect(head);
 		execv(cmd, ((t_cmd *)head->content)->args);
 		perror("shit happend\n");
 		exit(1);

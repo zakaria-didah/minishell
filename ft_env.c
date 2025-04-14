@@ -1,0 +1,100 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
+/*   Updated: 2025/04/13 16:02:13 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+#include "main.h"
+
+char	*ft_getenv(char *name)
+{
+	int		i;
+	char	*env;
+
+	i = 0;
+	while (var->env[i])
+	{
+		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
+		{
+			env = ft_strchr(var->env[i], '=');
+			if (env)
+				return (ft_strdup(env + 1));
+		}
+		i++;
+	}
+	return (NULL);
+}
+
+int	ft_env(char **args)
+{
+	int	i;
+
+	i = 0;
+	(void)args;
+	while (var->env[i])
+		ft_putendl_fd(var->env[i++], STDOUT_FILENO);
+	return (TRUE);
+}
+
+int	edit_env(char *name, char *value, t_bool APPEND)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (var->env[i])
+	{
+		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
+		{
+			var->env[i] = ft_strjoin(name, value);
+			return (SUCCESS);
+		}
+		i++;
+	}
+	if (APPEND)
+		return (ft_setenv(name, value));
+	return (FAILURE);
+}
+
+int	ft_setenv(char *name, char *value)
+{
+	var->env = ft_arrjoin(var->env, ft_strjoin(name, value));
+	return (SUCCESS);
+}
+
+int	ft_unset(char **args)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (args[i])
+	{
+		while (var->env[j])
+		{
+			if (ft_strncmp(var->env[j], args[i], ft_strlen(args[i])) == 0)
+			{
+				while (var->env[j])
+				{
+					var->env[j] = var->env[j + 1];
+					j++;
+				}
+				break ;
+			}
+			j++;
+		}
+		i++;
+		j = 0;
+	}
+	return (true);
+}
+

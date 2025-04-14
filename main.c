@@ -2,18 +2,6 @@
 
 t_var	*var = NULL;
 
-int	ft_unset(char **args)
-{
-	int	i;
-
-	i = 0;
-	while (args[i])
-	{
-		unsetenv(args[i++]);
-	}
-	return (true);
-}
-
 int	ft_export(char **args)
 {
 	char	*value;
@@ -21,64 +9,25 @@ int	ft_export(char **args)
 	int		i;
 	int		j;
 
+	value = NULL;
+	name = NULL;
 	i = 0;
 	j = 0;
 	while (args[i])
 	{
 		while (args[i][j] && args[i][j] != '=')
+			j++;
+		name = ft_substr(args[i], 0, j);
+		if (args[i][j] == '=')
 		{
 			j++;
+			value = args[i] + j;
 		}
-		value = args[i] + j + 1;
-		name = args[i];
-		name[j] = '\0';
-		setenv(name, value, 1);
+		ft_setenv(name, value);
 		j = 0;
 		i++;
 	}
-	ft_remove(args);
-}
-
-
-// int	ft_echo(char **args)
-// {
-// 	char	*str;
-// 	int		i;
-// 	int		j;
-// 	char	*var;
-// 	int		new_line;
-
-// 	new_line = 0;
-// 	i = 0;
-// 	if (args[i] && ft_strncmp(args[i], "-n", 3) == 0)
-// 	{
-// 		new_line = TRUE;
-// 		i++;
-// 	}
-// 	while (args[i])
-// 	{
-// 		ft_putstr_fd(args[i++], STDOUT_FILENO);
-// 		ft_putchar_fd(' ', STDOUT_FILENO);
-// 	}
-// 	if (!new_line)
-// 		ft_putchar_fd('\n', STDOUT_FILENO);
-// 	return (0);
-// }
-
-void	ft_error(char *s)
-{
-	size_t	len;
-	char	prefix[len];
-
-	len = ft_strlen(var->curr_cmd) + 3;
-	ft_strlcpy(prefix, var->curr_cmd, len);
-	ft_strlcat(prefix, ": ", len);
-	ft_putstr_fd(prefix, STDERR_FILENO);
-	if (s)
-	{
-		ft_putstr_fd(s, STDERR_FILENO);
-	}
-	ft_putendl_fd(strerror(errno), STDERR_FILENO);
+	return SUCCESS;
 }
 
 int	ft_cd(char **args)
@@ -86,38 +35,47 @@ int	ft_cd(char **args)
 	char	*path;
 	char	*home;
 	int		stat;
+	char	*tmp;
 
 	stat = 0;
 	if (ft_arrlen(args) > 1)
-		return (ft_error(NULL), ERROR);
+		return (ft_strerror(NULL), ERROR);
 	if (args && args[0])
 	{
-		if (args[0][0] == '~')
-		{
-			home = getenv("HOME");
-			path = ft_strjoin(home, args[0] + 1);
-		}
-		else if (args[0][0] == '-' && args[0][1] == '\0')
-			path = var->oldpwd;
-		else
-			path = args[0];
+		path = args[0];
 	}
 	else
-		path = getenv("HOME");
+		return (throw_error("cd: [relative or absolute path]"), ERROR);
 	stat = chdir(path);
 	if (stat != SUCCESS)
-		return (ft_error(ft_strjoin(args[0], ": ")), ERROR);
+		return (ft_strerror(ft_strjoin(args[0], ": ")), ERROR);
+	var->oldpwd = var->pwd;
+	tmp = getcwd(NULL, 0);
+	if (!tmp)
+		return (ft_putendl_fd(strerror(errno),2), ERROR);
+	var->pwd = ft_strdup(tmp);
+	free(tmp);
+	edit_env("PWD=", var->pwd, true);
+	return edit_env("OLDPWD=", var->oldpwd, true), SUCCESS;
 }
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
 {
 	char	*prompt;
 	char	*cwd;
+	int		option;
 
+	option = 0;
 	cwd = getcwd(NULL, 0);
-	prompt = ft_strrchr(cwd, '/');
-	prompt = ft_strjoin(prompt + 1, "$ ");
-	free(cwd);
+	if (!cwd)
+	{
+		option = TRUE;
+		cwd = ft_getenv("PWD");
+	}
+	prompt = ft_strrchr(cwd, '/') + 1;
+	prompt = ft_strjoin(prompt, "$> ");
+	if (!option)
+		free(cwd);
 	return (prompt);
 }
 
@@ -170,4 +128,5 @@ int	main(int ac, char **av, char **env)
 		pass_the_input(line);
 		free(line);
 	}
+	return 0;
 }

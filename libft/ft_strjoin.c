@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:21:30 by zdidah            #+#    #+#             */
-/*   Updated: 2024/11/10 19:21:33 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/12 20:09:23 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ char	*ft_strjoin(const char *s1, const char *s2)
 
 	if (!s1 && !s2)
 		return (NULL);
-	int s1_len = ft_strlen(s1);
-	int s2_len = ft_strlen(s2);
+	size_t s1_len = ft_strlen(s1);
+	size_t s2_len = ft_strlen(s2);
 	str = ft_calloc(sizeof(char) * (s1_len + s2_len + 1));
 	if (s1)
 		ft_strlcpy(str, s1, s1_len + 1);

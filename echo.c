@@ -7,7 +7,7 @@ int	ft_echo(char **argv)
 
 	i = 0;
 	option = false;
-	while (!ft_strncmp(argv[i], "-n", 3))
+	if (ft_strncmp(argv[i], "-n", 3) == 0)
 		i++;
 	if (i)
 		option = true;
