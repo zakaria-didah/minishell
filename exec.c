@@ -9,13 +9,12 @@ char	*find_cmd(char *cmd)
 	cmd_path = cmd;
 	i = access(cmd, X_OK);
 	j = 0;
-	while (var->path[j] && i != SUCCESS)
+	while (var->path[j] && access(cmd_path, X_OK))
 	{
 		cmd_path = ft_strjoin(var->path[j], cmd);
-		i = access(cmd_path, X_OK);
 		j++;
 	}
-	if (i != SUCCESS)
+	if (!var->path[j])
 	{
 		throw_error(ft_strjoin(cmd, ": command not found\n"));
 		return (NULL);
@@ -44,10 +43,17 @@ char	*join_args(char **args)
 	}
 	return (arg);
 }
+// void	pipex(t_list *cmd_lst)
+// {
+
+// }
 
 int	exec(t_list *head)
 {
 	pid_t child_pid;
+
+	// if (ft_lstsize(head) > 1)
+	// 	pipex(head);
 	char *cmd = find_cmd(((t_cmd *)head->content)->args[0]);
 	if (!cmd)
 		return (127);

@@ -323,18 +323,14 @@ t_list	*parse(t_list *tokens)
 	}
 	return (cmd_lst);
 }
-int	redirect(t_list *head)
+void	redirect(t_list *head)
 {
-	int	status;
-
-	status = SUCCESS;
 	if (((t_cmd *)head->content)->out)
-		status = red_out(((t_cmd *)head->content)->out);
+		red_out(((t_cmd *)head->content)->out);
 	if (((t_cmd *)head->content)->append)
-		status = append(((t_cmd *)head->content)->out);
+		append(((t_cmd *)head->content)->out);
 	if (((t_cmd *)head->content)->in)
-		status = red_in(((t_cmd *)head->content)->in);
-	return (status);
+		red_in(((t_cmd *)head->content)->in);
 }
 int	ft_pwd(char **argv)
 {
@@ -346,42 +342,105 @@ int	ft_pwd(char **argv)
 	if (!pwd)
 		return (perror("minishell: pwd"), FAILURE);
 	printf("%s\n", pwd);
+	free(pwd);
 	return (SUCCESS);
 }
 
-bool	exec_buildin(t_list *cmdlst)
-{
-	t_bultin	buildin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
-			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-			{"pwd", ft_pwd},{NULL}};
-	char		*cmd;
-	int			i;
-	int			exit_stat;
-	pid_t		child = 0;
+// bool	exec_buildin(t_list *cmdlst)
+// {
+// 	t_bultin	buildin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
+// 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
+// 			{"pwd", ft_pwd},{NULL}};
+// 	char		*cmd;
+// 	int			i;
+// 	int			exit_stat;
+// 	pid_t		child = 0;
 
-	exit_stat = SUCCESS;
-	i = 0;
-	cmd = ((t_cmd *)cmdlst->content)->args[0];
-	while (buildin[i].name)
+// 	exit_stat = SUCCESS;
+// 	i = 0;
+// 	cmd = ((t_cmd *)cmdlst->content)->args[0];
+// 	while (buildin[i].name)
+// 	{
+// 		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
+// 		{
+// 			var->curr_cmd = cmd;
+// 			if (i != 5)
+// 				child = fork();
+// 			if (child < 0)
+// 				ft_error(NULL);
+// 			if (child == 0){
+// 				redirect(cmdlst);
+// 				exit_stat = buildin[i].func(++((t_cmd *)cmdlst->content)->args),
+// 					exit(exit_stat);
+// 			}
+// 			else
+// 				return (wait(NULL), true);
+// 		}
+// 		i++;
+// 	}
+// 	return (FALSE);
+// }
+void	pipex(t_list *cmd_lst)
+{
+
+}
+t_builtin	exec_builtin(char **args)
+{
+	if (!ft_strncmp(args[0], "echo", 5))
+		return (ft_echo(args + 1), ECHO);
+	else if (!ft_strncmp(args[0], "cd", 3))
+		return (ft_cd(args + 1), CD);
+	else if (!ft_strncmp(args[0], "pwd", 4))
+		return (ft_pwd(args + 1), PWD);
+	else if (!ft_strncmp(args[0], "EXPORT", 7))
+		return (ft_export(args + 1), EXPORT);
+	else if (!ft_strncmp(args[0], "UNSET", 6))
+		return (ft_unset(args + 1), UNSET);
+	else if (!ft_strncmp(args[0], "env", 4))
+		return (ft_env(args + 1), ENV);
+	else if (!ft_strncmp(args[0], "exit", 5))
+		return (ft_exit(args + 1), EXIT);
+	else
+		return (NONE);
+}
+void	exec_child(t_list *cmd)
+{
+	char	*path;
+
+	redirect(cmd);
+	path = find_cmd(((t_cmd *)cmd->content)->args[0]);
+	((t_cmd *)cmd->content)->args[0] = path;
+	execve(path, ((t_cmd *)cmd->content)->args, var->env);
+}
+
+pid_t	exec_cmd(t_list *cmd)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+		return (throw_error("yekhkhkh"), -1);
+	if (pid == 0)
+		exec_child(cmd);
+	return (pid);
+}
+
+
+void	execute(t_list *cmd_lst)
+{
+	t_builtin	builtin;
+	pid_t		pid;
+	int			stat;
+
+	if (ft_lstsize(cmd_lst) > 1)
+		pipex(cmd_lst);
+	else
 	{
-		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
-		{
-			var->curr_cmd = cmd;
-			if (i != 5)
-				child = fork();
-			if (child < 0)
-				ft_error(NULL);
-			if (child == 0){
-				redirect(cmdlst);
-				exit_stat = buildin[i].func(++((t_cmd *)cmdlst->content)->args),
-					exit(exit_stat);
-			}
-			else
-				return (wait(NULL), true);
-		}
-		i++;
+		builtin = exec_builtin(((t_cmd *)cmd_lst->content)->args);
+		if (builtin == NONE)
+			pid = exec_cmd(cmd_lst);
+		waitpid(pid, &stat, 0);
 	}
-	return (FALSE);
 }
 
 int	pass_the_input(char *line)
@@ -400,8 +459,9 @@ int	pass_the_input(char *line)
 	cmd_lst = parse(head);
 	if (!cmd_lst)
 		return (FAILURE);
-	if (exec_buildin(cmd_lst))
-		return (SUCCESS);
-	exec(cmd_lst);
+	// if (exec_buildin(cmd_lst))
+	// 	return (SUCCESS);
+	// exec(cmd_lst);
+	execute(cmd_lst);
 	return (0);
 }

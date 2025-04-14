@@ -35,12 +35,24 @@ typedef enum s_status
 	FAILURE
 } t_status;
 
-// a structure to store the bultin functions with hash table algorithm
-typedef struct s_bultin
+typedef enum s_builtin
 {
-	char *name;
+	ECHO,
+	CD,
+	PWD,
+	EXPORT,
+	UNSET,
+	ENV,
+	EXIT,
+	NONE,
+} t_builtin;
+
+// a structure to store the bultin functions with hash table algorithm
+typedef struct s_builtins
+{
+	enum s_builtin builtin;
 	int (*func)(char **args);
-} t_bultin;
+} t_builtins;
 
 // if u want to add a global variable, please add it to the t_var structure.
 // a structure to store the env variables and global variables
@@ -54,7 +66,7 @@ typedef struct t_var
 	char *user;
 	char *host;
 	char *curr_cmd;
-	t_bultin *bultin;
+	t_builtin *bultin;
 
 } t_var;
 
@@ -110,12 +122,12 @@ char	*join_args(char **args);
 char	*find_cmd(char *cmd);
 void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
-int	red_out(char *file);
-t_bool	append(char *file);
+void	red_out(char *file);
+void	append(char *file);
 char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
-int	red_in(char *file);
-int	redirect(t_list *head);
+void	red_in(char *file);
+void	redirect(t_list *head);
 void ft_error(char *error);
 void	ft_strerror(char *s);
 

@@ -39,16 +39,15 @@ int	ft_cd(char **args)
 
 	stat = 0;
 	if (ft_arrlen(args) > 1)
-		return (ft_strerror(NULL), ERROR);
+		return (ft_putstr_fd("minishell: cd: too many arguments\n", 2), ERROR);
 	if (args && args[0])
 	{
 		path = args[0];
 	}
 	else
 		return (throw_error("cd: [relative or absolute path]"), ERROR);
-	stat = chdir(path);
-	if (stat != SUCCESS)
-		return (ft_strerror(ft_strjoin(args[0], ": ")), ERROR);
+	if (chdir(path))
+		return (perror("minishell: cd"), ERROR);
 	var->oldpwd = var->pwd;
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
