@@ -51,12 +51,13 @@ int	ft_cd(char **args)
 	var->oldpwd = var->pwd;
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
-		return (ft_putendl_fd(strerror(errno),2), ERROR);
+		return (perror("cd"), ERROR);
 	var->pwd = ft_strdup(tmp);
 	free(tmp);
-	edit_env("PWD=", var->pwd, true);
+	edit_env("PWD=", var->pwd, true); 
 	return edit_env("OLDPWD=", var->oldpwd, true), SUCCESS;
 }
+
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
 {

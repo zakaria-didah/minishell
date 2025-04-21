@@ -323,6 +323,7 @@ t_list	*parse(t_list *tokens)
 	}
 	return (cmd_lst);
 }
+
 void	redirect(t_list *head)
 {
 	if (((t_cmd *)head->content)->out)
@@ -332,17 +333,15 @@ void	redirect(t_list *head)
 	if (((t_cmd *)head->content)->in)
 		red_in(((t_cmd *)head->content)->in);
 }
+
 int	ft_pwd(char **argv)
 {
 	char	*pwd;
 
 	if (argv[0] && argv[0][0] == '-')
 		return (ft_putstr_fd("minishell: pwd: no options", 1), FAILURE);
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
-		return (perror("minishell: pwd"), FAILURE);
+	pwd = ft_getenv("PWD");
 	printf("%s\n", pwd);
-	free(pwd);
 	return (SUCCESS);
 }
 
@@ -384,32 +383,39 @@ void	pipex(t_list *cmd_lst)
 {
 
 }
-t_builtin	exec_builtin(char **args)
+t_builtin	which_builtin(char **args)
 {
 	if (!ft_strncmp(args[0], "echo", 5))
-		return (ft_echo(args + 1), ECHO);
+		return (ECHO);
 	else if (!ft_strncmp(args[0], "cd", 3))
-		return (ft_cd(args + 1), CD);
+		return (CD);
 	else if (!ft_strncmp(args[0], "pwd", 4))
-		return (ft_pwd(args + 1), PWD);
+		return (PWD);
 	else if (!ft_strncmp(args[0], "EXPORT", 7))
-		return (ft_export(args + 1), EXPORT);
+		return (EXPORT);
 	else if (!ft_strncmp(args[0], "UNSET", 6))
-		return (ft_unset(args + 1), UNSET);
+		return (UNSET);
 	else if (!ft_strncmp(args[0], "env", 4))
-		return (ft_env(args + 1), ENV);
+		return (ENV);
 	else if (!ft_strncmp(args[0], "exit", 5))
-		return (ft_exit(args + 1), EXIT);
-	else
-		return (NONE);
+		return (EXIT);
+	return (NONE);
 }
+
+void	execute_command(t_cmd cmd)
+{
+	int	stdin_fd;
+	int	stdout_fd;
+
+	process_redirections(cmd.redirections, &stdin_fd, &stdout_fd);
+}
+
 void	exec_child(t_list *cmd)
 {
 	char	*path;
 
 	redirect(cmd);
 	path = find_cmd(((t_cmd *)cmd->content)->args[0]);
-	((t_cmd *)cmd->content)->args[0] = path;
 	execve(path, ((t_cmd *)cmd->content)->args, var->env);
 }
 
@@ -425,22 +431,37 @@ pid_t	exec_cmd(t_list *cmd)
 	return (pid);
 }
 
-
-void	execute(t_list *cmd_lst)
+void	exec_builtin(t_builtin builtin, t_list *cmd)
 {
-	t_builtin	builtin;
-	pid_t		pid;
-	int			stat;
+	int	std_out;
+	int	std_in;
 
-	if (ft_lstsize(cmd_lst) > 1)
-		pipex(cmd_lst);
+	if (((t_cmd *)cmd->content)->out)
+		std_out = red_out(((t_cmd *)cmd->content)->out);
+	if (((t_cmd *)cmd->content)->append)
+		std_in = append(((t_cmd *)cmd->content)->out);
+	if (((t_cmd *)cmd->content)->in)
+		std_in = red_in(((t_cmd *)cmd->content)->in);
+	if (builtin == CD)
+		ft_cd(((t_cmd *)cmd->content)->args + 1);
+	else if (builtin == PWD)
+		ft_pwd(((t_cmd *)cmd->content)->args + 1);
+	else if (builtin == ECHO)
+		ft_echo(((t_cmd *)cmd->content)->args + 1);
+	else if (builtin == EXPORT)
+		ft_export(((t_cmd *)cmd->content)->args + 1);
+	else if (builtin == UNSET)
+		ft_unset(((t_cmd *)cmd->content)->args + 1);
+	else if (builtin == ENV)
+		ft_env(((t_cmd *)cmd->content)->args + 1);
 	else
-	{
-		builtin = exec_builtin(((t_cmd *)cmd_lst->content)->args);
-		if (builtin == NONE)
-			pid = exec_cmd(cmd_lst);
-		waitpid(pid, &stat, 0);
-	}
+		ft_exit(((t_cmd *)cmd->content)->args + 1);
+	if (((t_cmd *)cmd->content)->out)
+		dup2(std_out, STDOUT_FILENO);
+	if (((t_cmd *)cmd->content)->append)
+		dup2(std_out, STDOUT_FILENO);
+	if (((t_cmd *)cmd->content)->in)
+		dup2(std_in, STDIN_FILENO);
 }
 
 int	pass_the_input(char *line)

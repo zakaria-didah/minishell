@@ -54,6 +54,27 @@ typedef struct s_builtins
 	int (*func)(char **args);
 } t_builtins;
 
+typedef	enum s_red
+{
+	APPND,
+	OUT_RED,
+	IN_RED,
+	HERDOC,
+} t_red;
+
+typedef struct  s_redir
+{
+	t_red	type;
+	char	*file;
+}	t_redir;
+
+typedef struct s_cmdlst
+{
+	char		**args;
+	t_builtin	type;
+	t_list		*redirections;
+}	t_cmdlst;
+
 // if u want to add a global variable, please add it to the t_var structure.
 // a structure to store the env variables and global variables
 typedef struct t_var
@@ -67,7 +88,6 @@ typedef struct t_var
 	char *host;
 	char *curr_cmd;
 	t_builtin *bultin;
-
 } t_var;
 
 extern t_var *var;
@@ -122,15 +142,15 @@ char	*join_args(char **args);
 char	*find_cmd(char *cmd);
 void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
-void	red_out(char *file);
-void	append(char *file);
+int	red_out(char *file);
+int	append(char *file);
 char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
-void	red_in(char *file);
+int	red_in(char *file);
 void	redirect(t_list *head);
 void ft_error(char *error);
 void	ft_strerror(char *s);
-
+void	execute(t_list *cmd_lst);
 //......parsing......
 
 #endif
