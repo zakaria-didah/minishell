@@ -93,6 +93,19 @@ void	set_cmd_type(t_list *cmd_lst)
 	else
 		((t_cmdlst *)cmd_lst->content)->type = NONE;
 }
+
+char	*get_path(char *cmd)
+{
+	char	**paths;
+
+	if (access(cmd, F_OK))
+	paths = var->path;
+	while (paths)
+	{
+		
+	}
+}
+
 int		execute_command(t_cmdlst cmd)
 {
 	pid_t	pid;
