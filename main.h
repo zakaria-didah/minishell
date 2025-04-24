@@ -1,14 +1,16 @@
 #ifndef MINISHELL_MAIN_H
 # define MINISHELL_MAIN_H
 
-// # include "get_next_line.h"
 # include "libft/libft.h"
 # include "parser.h"
 # include "signals.h"
+# include <ctype.h>
+# include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -47,10 +49,22 @@ typedef enum s_builtin
 	NONE,
 } t_builtin;
 
+
+typedef struct s_wildcard
+{
+	int i;
+	int j;
+
+	int start_index;
+	int match;
+	int txt_len;
+	int pat_len;
+}	t_wildcard;
+
 // a structure to store the bultin functions with hash table algorithm
 typedef struct s_builtins
 {
-	enum s_builtin builtin;
+	char *name;
 	int (*func)(char **args);
 } t_builtins;
 
@@ -102,7 +116,7 @@ typedef struct s_cmd
 	char **args;
 	char *in;
 	char *out;
-	int *append;
+	int append;
 	char *hdoc;
 } t_cmd;
 
@@ -128,10 +142,25 @@ char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
 void	red_in(char *file);
 void	redirect(t_list *head);
-void ft_error(char *error);
+void	ft_error(char *error);
 void	ft_strerror(char *s);
+char	*handel_dollar(int *i, char *input);
+char *	expand(char *arg, token_type type);
+void	red_in(char *file);
+void	red_out(char *file);
+void	append(char *file);
+// void	hdoc(char *file);
+int	exec_cmd(t_list *cmd);
+void	exec_child(char *path, char **args);
+void	pipex(t_list *cmd_lst);
+bool	exec_builtin(t_list *cmdlst);
+void	execute(t_list *cmd_lst);
 
 //......parsing......
+
+
+//.....testing......
+void	parr(char **arr);
 
 #endif
 

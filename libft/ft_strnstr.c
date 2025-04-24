@@ -6,11 +6,13 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:21:56 by zdidah            #+#    #+#             */
-/*   Updated: 2024/11/11 09:13:15 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/18 15:54:24 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+
+/*locate a substring in a string*/
 
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 {

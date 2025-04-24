@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   garb_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:55 by zdidah            #+#    #+#             */
-/*   Updated: 2025/02/02 10:35:41 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/19 12:04:28 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,7 @@ void	*add_garb(void *ptr)
 {
 	t_garb	*node;
 
-	node = ft_calloc(sizeof(t_garb));
-	if (!node)
-		return (NULL);
+	node = ft_calloc(sizeof(t_garb), C_ARENA);
 	node->ptr = ptr;
 	node->prev = NULL;
 	node->next = NULL;

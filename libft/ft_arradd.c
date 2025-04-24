@@ -1,48 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   ft_arrjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/10 19:06:40 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/21 18:22:48 by zdidah           ###   ########.fr       */
+/*   Created: 2025/02/02 09:36:04 by zdidah            #+#    #+#             */
+/*   Updated: 2025/04/24 10:03:03 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_isspace(int c)
+size_t	ft_arrlen(char **str)
 {
-	if (c == 9 || c == 10 || c == 11 || c == 12 || c == 13 || c == 32)
-		return (1);
-	return (0);
+	size_t	i;
+
+	i = 0;
+	while (str && str[i])
+		i++;
+	return (i);
 }
 
-size_t	ft_atoi(const char *str)
+char	**ft_arradd(char **s1, char *s2)
 {
-	int	sign;
-	int	i;
-	size_t	res;
+	char	**arr;
+	int		i;
 
-	sign = 1;
 	i = 0;
-	res = 0;
-	while (ft_isspace(str[i]))
-		i++;
-	if (str[i] == '-')
+	if (!s2)
+		return (s1);
+	arr = ft_calloc(sizeof(char *)* (ft_arrlen(s1) + 2), C_ARENA);
+	while (s1 && s1[i])
 	{
-		sign = -1;
+		arr[i] = ft_strdup(s1[i]);
 		i++;
 	}
-	else if (str[i] == '+')
+	if (s2)
 	{
+		arr[i] = ft_strdup(s2);
 		i++;
 	}
-	while (str[i] >= '0' && str[i] <= '9' && str[i])
-	{
-		res = res * 10 + ((str[i] - 48) * sign);
-		i++;
-	}
-	return (res);
+	return (arr[i] = NULL, arr);
 }

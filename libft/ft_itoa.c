@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:18:27 by zdidah            #+#    #+#             */
-/*   Updated: 2025/02/02 09:40:01 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/19 12:17:13 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static char	*pre_conv(int len)
 {
 	char	*tmp;
 
-	tmp = ft_calloc((len + 1)* sizeof(char));
+	tmp = ft_calloc((len + 1)* sizeof(char), C_ARENA);
 	if (!tmp)
 		return (NULL);
 	tmp[0] = '0';

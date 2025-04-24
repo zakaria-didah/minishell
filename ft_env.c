@@ -6,10 +6,9 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/13 16:02:13 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/24 14:58:08 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "main.h"
 
@@ -17,15 +16,20 @@ char	*ft_getenv(char *name)
 {
 	int		i;
 	char	*env;
+	size_t	len;
 
 	i = 0;
+	len = ft_strlen(name);
 	while (var->env[i])
 	{
-		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
+		if (ft_strncmp(var->env[i], name, len) == 0)
 		{
-			env = ft_strchr(var->env[i], '=');
-			if (env)
-				return (ft_strdup(env + 1));
+			if (var->env[i][len] == '=')
+			{
+				env = ft_strchr(var->env[i], '=');
+				if (env)
+					return (ft_strdup(env + 1));
+			}
 		}
 		i++;
 	}
@@ -66,7 +70,25 @@ int	edit_env(char *name, char *value, t_bool APPEND)
 
 int	ft_setenv(char *name, char *value)
 {
-	var->env = ft_arrjoin(var->env, ft_strjoin(name, value));
+	int		i;
+	size_t	len;
+
+	if (!name)
+		return (FAILURE);
+	if (!ft_strchr(name, '='))
+		name = ft_strjoin(name, "=");
+	i = 0;
+	len = ft_strlen(name);
+	while (var->env[i])
+	{
+		if (ft_strncmp(var->env[i], name, len) == 0)
+		{
+			var->env[i] = ft_strjoin(name, value);
+			return (SUCCESS);
+		}
+		i++;
+	}
+	var->env = ft_arradd(var->env, ft_strjoin(name, value));
 	return (SUCCESS);
 }
 
@@ -97,4 +119,3 @@ int	ft_unset(char **args)
 	}
 	return (true);
 }
-

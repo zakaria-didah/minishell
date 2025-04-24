@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:47 by zdidah            #+#    #+#             */
-/*   Updated: 2025/02/01 14:21:33 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/19 12:16:13 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ char	**ft_split(const char *s, char *charset)
 	if (!s)
 		return (NULL);
 	words_len = count_words(s, charset);
-	words = ft_calloc((words_len + 1) * sizeof(char *));
+	words = ft_calloc((words_len + 1) * sizeof(char *), C_ARENA);
 	i = 0;
 	j = 0;
 	while (i < words_len)

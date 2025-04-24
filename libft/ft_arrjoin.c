@@ -1,45 +1,27 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_arrjoin.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/02 09:36:04 by zdidah            #+#    #+#             */
-/*   Updated: 2025/02/02 09:36:07 by zdidah           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "libft.h"
 
-size_t	ft_arrlen(char **str)
+char	**ft_arrjoin(char **arr1, char **arr2)
 {
 	size_t	i;
+	size_t	j;
+	size_t	len1;
+	size_t	len2;
+	char	**res;
 
 	i = 0;
-	while (str && str[i])
-		i++;
-	return (i);
-}
-
-char	**ft_arrjoin(char **s1, char *s2)
-{
-	char	**arr;
-	int		i;
-
+	j = 0;
+	len1 = ft_arrlen(arr1);
+	len2 = ft_arrlen(arr2);
+	if ((!arr1 && !arr2) || (!len1 && !len2))
+		return (NULL);
+	res = ft_calloc((len1 + len2 + 1) * sizeof(char *), C_TRACK);
+	if (arr1)
+		while (arr1[i])
+			res[j++] = ft_strdup(arr1[i++]);
 	i = 0;
-	if (!s2)
-		return (s1);
-	arr = ft_calloc(sizeof(char *)* (ft_arrlen(s1) + 2));
-	while (s1 && s1[i])
-	{
-		arr[i] = ft_strdup(s1[i]);
-		i++;
-	}
-	if (s2)
-	{
-		arr[i] = ft_strdup(s2);
-		i++;
-	}
-	return (arr[i] = NULL, arr);
+	if (arr2)
+		while (arr2[i])
+			res[j++] = ft_strdup(arr2[i++]);
+	res[j] = 0;
+	return (res);
 }

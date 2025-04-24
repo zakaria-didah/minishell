@@ -31,64 +31,32 @@ void	parr(char **arr)
 to handel the wildcard * in the input string.
 Not fully ready yet.
 */
-t_bool	wildcard(char *txt, char *pat)
-{
-	char	*buffer;
 
-	int(n), (m), (i), (j), (startIndex), (match);
-	buffer = malloc(1000);
+bool	is_balanced(char *input)
+{
+	ssize_t	i;
+	ssize_t	j;
+
+	__attribute__((cleanup(cleanup))) char *stack;
+	stack = ft_calloc(ft_strlen(input) * sizeof(char), C_MALLOC);
 	i = 0;
 	j = 0;
-	match = 0;
-	startIndex = -1;
-	n = ft_strlen(txt);
-	m = ft_strlen(pat);
-	while (i < n)
+	while (input[i])
 	{
-		if (j < m && pat[j] == txt[i])
+		if (input[i] == '"' && (!j || stack[j - 1] == '"'))
 		{
-			i++;
-			j++;
+			stack[j++] = '"';
 		}
-		else if (j < m && (pat[j] == '*'))
+		else if (input[i] == '\'' && (!j || stack[j - 1] == '\''))
 		{
-			startIndex = j;
-			match = i;
-			j++;
+			stack[j++] = '\'';
 		}
-		else if (startIndex != -1)
-		{
-			j = startIndex + 1;
-			match++;
-			i = match;
-		}
-		else
-			return (FALSE);
+		if (j >= 1 && (stack[j - 1] == '\'' && stack[j - 2] == '\'') || (stack[j
+				- 1] == '"' && stack[j - 2] == '"'))
+			stack[j -= 2] = 0;
+		i++;
 	}
-	while (j < m && pat[j] == '*')
-		j++;
-	if (j == m)
-		return (TRUE);
-	return (TRUE);
-}
-
-char	*handel_dollar(int *i, char *input)
-{
-	int		start;
-	char	tmp;
-	char	*res;
-
-	start = 0;
-	start = ++(*i);
-	while ((isalnum(input[*i]) || input[*i] == '_'))
-	{
-		(*i)++;
-	}
-	tmp = input[*i];
-	input[*i] = 0;
-	res = ft_getenv(input + start);
-	input[*i] = tmp;
-	return (res);
+	return (j == 0);
 }
 
 /*
@@ -102,18 +70,19 @@ t_list	*tokenize(char *input)
 	int		j;
 	int		start;
 	char	*expand;
+	char	quot;
 
 	head = NULL;
 	i = 0;
 	j = 0;
 	while (input[i])
 	{
-		if (input[i] == ' ')
+		if (ft_isspace(input[i]))
 		{
 			i++;
 			continue ;
 		}
-		token = ft_calloc(sizeof(t_token));
+		token = ft_calloc(sizeof(t_token), C_ARENA);
 		if (input[i] == '|')
 		{
 			token->type = PIPE;
@@ -149,53 +118,38 @@ t_list	*tokenize(char *input)
 				i++;
 			}
 		}
-		else if (input[i] == '$')
-		{
-			token->type = DOLLAR;
-			expand = handel_dollar(&i, input);
-			if (!expand)
-				expand = ft_strdup("");
-			token->value = expand;
-		}
-		else if (input[i] == '"')
-		{
-			start = i++;
-			while (input[i] && input[i] != '"')
-			{
-				if (input[i] == '$')
-				{
-					token->value = ft_strjoin(token->value, ft_substr(input,
-								start, i - start));
-					token->value = ft_strjoin(token->value, handel_dollar(&i,
-								input));
-					start = i;
-					i--;
-				}
-				i++;
-			}
-			if (input[i] != '"')
-				return (throw_error(NULL), NULL);
-			token->type = DQUOTE;
-			token->value = ft_strjoin(token->value, ft_substr(input, start, i
-						- start));
-			i++;
-		}
-		else if (input[i] == '\'')
-		{
-			start = i++;
-			while (input[i] && input[i] != '\'')
-				i++;
-			if (input[i] != '\'')
-				return (throw_error(NULL), NULL);
-			token->type = SQUOTE;
-			token->value = ft_substr(input, start, i - start);
-			i++;
-		}
+		// else if (input[i] == '"')
+		// {
+		// 	start = ++i;
+		// 	while (input[i] && input[i] != '"')
+		// 		i++;
+		// 	token->type = DQUOTE;
+		// 	token->value = ft_strjoin(token->value, ft_substr(input, start, i
+		// 				- start));
+		// 	i++;
+		// }
+		// else if (input[i] == '\'')
+		// {
+		// 	start = ++i;
+		// 	while (input[i] && input[i] != '\'')
+		// 		i++;
+		// 	token->type = SQUOTE;
+		// 	token->value = ft_substr(input, start, i - start);
+		// 	i++;
+		// }
 		else
 		{
 			start = i;
-			while (input[i] && !strchr(" |<>$", input[i]))
+			while (input[i] && !ft_strchr("\t\n |<>", input[i]))
+			{
+				if (input[i] == '\'' || input[i] == '"')
+				{
+					quot = input[i++];
+					while (input[i] != quot)
+						i++;
+				}
 				i++;
+			}
 			token->type = WORD;
 			token->value = ft_substr(input, start, i - start);
 		}
@@ -219,8 +173,9 @@ t_list	*parse(t_list *tokens)
 	ac = 0;
 	while (tokens)
 	{
-		cmd = ft_calloc(sizeof(t_cmd));
-		cmd->args = ft_calloc(sizeof(char *) * (ft_lstsize(tokens) + 1));
+		cmd = ft_calloc(sizeof(t_cmd), C_ARENA);
+		cmd->args = ft_calloc(sizeof(char *) * (ft_lstsize(tokens) + 1),
+				C_ARENA);
 		token = tokens->content;
 		while (tokens && token && token->type != PIPE)
 		{
@@ -243,12 +198,12 @@ t_list	*parse(t_list *tokens)
 					}
 					else
 					{
-						throw_error(NULL);
+						return (throw_error(NULL), NULL);
 					}
 				}
 				else
 				{
-					throw_error(NULL);
+					return (throw_error(NULL), NULL);
 				}
 			}
 			else if (token->type == RED_OUT)
@@ -264,12 +219,12 @@ t_list	*parse(t_list *tokens)
 					}
 					else
 					{
-						throw_error(NULL);
+						return (throw_error(NULL), NULL);
 					}
 				}
 				else
 				{
-					throw_error(NULL);
+					return (throw_error(NULL), NULL);
 				}
 			}
 			else if (token->type == APPEND)
@@ -286,12 +241,12 @@ t_list	*parse(t_list *tokens)
 					}
 					else
 					{
-						throw_error(NULL);
+						return (throw_error(NULL), NULL);
 					}
 				}
 				else
 				{
-					throw_error(NULL);
+					return (throw_error(NULL), NULL);
 				}
 			}
 			else if (token->type == HDOC)
@@ -307,12 +262,12 @@ t_list	*parse(t_list *tokens)
 					}
 					else
 					{
-						throw_error(NULL);
+						return (throw_error(NULL), NULL);
 					}
 				}
 				else
 				{
-					throw_error(NULL);
+					return (throw_error(NULL), NULL);
 				}
 			}
 			tokens = tokens->next;
@@ -332,10 +287,14 @@ void	redirect(t_list *head)
 	if (((t_cmd *)head->content)->in)
 		red_in(((t_cmd *)head->content)->in);
 }
+
+/*use ft_getenv("PWD") it's better
+and options don't have to start with - if argv then throwerror :)*/
 int	ft_pwd(char **argv)
 {
 	char	*pwd;
 
+	printf("%s\n", argv[0]);
 	if (argv[0] && argv[0][0] == '-')
 		return (ft_putstr_fd("minishell: pwd: no options", 1), FAILURE);
 	pwd = getcwd(NULL, 0);
@@ -346,100 +305,78 @@ int	ft_pwd(char **argv)
 	return (SUCCESS);
 }
 
-// bool	exec_buildin(t_list *cmdlst)
-// {
-// 	t_bultin	buildin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
-// 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-// 			{"pwd", ft_pwd},{NULL}};
-// 	char		*cmd;
-// 	int			i;
-// 	int			exit_stat;
-// 	pid_t		child = 0;
+bool	exec_builtin(t_list *cmdlst)
+{
+	t_builtins	builtin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
+			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
+			{"pwd", ft_pwd}, {NULL}};
+	char		*cmd;
+	int			i;
+	int			exit_stat;
 
-// 	exit_stat = SUCCESS;
-// 	i = 0;
-// 	cmd = ((t_cmd *)cmdlst->content)->args[0];
-// 	while (buildin[i].name)
-// 	{
-// 		if (ft_strncmp(cmd, buildin[i].name, ft_strlen(cmd)) == 0)
-// 		{
-// 			var->curr_cmd = cmd;
-// 			if (i != 5)
-// 				child = fork();
-// 			if (child < 0)
-// 				ft_error(NULL);
-// 			if (child == 0){
-// 				redirect(cmdlst);
-// 				exit_stat = buildin[i].func(++((t_cmd *)cmdlst->content)->args),
-// 					exit(exit_stat);
-// 			}
-// 			else
-// 				return (wait(NULL), true);
-// 		}
-// 		i++;
-// 	}
-// 	return (FALSE);
-// }
+	exit_stat = SUCCESS;
+	i = 0;
+	cmd = ((t_cmd *)cmdlst->content)->args[0];
+	while (builtin[i].name)
+	{
+		if (ft_strncmp(cmd, builtin[i].name, ft_strlen(cmd) + 1) == 0)
+		{
+			var->curr_cmd = cmd;
+			return (builtin[i].func(++((t_cmd *)cmdlst->content)->args), true);
+		}
+		i++;
+	}
+	return (false);
+}
 void	pipex(t_list *cmd_lst)
 {
-
-}
-t_builtin	exec_builtin(char **args)
-{
-	if (!ft_strncmp(args[0], "echo", 5))
-		return (ft_echo(args + 1), ECHO);
-	else if (!ft_strncmp(args[0], "cd", 3))
-		return (ft_cd(args + 1), CD);
-	else if (!ft_strncmp(args[0], "pwd", 4))
-		return (ft_pwd(args + 1), PWD);
-	else if (!ft_strncmp(args[0], "EXPORT", 7))
-		return (ft_export(args + 1), EXPORT);
-	else if (!ft_strncmp(args[0], "UNSET", 6))
-		return (ft_unset(args + 1), UNSET);
-	else if (!ft_strncmp(args[0], "env", 4))
-		return (ft_env(args + 1), ENV);
-	else if (!ft_strncmp(args[0], "exit", 5))
-		return (ft_exit(args + 1), EXIT);
-	else
-		return (NONE);
-}
-void	exec_child(t_list *cmd)
-{
-	char	*path;
-
-	redirect(cmd);
-	path = find_cmd(((t_cmd *)cmd->content)->args[0]);
-	((t_cmd *)cmd->content)->args[0] = path;
-	execve(path, ((t_cmd *)cmd->content)->args, var->env);
 }
 
-pid_t	exec_cmd(t_list *cmd)
+/* SEGV we don't check if the argv is NULL,
+	plus the hash table algo is way faster,
+ and it's easier for upgrading
+*/
+// t_builtin	exec_builtin(char **args)
+// {
+// 	if (!ft_strncmp(args[0], "echo", 5))
+// 		return (ft_echo(args + 1), ECHO);
+// 	else if (!ft_strncmp(args[0], "cd", 3))
+// 		return (ft_cd(args + 1), CD);
+// 	else if (!ft_strncmp(args[0], "pwd", 4))
+// 		return (ft_pwd(args + 1), PWD);
+// 	else if (!ft_strncmp(args[0], "EXPORT", 7))
+// 		return (ft_export(args + 1), EXPORT);
+// 	else if (!ft_strncmp(args[0], "UNSET", 6))
+// 		return (ft_unset(args + 1), UNSET);
+// 	else if (!ft_strncmp(args[0], "env", 4))
+// 		return (ft_env(args + 1), ENV);
+// 	else if (!ft_strncmp(args[0], "exit", 5))
+// 		return (ft_exit(args + 1), EXIT);
+// 	else
+// 		return (NONE);
+// }
+
+void	ready_to_expand(t_list *head)
 {
-	pid_t	pid;
+	token_type	tmp;
+	t_list		*tmplst;
 
-	pid = fork();
-	if (pid == -1)
-		return (throw_error("yekhkhkh"), -1);
-	if (pid == 0)
-		exec_child(cmd);
-	return (pid);
-}
-
-
-void	execute(t_list *cmd_lst)
-{
-	t_builtin	builtin;
-	pid_t		pid;
-	int			stat;
-
-	if (ft_lstsize(cmd_lst) > 1)
-		pipex(cmd_lst);
-	else
+	tmp = -1;
+	int i = 0;
+	tmplst = head;
+	while (tmplst)
 	{
-		builtin = exec_builtin(((t_cmd *)cmd_lst->content)->args);
-		if (builtin == NONE)
-			pid = exec_cmd(cmd_lst);
-		waitpid(pid, &stat, 0);
+		tmp = ((t_token *)(tmplst->content))->type;
+		char **arr = ft_split(((t_token *)(tmplst->content))->value,"\"'");
+		while(arr[i]){
+			if (arr[i][0] != '\''){
+				if (arr[i][0] == '"')
+					tmp = DQUOTE;
+				arr[i] = expand(arr[i], tmp);
+			}
+			i++;
+		}
+		tmplst = tmplst->next;
 	}
 }
 
@@ -454,14 +391,15 @@ int	pass_the_input(char *line)
 	line = ft_strtrim(line, " ");
 	if (!*line)
 		return (SUCCESS);
+	if (!is_balanced(line))
+		return (throw_error(NULL), FAILURE);
 	i = 0;
 	head = tokenize(line);
+	//pl(head);
+	ready_to_expand(head);
 	cmd_lst = parse(head);
 	if (!cmd_lst)
 		return (FAILURE);
-	// if (exec_buildin(cmd_lst))
-	// 	return (SUCCESS);
-	// exec(cmd_lst);
 	execute(cmd_lst);
 	return (0);
 }

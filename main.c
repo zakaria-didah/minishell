@@ -2,60 +2,32 @@
 
 t_var	*var = NULL;
 
-int	ft_export(char **args)
-{
-	char	*value;
-	char	*name;
-	int		i;
-	int		j;
-
-	value = NULL;
-	name = NULL;
-	i = 0;
-	j = 0;
-	while (args[i])
-	{
-		while (args[i][j] && args[i][j] != '=')
-			j++;
-		name = ft_substr(args[i], 0, j);
-		if (args[i][j] == '=')
-		{
-			j++;
-			value = args[i] + j;
-		}
-		ft_setenv(name, value);
-		j = 0;
-		i++;
-	}
-	return SUCCESS;
-}
-
 int	ft_cd(char **args)
 {
 	char	*path;
 	char	*home;
 	int		stat;
-	char	*tmp;
 
+	__attribute__((cleanup(cleanup))) char *tmp;
 	stat = 0;
+	tmp = NULL;
 	if (ft_arrlen(args) > 1)
-		return (ft_putstr_fd("minishell: cd: too many arguments\n", 2), ERROR);
+		return (ft_strerror("too many arguments\n"), ERROR);
 	if (args && args[0])
 	{
 		path = args[0];
 	}
 	else
-		return (throw_error("cd: [relative or absolute path]"), ERROR);
+		return (throw_error("cd: [relative or absolute path]\n"), ERROR);
 	if (chdir(path))
 		return (perror("minishell: cd"), ERROR);
 	var->oldpwd = var->pwd;
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
-		return (ft_putendl_fd(strerror(errno),2), ERROR);
+		return (perror("cd: error retrieving current directory"), ERROR);
 	var->pwd = ft_strdup(tmp);
-	free(tmp);
-	edit_env("PWD=", var->pwd, true);
-	return edit_env("OLDPWD=", var->oldpwd, true), SUCCESS;
+	edit_env("PWD=", var->pwd, TRUE);
+	return (edit_env("OLDPWD=", var->oldpwd, TRUE), SUCCESS);
 }
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
@@ -105,17 +77,12 @@ int	init(char **env)
 
 int	main(int ac, char **av, char **env)
 {
-	ssize_t	read;
-	size_t	len;
-	char	*line;
-
-	setbuf(stdout, NULL);
+	__attribute__((cleanup(cleanup))) char *line;
 	if (ac != 1)
 		return (ft_putendl_fd("minishell: no arguments", STDERR_FILENO),
 			FAILURE);
-	var = ft_calloc(sizeof(t_var));
+	var = ft_calloc(sizeof(t_var), C_ARENA);
 	init(env);
-	len = 0;
 	while (true)
 	{
 		line = readline(get_prompt());
@@ -125,7 +92,6 @@ int	main(int ac, char **av, char **env)
 		}
 		add_history(line);
 		pass_the_input(line);
-		free(line);
 	}
-	return 0;
+	return (0);
 }

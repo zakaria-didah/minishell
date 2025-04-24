@@ -1,7 +1,7 @@
-SRC= main.c parser.c signals.c utiles.c exec.c echo.c append.c ft_env.c error.c
+SRC= main.c parser.c signals.c utiles.c exec.c echo.c append.c ft_env.c error.c expand.c export.c
 OBJ= $(SRC:.c=.o)
 CC= cc
-CFLAGS=  -fsanitize=address -g3
+CFLAGS=  -g3 #-fsanitize=address -g3
 LDFLAGS= -lreadline 
 lib= libft/libft.a
 NAME= minishell
@@ -9,24 +9,29 @@ NAME= minishell
 
 all: $(NAME)
 
+
 $(NAME): $(lib) $(OBJ) 
-	@echo "linking"
-	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ)  $(LDFLAGS) $(lib)
+	@echo -n "linking "
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ)  $(LDFLAGS) $(lib)
+
+%.o: %.c
+	@echo "Compiling $< "
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(lib):
 	@echo "Compiling libft"
-	@make -C libft bonus
+	@make -C libft bonus >/dev/null
 
 clean:
-	@echo "Cleaning"
+	@$(MAKE) -C libft clean >/dev/null
 	@rm -f $(OBJ)
-	@$(MAKE) -C libft clean
 	@echo "Cleaned"
 
 fclean: clean
 	@rm -f $(NAME)
-	@$(MAKE) -C libft fclean
+	@$(MAKE) -C libft fclean >/dev/null
 
 re: fclean all
+	@make clean > /dev/null
 
 .PHONY: all clean fclean re

@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   ft_strinsert.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/10 19:21:52 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/19 14:03:11 by zdidah           ###   ########.fr       */
+/*   Created: 2025/04/21 18:28:28 by zdidah            #+#    #+#             */
+/*   Updated: 2025/04/23 10:09:46 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+char	*ft_strinsert(char *s, char *txt, int index, int end)
 {
-	size_t	i;
+	char	*new;
+	size_t	len_s;
+	size_t	len_txt;
 
-	i = 0;
-	if (n == 0 || (!s1 && !s2))
-		return (0);
-	while (s1[i] && s2[i] && i < n - 1)
-	{
-		if (s1[i] != s2[i])
-			return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
-		i++;
-	}
-	return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
+	len_s = ft_strlen(s);
+	len_txt = ft_strlen(txt);
+	new = ft_calloc((len_s + len_txt + 1) * sizeof(char), C_ARENA);
+	ft_strlcpy(new, s, index);
+	ft_strlcat(new, txt, len_s + len_txt + 1);
+	ft_strlcat(new, s + end, len_s + len_txt + 1);
+	
+	return (new);
 }
