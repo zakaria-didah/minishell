@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:06:33 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/24 13:50:23 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/25 11:44:16 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define LIBFT_H
 
 # include <fcntl.h>
-# include <stdio.h>
 # include <limits.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 
@@ -37,6 +37,7 @@ int					ft_tolower(int c);
 int					ft_toupper(int c);
 size_t				ft_arrlen(char **arr);
 int					ft_lstsize(t_list *lst);
+char				**ft_arrdup(char **arr);
 size_t				ft_strlen(const char *s);
 t_list				*ft_lstlast(t_list *lst);
 size_t				ft_atoi(const char *str);
@@ -48,6 +49,7 @@ int					is_in(char c, const char *s);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
 void				ft_putendl_fd(char *s, int fd);
+void				ft_arrdel(char **arr, int elem);
 char				**ft_arradd(char **s1, char *s2);
 char				*ft_strchr(const char *s, int c);
 char				*ft_strrchr(const char *s, int c);

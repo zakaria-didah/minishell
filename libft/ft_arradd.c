@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_arrjoin.c                                       :+:      :+:    :+:   */
+/*   ft_arradd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 09:36:04 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/24 10:03:03 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/25 14:46:00 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,14 @@ char	**ft_arradd(char **s1, char *s2)
 	int		i;
 
 	i = 0;
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1 && s2)
+	{
+		arr = ft_calloc(sizeof(char *) * 2, C_ARENA);
+		arr[0] = ft_strdup(s2);
+		return (arr[1] = NULL, arr);
+	}
 	if (!s2)
 		return (s1);
 	arr = ft_calloc(sizeof(char *)* (ft_arrlen(s1) + 2), C_ARENA);

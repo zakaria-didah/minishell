@@ -121,6 +121,8 @@ typedef struct s_cmd
 } t_cmd;
 
 //......utiles......
+bool	is_balanced(char *input);
+size_t	ft_atos(char *num);
 int	ft_exit(char **args);
 char	*get_prompt(void);
 int	ft_cd(char **args);
@@ -145,7 +147,7 @@ void	redirect(t_list *head);
 void	ft_error(char *error);
 void	ft_strerror(char *s);
 char	*handel_dollar(int *i, char *input);
-char *	expand(char *arg, token_type type);
+char **	expand(char *arg);
 void	red_in(char *file);
 void	red_out(char *file);
 void	append(char *file);

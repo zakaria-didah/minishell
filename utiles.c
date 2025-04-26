@@ -12,6 +12,33 @@ void	cleanup(void *ptr)
 	}
 }
 
+bool	is_balanced(char *input)
+{
+	ssize_t	i;
+	ssize_t	j;
+
+	__attribute__((cleanup(cleanup))) char *stack;
+	stack = ft_calloc((ft_strlen(input)+1 )* sizeof(char), C_MALLOC);
+	i = 0;
+	j = 0;
+	while (input[i])
+	{
+		if (input[i] == '"' && (!j || stack[j - 1] == '"'))
+		{
+			stack[j++] = '"';
+		}
+		else if (input[i] == '\'' && (!j || stack[j - 1] == '\''))
+		{
+			stack[j++] = '\'';
+		}
+		if (j >= 2 && ((stack[j - 1] == '\'' && stack[j - 2] == '\'') || (stack[j
+				- 1] == '"' && stack[j - 2] == '"')))
+			stack[j -= 2] = 0;
+		i++;
+	}
+	return (j == 0);
+}
+
 size_t	ft_atos(char *num)
 {
 	int		i;

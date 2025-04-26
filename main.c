@@ -92,6 +92,7 @@ int	main(int ac, char **av, char **env)
 		}
 		add_history(line);
 		pass_the_input(line);
+		reset_arena();
 	}
 	return (0);
 }

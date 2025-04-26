@@ -32,32 +32,7 @@ to handel the wildcard * in the input string.
 Not fully ready yet.
 */
 
-bool	is_balanced(char *input)
-{
-	ssize_t	i;
-	ssize_t	j;
 
-	__attribute__((cleanup(cleanup))) char *stack;
-	stack = ft_calloc(ft_strlen(input) * sizeof(char), C_MALLOC);
-	i = 0;
-	j = 0;
-	while (input[i])
-	{
-		if (input[i] == '"' && (!j || stack[j - 1] == '"'))
-		{
-			stack[j++] = '"';
-		}
-		else if (input[i] == '\'' && (!j || stack[j - 1] == '\''))
-		{
-			stack[j++] = '\'';
-		}
-		if (j >= 1 && (stack[j - 1] == '\'' && stack[j - 2] == '\'') || (stack[j
-				- 1] == '"' && stack[j - 2] == '"'))
-			stack[j -= 2] = 0;
-		i++;
-	}
-	return (j == 0);
-}
 
 /*
 A func to tokenize the input.
@@ -183,7 +158,11 @@ t_list	*parse(t_list *tokens)
 			if (token->type == WORD || token->type == DOLLAR
 				|| token->type == DQUOTE || token->type == SQUOTE)
 			{
-				cmd->args[ac++] = ft_strdup(token->value);
+				char **hh = expand(token->value);
+				cmd->args = ft_arrjoin(cmd->args, hh);
+				parr(cmd->args);
+				ac = ft_arrlen(cmd->args);
+
 			}
 			else if (token->type == RED_IN)
 			{
@@ -272,7 +251,7 @@ t_list	*parse(t_list *tokens)
 			}
 			tokens = tokens->next;
 		}
-		cmd->args[ac] = NULL;
+		//cmd->args[ac] = NULL;
 		ft_lstadd_back(&cmd_lst, ft_lstnew(cmd));
 		// under construction
 	}
@@ -292,16 +271,13 @@ void	redirect(t_list *head)
 and options don't have to start with - if argv then throwerror :)*/
 int	ft_pwd(char **argv)
 {
-	char	*pwd;
-
-	printf("%s\n", argv[0]);
+	__attribute__((cleanup(cleanup))) char *pwd;
 	if (argv[0] && argv[0][0] == '-')
 		return (ft_putstr_fd("minishell: pwd: no options", 1), FAILURE);
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 		return (perror("minishell: pwd"), FAILURE);
 	printf("%s\n", pwd);
-	free(pwd);
 	return (SUCCESS);
 }
 
@@ -358,23 +334,32 @@ void	pipex(t_list *cmd_lst)
 
 void	ready_to_expand(t_list *head)
 {
-	token_type	tmp;
 	t_list		*tmplst;
+	int			i;
+	int j = 0;
+	char		**arr;
+	t_cmd *tmp;
+
 
 	tmp = -1;
-	int i = 0;
+	i = 0;
 	tmplst = head;
 	while (tmplst)
 	{
-		tmp = ((t_token *)(tmplst->content))->type;
-		char **arr = ft_split(((t_token *)(tmplst->content))->value,"\"'");
-		while(arr[i]){
-			if (arr[i][0] != '\''){
-				if (arr[i][0] == '"')
-					tmp = DQUOTE;
-				arr[i] = expand(arr[i], tmp);
+		tmp = (t_cmd *)(head->content);
+		while(tmp->args[j]){
+			arr = ft_split(tmp->args[j], "\"'");
+			while (arr[i])
+			{
+				if (arr[i][0] != '\'')
+				{
+					if (arr[i][0] == '"')
+						tmp = DQUOTE;
+					arr[i] = expand(arr[i]);
+				}
+				i++;
 			}
-			i++;
+			j++;
 		}
 		tmplst = tmplst->next;
 	}
@@ -395,9 +380,8 @@ int	pass_the_input(char *line)
 		return (throw_error(NULL), FAILURE);
 	i = 0;
 	head = tokenize(line);
-	//pl(head);
-	ready_to_expand(head);
 	cmd_lst = parse(head);
+	// ready_to_expand(cmd_lst);
 	if (!cmd_lst)
 		return (FAILURE);
 	execute(cmd_lst);

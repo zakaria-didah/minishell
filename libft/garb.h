@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:32:49 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/19 16:07:16 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/26 08:57:49 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <unistd.h>
 
 # define CHUNK 64
-# define ARENA_SIZE 10240
+# define ARENA_SIZE 128
 # define C_ARENA (1 << 0)
 # define C_MALLOC (1 << 1)
 # define C_TRACK (1 << 2)
@@ -49,5 +49,7 @@ size_t				list_len_(t_garb *head);
 t_list				**arena_head(void);
 t_mem				*realloc_arena(void);
 void				dealloc_arena(void);
+void				reset_arena(void);
+int					clear_arena(t_list *alloc);
 
 #endif
