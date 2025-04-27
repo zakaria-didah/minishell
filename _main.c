@@ -31,6 +31,7 @@ int main(){
     reset_arena();
     printf("\nafter reset\n\n");
     pl();
+    ft_free();
 
 
 

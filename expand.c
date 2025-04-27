@@ -199,14 +199,12 @@ int	count_fields(const char *s)
 		}
 	}
 	if (quot && !count)
-	{
 		return 1;
-	}
 	return (count);
 }
 
 
-char	**field_spliting(char *arg)
+char	**field_spliting(char *arg, int count)
 {
 	char	**res;
 	int		i;
@@ -214,43 +212,75 @@ char	**field_spliting(char *arg)
 	int		quot;
 	int		start;
 
-	res = NULL;
 	i = 0;
 	j = 0;
 	quot = 0;
+	start = -1;
+	// res = ft_calloc((count +1 ) * sizeof(char *), C_ARENA);
+res = NULL;
+	// while (arg[i]&& count )
+	// {
+	// 	if (arg[i] == '"' || arg[i] == '\'')
+	// 	{
+	// 		quot = arg[i];
+	// 		start = i++;
+	// 		while (arg[i] != quot)
+	// 			i++;
+	// 		res = ft_arradd(res, ft_substr(arg, start, (i + 1) - start));
+	// 		start = -1;
+	// 	}
+	// 	else if (isspace(arg[i]))
+	// 	{
+	// 		while (arg[i] && !isspace(arg[i]))
+	// 			i++;
+	// 		start = i;
+	// 		while (arg[i] && !isspace(arg[i]))
+	// 			i++;
+	// 		res = ft_arradd(res, ft_substr(arg, start, i - start));
+	// 		continue ;
+	// 	}
+	// 	else
+	// 	{
+	// 		start = i;
+	// 		while (arg[i] && (!isspace(arg[i]) && (arg[i] != '"'
+	// 					&& arg[i] != '\'')))
+	// 		{
+	// 			i++;
+	// 		}
+	// 		res = ft_arradd(res, ft_substr(arg, start, i - start));
+	// 		continue ;
+	// 	}
+	// 	res[j][i] = arg[i];
+	// 	i++;
+	// }
+
 	while (arg[i])
 	{
 		if (arg[i] == '"' || arg[i] == '\'')
 		{
-			quot = arg[i];
-			start = i++;
-			while (arg[i] != quot)
+			start = i-1;
+			quot = arg[i++];
+			while (arg[i] && arg[i] != quot)
 				i++;
-			res = ft_arradd(res, ft_substr(arg, start, (i + 1) - start));
-			start = -1;
+			i++;
 		}
-		else if (isspace(arg[i]))
-		{
-			while (arg[i] && !isspace(arg[i]))
-				i++;
-			start = i;
-			while (arg[i] && !isspace(arg[i]))
-				i++;
-			res = ft_arradd(res, ft_substr(arg, start, i - start));
-			continue ;
+		if (arg[i] && (start && !is_in(arg[i], " \t\n"))){
+			res = ft_arradd(res, ft_substr(arg, start , i));
 		}
-		else
-		{
-			start = i;
-			while (arg[i] && (!isspace(arg[i]) && (arg[i] != '"'
-						&& arg[i] != '\'')))
+		while (arg[i] && is_in(arg[i], " \t\n"))
+			i++;
+		while (arg[i] && (!is_in(arg[i], " \t\n") )){
+			start = i-1;
+			if (arg[i] == '"' || arg[i] == '\'')
 			{
+				quot = arg[i++];
+				while (arg[i] && arg[i] != quot)
+					i++;
 				i++;
 			}
-			res = ft_arradd(res, ft_substr(arg, start, i - start));
-			continue ;
+			i++;
 		}
-		i++;
+		res = ft_arradd(res, ft_substr(arg, start , i));
 	}
 	return (res);
 }
@@ -331,7 +361,7 @@ char	**expand(char *arg)
 	}
 	else
 	{
-		res = field_spliting(arg);
+		res = field_spliting(arg, fields);
 	}
 	printf("----res in field_spliting----\n");
 	parr(res);
