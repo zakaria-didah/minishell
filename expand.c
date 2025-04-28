@@ -298,6 +298,18 @@ char	**splitting(char *arg, int count)
 					// }
 }
 
+void skip_quote(char *arg, int *i)
+{
+	char	quot;
+
+	quot = arg[*i];
+	(*i)++;
+	while (arg[*i] && arg[*i] != quot)
+	{
+		(*i)++;
+	}
+}
+
 char	*expand_vars(char *arg)
 {
 	char	*expande;
@@ -309,6 +321,8 @@ char	*expand_vars(char *arg)
 	i = 0;
 	while (arg[i])
 	{
+		if (arg[i] == '\'')
+			skip_quote(arg, &i);
 		if (arg[i] == '$' && (arg[i + 1] && arg[i + 1] != '?'))
 		{
 			start = ++i;

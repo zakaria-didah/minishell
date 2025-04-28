@@ -154,6 +154,7 @@ void	exec_child(char *path, char **args);
 void	pipex(t_list *cmd_lst);
 bool	exec_builtin(t_list *cmdlst);
 void	execute(t_list *cmd_lst);
+void heredoc(const char *delimiter);
 
 //......parsing......
 

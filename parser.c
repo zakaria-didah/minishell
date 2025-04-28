@@ -76,7 +76,7 @@ t_list	*tokenize(char *input)
 			{
 				token->type = HDOC;
 				token->value = ft_strdup("<<");
-				i++;
+				i+=2;
 			}
 			else
 			{
@@ -100,25 +100,6 @@ t_list	*tokenize(char *input)
 				i++;
 			}
 		}
-		// else if (input[i] == '"')
-		// {
-		// 	start = ++i;
-		// 	while (input[i] && input[i] != '"')
-		// 		i++;
-		// 	token->type = DQUOTE;
-		// 	token->value = ft_strjoin(token->value, ft_substr(input, start, i
-		// 				- start));
-		// 	i++;
-		// }
-		// else if (input[i] == '\'')
-		// {
-		// 	start = ++i;
-		// 	while (input[i] && input[i] != '\'')
-		// 		i++;
-		// 	token->type = SQUOTE;
-		// 	token->value = ft_substr(input, start, i - start);
-		// 	i++;
-		// }
 		else
 		{
 			start = i;
@@ -150,6 +131,7 @@ t_list	*parse(t_list *tokens)
 	t_cmd	*cmd;
 	t_list	*cmd_lst;
 	int		ac;
+	char **tmp;
 
 	cmd_lst = NULL;
 	ac = 0;
@@ -165,8 +147,8 @@ t_list	*parse(t_list *tokens)
 			if (token->type == WORD || token->type == DOLLAR
 				|| token->type == DQUOTE || token->type == SQUOTE)
 			{
-				char **hh = expand(token->value);
-				cmd->args = ft_arrjoin(cmd->args, hh);
+				char **tmp = expand(token->value);
+				cmd->args = ft_arrjoin(cmd->args, tmp);
 				ac = ft_arrlen(cmd->args);
 
 			}
@@ -179,7 +161,13 @@ t_list	*parse(t_list *tokens)
 					if (token->type == WORD || token->type == DOLLAR
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
-						cmd->in = ft_strdup(token->value);
+						tmp = expand(token->value);
+						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
+							return (throw_error("ambiguous redirect"), NULL);
+						else
+						{
+							cmd->in = ft_strdup(tmp[0]);
+						}
 					}
 					else
 					{
@@ -200,7 +188,11 @@ t_list	*parse(t_list *tokens)
 					if (token->type == WORD || token->type == DOLLAR
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
-						cmd->out = ft_strdup(token->value);
+						tmp = expand(token->value);
+						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
+							return (throw_error("ambiguous redirect"), NULL);
+						else
+							cmd->out = ft_strdup(tmp[0]);
 					}
 					else
 					{
@@ -221,7 +213,11 @@ t_list	*parse(t_list *tokens)
 					if (token->type == WORD || token->type == DOLLAR
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
-						cmd->out = ft_strdup(token->value);
+						tmp = expand(token->value);
+						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
+							return (throw_error("ambiguous redirect"), NULL);
+						else
+							cmd->out = ft_strdup(tmp[0]);
 						cmd->append = TRUE;
 					}
 					else
@@ -271,6 +267,8 @@ void	redirect(t_list *head)
 		append(((t_cmd *)head->content)->out);
 	if (((t_cmd *)head->content)->in)
 		red_in(((t_cmd *)head->content)->in);
+	if (((t_cmd *)head->content)->hdoc)
+		heredoc(((t_cmd *)head->content)->hdoc);
 }
 
 /*use ft_getenv("PWD") it's better
@@ -337,7 +335,7 @@ void	pipex(t_list *cmd_lst)
 // 	else
 // 		return (NONE);
 // }
-
+/*
 void	ready_to_expand(t_list *head)
 {
 	t_list		*tmplst;
@@ -370,6 +368,7 @@ void	ready_to_expand(t_list *head)
 		tmplst = tmplst->next;
 	}
 }
+	*/
 
 int	pass_the_input(char *line)
 {

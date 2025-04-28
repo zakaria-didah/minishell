@@ -19,8 +19,12 @@
 # include <string.h>
 # include <unistd.h>
 
+
+
 # define CHUNK 64
 # define ARENA_SIZE 1024
+
+/*flags for the garbeg collector*/
 # define C_ARENA (1 << 0)
 # define C_PARENA (1 << 1)
 # define C_MALLOC (1 << 2)

@@ -22,7 +22,7 @@ char	*ft_getenv(char *name)
 	len = ft_strlen(name);
 	while (var->env[i])
 	{
-		if (ft_strncmp(var->env[i], name, len) == 0)
+		if (ft_memcmp(var->env[i], name, len) == 0)
 		{
 			if (var->env[i][len] == '=')
 			{
@@ -83,7 +83,7 @@ int	ft_setenv(char *name, char *value)
 	len = ft_strlen(name);
 	while (var->env[i])
 	{
-		if (ft_strncmp(var->env[i], name, len) == 0)
+		if (ft_memcmp(var->env[i], name, len) == 0)
 		{
 			var->env[i] = ft_strjoin(name, value);
 			return (gc_mode(0), SUCCESS);
