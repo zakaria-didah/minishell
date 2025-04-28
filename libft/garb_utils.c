@@ -29,7 +29,7 @@ void	*add_garb(void *ptr)
 {
 	t_garb	*node;
 
-	node = ft_calloc(sizeof(t_garb), C_ARENA);
+	node = ft_calloc(sizeof(t_garb), C_PARENA);
 	node->ptr = ptr;
 	node->prev = NULL;
 	node->next = NULL;

@@ -10,72 +10,74 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "main.h"
 
-int	is_in(char c, const char *charset)
+int	count_them(const char *s)
 {
-	int	i;
+	int		count;
+	int		i;
+	char	buf;
 
-	i = 0;
-	while (charset[i])
-	{
-		if (charset[i] == c)
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-int	count_words(const char *s, char *c)
-{
-	int	i;
-	int	count;
-
-	i = 0;
 	count = 0;
+	i = 0;
 	while (s[i])
 	{
-		while (s[i] && is_in(s[i], c))
+		if (s[i] && (s[i] == '\'' || s[i] == '"'))
+		{
+			buf = s[i++];
+			while (s[i] && s[i] != buf)
+			{
+				i++;
+			}
+			count++;
+			i++;
+		}
+		while (s[i] && (s[i] != '\'' && s[i] != '"'))
 			i++;
 		if (s[i])
 			count++;
-		while (s[i] && !is_in(s[i], c))
-			i++;
 	}
 	return (count);
 }
 
-char	*create_word(const char *s, const char *c, int *j)
+char	*create_word_(const char *s)
 {
-	int		i;
-	char	*str;
+	static int	j = 0;
+	int			i;
+	char		buf;
 
-	while (s[*j] && is_in(s[*j], c))
-		(*j)++;
-	i = *j;
-	while (s[i] && !is_in(s[i], c))
-		i++;
-	str = ft_substr(s, *j, i - *j);
-	*j = i;
-	return (str); 
+	i = 0;
+	buf = 0;
+	i = j;
+	if (s[j] && (s[j] == '\'' || s[j] == '"'))
+	{
+		buf = s[j++];
+		while (s[j] && s[j] != buf)
+		{
+			j++;
+		}
+		return (ft_substr(s, i, ++j - i));
+	}
+	while (s[j] && !is_in(s[j], "\"'"))
+		j++;
+	return (ft_substr(s, i, j - i));
 }
 
-char	**ft_split(const char *s, char *charset)
+char	**split_(const char *s)
 {
 	int		words_len;
 	char	**words;
 	int		i;
-	int		j;
 
 	if (!s)
 		return (NULL);
-	words_len = count_words(s, charset);
+	words_len = count_them(s);
+	printf("%d\n", words_len);
 	words = ft_calloc((words_len + 1) * sizeof(char *), C_ARENA);
 	i = 0;
-	j = 0;
 	while (i < words_len)
 	{
-		words[i] = create_word(s, charset, &j);
+		words[i] = create_word_(s);
 		i++;
 	}
 	words[i] = NULL;

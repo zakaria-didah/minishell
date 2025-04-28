@@ -1,4 +1,4 @@
-SRC= main.c parser.c signals.c utiles.c exec.c echo.c append.c ft_env.c error.c expand.c export.c
+SRC= main.c parser.c signals.c utiles.c exec.c echo.c append.c ft_env.c error.c expand.c export.c ft_split_x.c
 OBJ= $(SRC:.c=.o)
 CC= cc
 CFLAGS=  -g3 #-fsanitize=address -g3

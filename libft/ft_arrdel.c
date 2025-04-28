@@ -3,10 +3,8 @@
 void	ft_arrdel(char **arr, int elem)
 {
 	int	i;
-	int	j;
 
 	i = 0;
-	j = 0;
 	while (arr[i])
 	{
 		if (i == elem)

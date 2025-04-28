@@ -21,9 +21,16 @@ void	parr(char **arr)
 	int	i;
 
 	i = 0;
+	if (!arr)
+		return (void)printf("[null]\n");
+	printf("{");
 	while (arr[i])
 	{
-		printf("[%s]\n", arr[i++]);
+		printf("[%s]", arr[i++]);
+		if (arr[i])
+			printf(", ");
+		else
+			printf("}\n");
 	}
 }
 
@@ -160,7 +167,6 @@ t_list	*parse(t_list *tokens)
 			{
 				char **hh = expand(token->value);
 				cmd->args = ft_arrjoin(cmd->args, hh);
-				parr(cmd->args);
 				ac = ft_arrlen(cmd->args);
 
 			}

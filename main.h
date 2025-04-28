@@ -73,12 +73,8 @@ typedef struct s_builtins
 typedef struct t_var
 {
 	char **env;
-	char **path;
 	char *pwd;
 	char *oldpwd;
-	char *home;
-	char *user;
-	char *host;
 	char *curr_cmd;
 	t_builtin *bultin;
 
@@ -121,6 +117,7 @@ typedef struct s_cmd
 } t_cmd;
 
 //......utiles......
+char **split_(const char *s );
 bool	is_balanced(char *input);
 size_t	ft_atos(char *num);
 int	ft_exit(char **args);
