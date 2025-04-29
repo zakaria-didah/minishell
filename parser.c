@@ -48,12 +48,6 @@ void	parr(char **arr)
 	}
 }
 
-/*
-to handel the wildcard * in the input string.
-Not fully ready yet.
-*/
-
-
 
 /*
 A func to tokenize the input.
@@ -371,40 +365,7 @@ bool	exec_builtin(t_list *cmdlst)
 // 	else
 // 		return (NONE);
 // }
-/*
-void	ready_to_expand(t_list *head)
-{
-	t_list		*tmplst;
-	int			i;
-	int j = 0;
-	char		**arr;
-	t_cmd *tmp;
 
-
-	tmp = -1;
-	i = 0;
-	tmplst = head;
-	while (tmplst)
-	{
-		tmp = (t_cmd *)(head->content);
-		while(tmp->args[j]){
-			arr = ft_split(tmp->args[j], "\"'");
-			while (arr[i])
-			{
-				if (arr[i][0] != '\'')
-				{
-					if (arr[i][0] == '"')
-						tmp = DQUOTE;
-					arr[i] = expand(arr[i]);
-				}
-				i++;
-			}
-			j++;
-		}
-		tmplst = tmplst->next;
-	}
-}
-	*/
 
 int	pass_the_input(char *line)
 {
@@ -422,7 +383,6 @@ int	pass_the_input(char *line)
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
-	// ready_to_expand(cmd_lst);
 	if (!cmd_lst)
 		return (FAILURE);
 	execute(cmd_lst);
