@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:55 by zdidah            #+#    #+#             */
-/*   Updated: 2025/02/02 09:39:45 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/04/19 12:16:02 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*ft_strdup(const char *s1)
 
 	i = 0;
 	len = ft_strlen(s1);
-	s = (char *)ft_calloc(sizeof(char)* (len + 1));
+	s = (char *)ft_calloc(sizeof(char)* (len + 1), C_ARENA);
 	if (!s)
 		return (NULL);
 	while (s1[i])

@@ -12,6 +12,33 @@ void	cleanup(void *ptr)
 	}
 }
 
+bool	is_balanced(char *input)
+{
+	ssize_t	i;
+	ssize_t	j;
+
+	__attribute__((cleanup(cleanup))) char *stack;
+	stack = ft_calloc((ft_strlen(input)+1 )* sizeof(char), C_MALLOC);
+	i = 0;
+	j = 0;
+	while (input[i])
+	{
+		if (input[i] == '"' && (!j || stack[j - 1] == '"'))
+		{
+			stack[j++] = '"';
+		}
+		else if (input[i] == '\'' && (!j || stack[j - 1] == '\''))
+		{
+			stack[j++] = '\'';
+		}
+		if (j >= 2 && ((stack[j - 1] == '\'' && stack[j - 2] == '\'') || (stack[j
+				- 1] == '"' && stack[j - 2] == '"')))
+			stack[j -= 2] = 0;
+		i++;
+	}
+	return (j == 0);
+}
+
 size_t	ft_atos(char *num)
 {
 	int		i;
@@ -60,46 +87,24 @@ int	ft_exit(char **args)
 		TRUE);
 }
 
-
-
-
-
-bool	wildCard(char *txt, char *pat)
+char	*join_args(char **args)
 {
-	int(n), (m), (i), (j), (startIndex), (match);
+	int		i;
+	size_t	len;
+	char	*arg;
+
 	i = 0;
-	j = 0;
-	match = 0;
-	startIndex = -1;
-	n = ft_strlen(txt);
-	m = ft_strlen(pat);
-	while (i < n)
+	len = 0;
+	if (!args[i])
+		return (NULL);
+	while (args[i])
+		len += ft_strlen(args[i++]) + 1;
+	arg = ft_calloc(len, C_ARENA);
+	i = 0;
+	while (args[i])
 	{
-		if (j < m && (pat[j] == '*' || pat[j] == txt[i]))
-		{
-			i++;
-			j++;
-		}
-		else if (startIndex != -1)
-		{
-			j = startIndex + 1;
-			match++;
-			i = match;
-		}
-		else
-			return (FALSE);
+		ft_strlcat(arg, args[i++], len);
+		ft_strlcat(arg, " ", len);
 	}
-	while (j < m && pat[j] == '*')
-		j++;
-	return (j == m);
+	return (arg);
 }
-
-// int	main(void)
-// {
-// 	char *	txt;
-// 	char *	pat;
-
-// 	txt = "baaabab";
-// 	pat = "*****ba*****ab";
-// 	printf("%s\n",wildCard(txt, pat) ? "true" : "false");
-// }

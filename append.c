@@ -10,38 +10,31 @@ int	open_file(char *file, int append_redout_redin)
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	else
 		fd = open(file, O_RDONLY);
+	if (fd < 0)
+		ft_putstr_fd(strerror(errno), 2), exit(FAILURE);
 	return (fd);
 }
 
-int	red_out(char *file)
+void	red_out(char *file)
 {
 	int	fd;
-	int std_out;
 
-	std_out = dup(STDOUT_FILENO);
 	fd = open_file(file, RED_OUT);
 	dup2(fd, STDOUT_FILENO);
-	return (std_out);
 }
 
-int	red_in(char *file)
+void	red_in(char *file)
 {
 	int	fd;
-	int std_in;
 
-	std_in = dup(STDIN_FILENO);
 	fd = open_file(file, RED_IN);
 	dup2(fd, STDIN_FILENO);
-	return (std_in);
 }
 
-int	append(char *file)
+void	append(char *file)
 {
 	int	fd;
-	int std_out;
 
-	std_out = dup(STDOUT_FILENO);
 	fd = open_file(file, APPEND);
 	dup2(fd, STDOUT_FILENO);
-	return (std_out);
 }

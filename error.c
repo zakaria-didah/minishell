@@ -33,7 +33,7 @@ void	throw_error(char *line)
 	if (line)
 	{
 		ft_putstr_fd(prefix, 2);
-		ft_putstr_fd(line, 2);
+		ft_putendl_fd(line, 2);
 		return ;
 	}
 	ft_putstr_fd("minishell: syntax error\n", 2);
