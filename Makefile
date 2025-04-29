@@ -2,8 +2,8 @@ SRC= main.c parser.c signals.c utiles.c exec.c echo.c \
 	append.c ft_env.c error.c expand.c export.c ft_split_x.c \
 	ft_heredoc.c
 OBJ= $(SRC:.c=.o)
-CC= cc
-CFLAGS=  -g3 #-fsanitize=address -g3
+CC=gcc
+CFLAGS=  -g3 #-fsanitize=address 
 LDFLAGS= -lreadline 
 lib= libft/libft.a
 NAME= minishell

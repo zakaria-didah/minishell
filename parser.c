@@ -3,14 +3,28 @@
 
 /*--->Some func's to debug<---*/
 /*⇓⇓⇓⇓ print_list ⇓⇓⇓⇓*/
-void	pl(t_list *head)
+void	pl(t_list *head, int f)
 {
 	t_list	*tmp;
 
 	tmp = head;
+	t_token	*token;
+	t_cmd	*cmd;
+	if (f == 1)
+	{
+		while (tmp)
+		{
+			cmd = (t_cmd *)tmp->content;
+			parr(cmd->args);
+
+			tmp = tmp->next;
+		}
+		return ;
+	}
 	while (tmp)
 	{
-		printf("value -> [%s]\n", ((t_token *)tmp->content)->value);
+		token = (t_token *)tmp->content;
+		printf("value -> [%s]\n", token->value);
 		tmp = tmp->next;
 	}
 }
@@ -69,6 +83,7 @@ t_list	*tokenize(char *input)
 		{
 			token->type = PIPE;
 			token->value = ft_strdup("|");
+			i++;
 		}
 		else if (input[i] == '<')
 		{
@@ -137,11 +152,12 @@ t_list	*parse(t_list *tokens)
 	ac = 0;
 	while (tokens)
 	{
+
 		cmd = ft_calloc(sizeof(t_cmd), C_ARENA);
 		cmd->args = ft_calloc(sizeof(char *) * (ft_lstsize(tokens) + 1),
 				C_ARENA);
 		token = tokens->content;
-		while (tokens && token && token->type != PIPE)
+		while ((tokens && token) && token->type != PIPE)
 		{
 			token = tokens->content;
 			if (token->type == WORD || token->type == DOLLAR
@@ -251,13 +267,35 @@ t_list	*parse(t_list *tokens)
 					return (throw_error(NULL), NULL);
 				}
 			}
+			if (token->type == PIPE && check_next_pipe(tokens) == ERROR)
+				return ( NULL);
 			tokens = tokens->next;
 		}
 		//cmd->args[ac] = NULL;
 		ft_lstadd_back(&cmd_lst, ft_lstnew(cmd));
-		// under construction
 	}
 	return (cmd_lst);
+}
+
+int check_next_pipe(t_list *head)
+{
+	t_token *tok;
+
+	if (head->next)
+	{
+		tok = head->next->content;
+		if (!(tok->type == WORD || tok->type == DOLLAR
+			|| tok->type == DQUOTE || tok->type == SQUOTE))
+		{
+			return (throw_error("syntax error near unexpected token `|'"), ERROR);
+		}
+	}
+	else
+	{
+		return (throw_error("syntax error near unexpected token `|'"), ERROR);
+	}
+
+	return (SUCCESS);
 }
 void	redirect(t_list *head)
 {
@@ -308,9 +346,7 @@ bool	exec_builtin(t_list *cmdlst)
 	}
 	return (false);
 }
-void	pipex(t_list *cmd_lst)
-{
-}
+
 
 /* SEGV we don't check if the argv is NULL,
 	plus the hash table algo is way faster,

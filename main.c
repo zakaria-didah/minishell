@@ -62,9 +62,20 @@ void	add_slash_to_path(char **path)
 	}
 }
 
+void sigpipe_handler(int sig) {
+    (void)sig;
+    write(STDERR_FILENO, "Broken pipe detected\n", 22);
+}
+
+void setup_signals(void) {
+    signal(SIGPIPE, sigpipe_handler);
+	signal(SIGINT, sigint_handler);
+}
+
+
 int	init(char **env)
 {
-	signal(SIGINT, sigint_handler);
+	setup_signals();
 	var->env = env;
 	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
 	if (tmp)

@@ -151,16 +151,17 @@ void	append(char *file);
 // void	hdoc(char *file);
 int	exec_cmd(t_list *cmd);
 void	exec_child(char *path, char **args);
-void	pipex(t_list *cmd_lst);
 bool	exec_builtin(t_list *cmdlst);
 void	execute(t_list *cmd_lst);
 void heredoc(const char *delimiter);
+int pipex(t_list *head);
 
 //......parsing......
-
+int check_next_pipe(t_list *head);
 
 //.....testing......
 void	parr(char **arr);
+void	pl(t_list *head, int f);
 
 #endif
 
