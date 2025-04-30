@@ -126,7 +126,6 @@ int pipex(t_list *head)
 			else 
 				exit(0);
 		}
-
 		if (prev_fd != -1)
 			close(prev_fd); 
 		if (head->next)
