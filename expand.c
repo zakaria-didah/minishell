@@ -381,17 +381,6 @@ char	**expand(char *arg)
 	i = 0;
 	j = 0;
 	arg = expand_vars(arg);
-	// fields = count_fields(arg);
-	// printf("arg -> %s\n", arg);
-	// if (fields == 1)
-	// {
-	// 	res = ft_arradd(res, arg);
-	// }
-	// else
-	// {
-	// 	// res = field_spliting(arg);
-	// 	res = splitting(arg, fields);
-	// }
 	arg = field_spliting(arg);
 	res = ft_split(arg, (char [2]){127, 0});
 	if (!res)
