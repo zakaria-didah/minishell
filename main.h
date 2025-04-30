@@ -158,6 +158,7 @@ int pipex(t_list *head);
 
 //......parsing......
 int check_next_pipe(t_list *head);
+void sort_alpha(char **arr);
 
 //.....testing......
 void	parr(char **arr);

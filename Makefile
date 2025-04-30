@@ -1,5 +1,5 @@
 SRC= main.c parser.c signals.c utiles.c exec.c echo.c \
-	append.c ft_env.c error.c expand.c export.c ft_split_x.c \
+	redirections.c ft_env.c error.c expand.c export.c ft_split_x.c \
 	ft_heredoc.c
 OBJ= $(SRC:.c=.o)
 CC=gcc

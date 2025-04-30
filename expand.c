@@ -11,22 +11,11 @@ int	match(char *txt, char *pat)
 	while (w.i < w.txt_len)
 	{
 		if (w.j < w.pat_len && pat[w.j] == txt[w.i])
-		{
-			w.i++;
-			w.j++;
-		}
+			(w.i++, w.j++);
 		else if (w.j < w.pat_len && (pat[w.j] == '*'))
-		{
-			w.start_index = w.j;
-			w.match = w.i;
-			w.j++;
-		}
+			(w.start_index = w.j, w.match = w.i, w.j++);
 		else if (w.start_index != -1)
-		{
-			w.j = w.start_index + 1;
-			w.match++;
-			w.i = w.match;
-		}
+			(w.j = w.start_index + 1, w.match++, w.i = w.match);
 		else
 			return (false);
 	}
@@ -35,46 +24,6 @@ int	match(char *txt, char *pat)
 	return (w.j == w.pat_len);
 }
 
-size_t	biglen(char **arr)
-{
-	size_t	i;
-	size_t	len;
-
-	i = 0;
-	len = 0;
-	while (arr[i])
-	{
-		if (ft_strlen(arr[i]) > len)
-			len = ft_strlen(arr[i]);
-		i++;
-	}
-	return (len);
-}
-
-void	sort_alpha(char **arr)
-{
-	int		i;
-	int		j;
-	char	*tmp;
-
-	i = 0;
-	j = 1;
-	while (arr[i] && arr[j])
-	{
-		if (ft_strncmp(arr[i], arr[j], ft_strlen(arr[i])) > 0)
-		{
-			tmp = arr[i];
-			arr[i] = arr[j];
-			arr[j] = tmp;
-		}
-		j++;
-		if (!arr[j])
-		{
-			i++;
-			j = i + 1;
-		}
-	}
-}
 
 char	**wildcard(char *pat)
 {
@@ -95,9 +44,7 @@ char	**wildcard(char *pat)
 			continue ;
 		}
 		if (match(dir->d_name, pat))
-		{
 			res = ft_arradd(res, dir->d_name);
-		}
 		dir = readdir(dp);
 	}
 	closedir(dp);
@@ -105,6 +52,35 @@ char	**wildcard(char *pat)
 		return (NULL);
 	sort_alpha(res);
 	return (res);
+}
+
+void sort_alpha(char **arr)
+{
+	int i;
+	int j;
+	char *tmp;
+	size_t len;
+
+	i = 0;
+	j = 0;
+	while (arr[i])
+	{
+		j = i + 1;
+		while (arr[j])
+		{
+			len = ft_strlen(arr[i]);
+			if (len > ft_strlen(arr[j]))
+				len = ft_strlen(arr[j]);
+			if (ft_memcmp(arr[i], arr[j], len) > 0)
+			{
+				tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
 }
 
 char	*handel_dollar(int *i, char *input)
@@ -123,21 +99,6 @@ char	*handel_dollar(int *i, char *input)
 	input[*i] = 0;
 	res = ft_getenv(input + start);
 	input[*i] = tmp;
-	return (res);
-}
-char	*handel_dollar_(char *name)
-{
-	int		i;
-	char	*res;
-
-	i = 0;
-	while (name[i] && (isalnum(name[i]) || name[i] == '_'))
-	{
-		i++;
-	}
-	if (i != ft_strlen(name))
-		return (NULL);
-	res = ft_getenv(name);
 	return (res);
 }
 
@@ -167,47 +128,6 @@ char	*get_pattren(char *arg, int start)
 	return (pattren);
 }
 
-int	count_fields(const char *s)
-{
-	int		i;
-	int		count;
-	char	quot;
-
-	quot = 0;
-	i = 0;
-	count = 0;
-	while (s[i])
-	{
-		if (s[i] == '"' || s[i] == '\'')
-		{
-			quot = s[i++];
-			while (s[i] && s[i] != quot)
-				i++;
-			i++;
-		}
-		while (s[i] && is_in(s[i], " \t\n"))
-			i++;
-		if (s[i])
-			count++;
-		while (s[i] && (!is_in(s[i], " \t\n")))
-		{
-			if (s[i] == '"' || s[i] == '\'')
-			{
-				quot = s[i++];
-				while (s[i] && s[i] != quot)
-					i++;
-				i++;
-			}
-			i++;
-		}
-	}
-	if (quot && !count)
-	{
-		return (1);
-	}
-	return (count);
-}
-
 char	*field_spliting(char *arg)
 {
 	int	i;
@@ -221,9 +141,7 @@ char	*field_spliting(char *arg)
 		{
 			field = arg[i++];
 			while (arg[i] && arg[i] != field)
-			{
 				i++;
-			}
 			i++;
 		}
 		while (arg[i] && (arg[i] != '\'' && arg[i] != '"'))
@@ -291,14 +209,14 @@ char	**splitting(char *arg, int count)
 	// 	i = check_is_in(qout, arg + q + 1)+1;
 	// 	if (res)
 	// 		res[ft_arrlen(res)-1] = ft_strjoin(res[ft_arrlen(res)-1],
-					// ft_substr(arg, q, i));
-					// 	else
-					// 		res= ft_arradd(res, ft_substr(arg, q, i));
-					// 	q  = i ;
-					// }
+	// ft_substr(arg, q, i));
+	// 	else
+	// 		res= ft_arradd(res, ft_substr(arg, q, i));
+	// 	q  = i ;
+	// }
 }
 
-void skip_quote(char *arg, int *i)
+void	skip_quote(char *arg, int *i)
 {
 	char	quot;
 
@@ -333,6 +251,7 @@ char	*expand_vars(char *arg)
 			{
 				ft_bzero(arg + start - 1, i - start + 1);
 				ft_memmove(arg + start - 1, arg + i, ft_strlen(arg + i) + 1);
+				i = start - 1;
 			}
 		}
 		else if (arg[i + 1] != '?')
@@ -363,28 +282,21 @@ char	**quet_remove(char **arg)
 			i++;
 		}
 		j++;
+		i = 0;
 	}
 	return (arg);
 }
-char	**expand(char *arg)
-{
-	int		i;
-	char	*pattren;
-	char	**res;
-	char	**wc;
-	int		j;
-	int		quot;
-	int		fields;
 
-	res = NULL;
-	quot = 0;
+char **check_wildcard(char **res)
+{
+	int i;
+	int j;
+	char ** wc;
+	int quot;
 	i = 0;
 	j = 0;
-	arg = expand_vars(arg);
-	arg = field_spliting(arg);
-	res = ft_split(arg, (char [2]){127, 0});
-	if (!res)
-		printf("error\n"), exit(1);
+	quot = 1;
+
 	while (res[j])
 	{
 		while (res[j][i])
@@ -395,7 +307,10 @@ char	**expand(char *arg)
 			{
 				wc = wildcard(res[j]);
 				if (wc)
+				{
+					res[j] = 0;
 					res = ft_arrjoin(res, wc);
+				}
 				else
 				{
 					if (res[j][ft_strlen(res[j]) - 1] == '*')
@@ -406,8 +321,28 @@ char	**expand(char *arg)
 		}
 		j++;
 	}
+	return (res);
+
+}
+	
+char	**expand(char *arg)
+{
+	int		i;
+	char	**res;
+	char	**wc;
+	int		j;
+	int		quot;
+
+	res = NULL;
+	quot = 1;
+	i = 0;
+	j = 0;
+	arg = expand_vars(arg);
+	arg = field_spliting(arg);
+	res = ft_split(arg, (char[2]){127, 0});
+	if (!res)
+		(printf("error\n"), exit(1));
+	res = check_wildcard(res);
 	res = quet_remove(res);
-	// printf("----res in quet_remove----\n");
-	// parr(res);
 	return (res);
 }
