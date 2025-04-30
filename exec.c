@@ -119,7 +119,6 @@ int pipex(t_list *head)
 			}
 			exec_child(path,((t_cmd *)head->content)->args);
 		}
-
 		if (prev_fd != -1)
 			close(prev_fd); 
 		if (head->next)
