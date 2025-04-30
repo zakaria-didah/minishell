@@ -1,26 +1,36 @@
 #include "main.h"
 
+char	**get_path(void)
+{
+	char	**path;
+	char	*tmp;
 
-
+	tmp = ft_getenv("PATH");
+	if (!tmp)
+		return (throw_error("PATH not found\n"), NULL);
+	path = ft_split(tmp, ":");
+	add_slash_to_path(path);
+	return (path);
+}
 
 char	*find_cmd(char *cmd)
 {
 	int		i;
 	char	*cmd_path;
 	int		j;
+	char	**path;
 
 	cmd_path = cmd;
-	char *path = ft_getenv("PATH");
+	path = get_path();
 	if (!path)
-		return throw_error(ft_strjoin(cmd, ": command not found\n")), NULL;
-	// i = access(cmd, X_OK);
+		return NULL;
 	j = 0;
-	while (var->path[j] && access(cmd_path, X_OK))
+	while (path[j] && access(cmd_path, X_OK))
 	{
-		cmd_path = ft_strjoin(var->path[j], cmd);
+		cmd_path = ft_strjoin(path[j], cmd);
 		j++;
 	}
-	if (!var->path[j])
+	if (!path[j])
 	{
 		throw_error(ft_strjoin(cmd, ": command not found\n"));
 		return (NULL);
@@ -29,63 +39,31 @@ char	*find_cmd(char *cmd)
 }
 
 
-// void	pipex(t_list *cmd_lst)
-// {
-
-// }
-
-pid_t fork_cmd(t_list *cmd, char **path)
+pid_t	fork_cmd(t_list *cmd, char **path)
 {
 	pid_t	pid;
 	int		stat;
-
-	*path = find_cmd(((t_cmd *)cmd->content)->args[0]);
-	if (!*path)
-		return (-1);
-	var->curr_cmd = ((t_cmd *)cmd->content)->args[0];
-	((t_cmd *)cmd->content)->args[0] = *path;
+	
 	pid = fork();
 	if (pid == -1)
 		return (throw_error("fork failed\n"), exit(-1), -1);
+	if (pid == 0){
+		*path = find_cmd(((t_cmd *)cmd->content)->args[0]);
+		if (!*path)
+			return (exit(127), -1);
+		var->curr_cmd = ((t_cmd *)cmd->content)->args[0];
+		((t_cmd *)cmd->content)->args[0] = *path;
+	}
 	return (pid);
 }
-/*
-int	exec(t_list *head)
-{
-	pid_t child_pid;
-
-	// if (ft_lstsize(head) > 1)
-	// 	pipex(head);
-	char *cmd = find_cmd(((t_cmd *)head->content)->args[0]);
-	if (!cmd)
-		return (127);
-	child_pid = fork();
-	if (child_pid < 0)
-		exit(-1);
-	var->curr_cmd = cmd;
-	if (child_pid == 0)
-	{
-		redirect(head);
-		execv(cmd, ((t_cmd *)head->content)->args);
-		perror("shit happend\n");
-		exit(1);
-	}
-	else
-	{
-		wait(NULL);
-	}
-	return (SUCCESS);
-}
-*/
 
 
 void	exec_child(char *path, char **args)
 {
 	execve(path, args, var->env);
-	perror(strerror(errno));
 	ft_putendl_fd("shit happend", 2);
 	ft_free();
-	exit(1);
+	exit(errno);
 }
 
 pid_t	exec_cmd(t_list *cmd)
@@ -96,7 +74,7 @@ pid_t	exec_cmd(t_list *cmd)
 
 	pid = fork_cmd(cmd, &path);
 	if (pid == -1)
-		return -1;
+		return (-1);
 	if (pid == 0)
 	{
 		redirect(cmd);
@@ -107,6 +85,56 @@ pid_t	exec_cmd(t_list *cmd)
 	return (pid);
 }
 
+
+int pipex(t_list *head)
+{
+	int		fd[2];
+	int		prev_fd = -1;
+	pid_t	pid;
+	size_t	i = 0;
+	char *path;
+	size_t	len = ft_lstsize(head);
+
+
+	while (head)
+	{
+		if (head->next && pipe(fd) < 0)
+			return (perror("pipe"), -1);
+
+		pid = fork_cmd(head, &path);
+		if (pid < 0)
+			return (perror("fork"), -1);
+		else if (pid == 0)
+		{
+			if (prev_fd != -1)
+			{
+				dup2(prev_fd, STDIN_FILENO);
+				close(prev_fd);
+			}
+			if (head->next)
+			{
+				close(fd[0]); 
+				dup2(fd[1], STDOUT_FILENO);
+				close(fd[1]);
+			}
+			exec_child(path,((t_cmd *)head->content)->args);
+		}
+		if (prev_fd != -1)
+			close(prev_fd); 
+		if (head->next)
+		{
+			close(fd[1]); 
+			prev_fd = fd[0]; 
+		}
+		head = head->next;
+		i++;
+	}
+	while (i-- > 0)
+		wait(NULL);
+	return (0);
+}
+
+
 void	execute(t_list *cmd_lst)
 {
 	pid_t	pid;
@@ -115,10 +143,11 @@ void	execute(t_list *cmd_lst)
 		pipex(cmd_lst);
 	else
 	{
-		if (!exec_builtin(cmd_lst)){
+		if (!exec_builtin(cmd_lst))
+		{
 			pid = exec_cmd(cmd_lst);
 			if (pid < 0)
-				;// handel exit here... 
+				; // handel exit here...
 		}
 	}
 }

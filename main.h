@@ -73,12 +73,8 @@ typedef struct s_builtins
 typedef struct t_var
 {
 	char **env;
-	char **path;
 	char *pwd;
 	char *oldpwd;
-	char *home;
-	char *user;
-	char *host;
 	char *curr_cmd;
 	t_builtin *bultin;
 
@@ -121,6 +117,7 @@ typedef struct s_cmd
 } t_cmd;
 
 //......utiles......
+char **split_(const char *s );
 bool	is_balanced(char *input);
 size_t	ft_atos(char *num);
 int	ft_exit(char **args);
@@ -154,15 +151,17 @@ void	append(char *file);
 // void	hdoc(char *file);
 int	exec_cmd(t_list *cmd);
 void	exec_child(char *path, char **args);
-void	pipex(t_list *cmd_lst);
 bool	exec_builtin(t_list *cmdlst);
 void	execute(t_list *cmd_lst);
+void heredoc(const char *delimiter);
+int pipex(t_list *head);
 
 //......parsing......
-
+int check_next_pipe(t_list *head);
 
 //.....testing......
 void	parr(char **arr);
+void	pl(t_list *head, int f);
 
 #endif
 

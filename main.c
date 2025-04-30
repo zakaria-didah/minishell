@@ -62,16 +62,27 @@ void	add_slash_to_path(char **path)
 	}
 }
 
+void sigpipe_handler(int sig) {
+    (void)sig;
+    write(STDERR_FILENO, "Broken pipe detected\n", 22);
+}
+
+void setup_signals(void) {
+    signal(SIGPIPE, sigpipe_handler);
+	signal(SIGINT, sigint_handler);
+}
+
+
 int	init(char **env)
 {
-	signal(SIGINT, sigint_handler);
+	setup_signals();
 	var->env = env;
-	var->path = ft_split(getenv("PATH"), ":");
-	add_slash_to_path(var->path);
-	var->pwd = getenv("PWD");
-	var->oldpwd = getenv("OLDPWD");
-	var->home = getenv("HOME");
-	var->user = getenv("USER");
+	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
+	if (tmp)
+		var->pwd = ft_strdup(tmp);
+	else
+		var->pwd = ft_getenv("PATH");
+	var->oldpwd = NULL;
 	return (0);
 }
 
@@ -81,7 +92,7 @@ int	main(int ac, char **av, char **env)
 	if (ac != 1)
 		return (ft_putendl_fd("minishell: no arguments", STDERR_FILENO),
 			FAILURE);
-	var = ft_calloc(sizeof(t_var), C_ARENA);
+	var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
 	while (true)
 	{

@@ -22,7 +22,7 @@ char	*ft_getenv(char *name)
 	len = ft_strlen(name);
 	while (var->env[i])
 	{
-		if (ft_strncmp(var->env[i], name, len) == 0)
+		if (ft_memcmp(var->env[i], name, len) == 0)
 		{
 			if (var->env[i][len] == '=')
 			{
@@ -58,14 +58,15 @@ int	edit_env(char *name, char *value, t_bool APPEND)
 	{
 		if (ft_strncmp(var->env[i], name, ft_strlen(name)) == 0)
 		{
+			gc_mode(C_TRACK);
 			var->env[i] = ft_strjoin(name, value);
-			return (SUCCESS);
+			return (gc_mode(0),SUCCESS);
 		}
 		i++;
 	}
 	if (APPEND)
 		return (ft_setenv(name, value));
-	return (FAILURE);
+	return (gc_mode(0), FAILURE);
 }
 
 int	ft_setenv(char *name, char *value)
@@ -75,21 +76,22 @@ int	ft_setenv(char *name, char *value)
 
 	if (!name)
 		return (FAILURE);
+	gc_mode(C_TRACK);
 	if (!ft_strchr(name, '='))
 		name = ft_strjoin(name, "=");
 	i = 0;
 	len = ft_strlen(name);
 	while (var->env[i])
 	{
-		if (ft_strncmp(var->env[i], name, len) == 0)
+		if (ft_memcmp(var->env[i], name, len) == 0)
 		{
 			var->env[i] = ft_strjoin(name, value);
-			return (SUCCESS);
+			return (gc_mode(0), SUCCESS);
 		}
 		i++;
 	}
 	var->env = ft_arradd(var->env, ft_strjoin(name, value));
-	return (SUCCESS);
+	return (gc_mode(0),SUCCESS);
 }
 
 int	ft_unset(char **args)

@@ -1,11 +1,11 @@
 #include "garb.h"
 
+
 void	reset_arena(void)
 {
 	t_list	*alloc;
 	t_mem	*mem;
 	t_list	*tmp;
-
 	alloc = *arena_head();
 	if (alloc)
 	{
@@ -39,13 +39,13 @@ int	clear_arena(t_list *alloc)
 	return (1);
 }
 
-t_mem	*realloc_arena(void)
+t_mem	*realloc_arena(t_list *head)
 {
 	t_list	*arena;
 	t_mem	*new;
 
 	new = malloc(sizeof(t_mem));
-	arena = ft_lstlast(*arena_head());
+	arena = ft_lstlast(head);
 	new->size = ((t_mem *)arena->content)->size * 2;
 	new->mempool = malloc(new->size);
 	ft_bzero(new->mempool, new->size);
@@ -62,6 +62,15 @@ void	dealloc_arena(void)
 	t_list	*tmp;
 
 	alloc = *arena_head();
+	while (alloc)
+	{
+		free(((t_mem *)(alloc->content))->mempool);
+		free(alloc->content);
+		tmp = alloc;
+		alloc = alloc->next;
+		free(tmp);
+	}
+	alloc = *parena_head();
 	while (alloc)
 	{
 		free(((t_mem *)(alloc->content))->mempool);

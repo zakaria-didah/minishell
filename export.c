@@ -1,5 +1,20 @@
 #include "main.h"
 
+bool is_valid_value(char *arg)
+{
+	int	i;
+
+	i = 0;
+
+	while (arg[i] && arg[i] != '=')
+	{
+		if (!ft_isalnum(arg[i]) && arg[i] != '_')
+			return (FALSE);
+		i++;
+	}
+	return (TRUE);
+}
+
 int	export_append(char *arg, int i)
 {
 	int		j;
@@ -53,7 +68,6 @@ int	ft_export(char **args)
 
 	i = 0;
 	j = 0;
-	parr(args);
 	if (!args || !args[0])
 	{
 		while (var->env[i])
@@ -62,12 +76,12 @@ int	ft_export(char **args)
 	}
 	while (args[i])
 	{
-		while (args[i][j] && ft_isalnum(args[i][j]))
+		while ((args[i][j] &&!ft_isdigit(args[i][0])) && ft_isalnum(args[i][j]))
 			j++;
 		if (args[i][j] == '+')
-			return (export_append(args[i], j++));
-		else
-			return (export_asign(args[i], j));
+			export_append(args[i], j++);
+		else 
+			export_asign(args[i], j);
 		j = 0;
 		i++;
 	}

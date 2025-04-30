@@ -17,22 +17,30 @@ int pl(){
 return 0;
 }
 
+void	parr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return (void)printf("[null]\n");
+	printf("{");
+	while (arr[i])
+	{
+		printf("[%s]", arr[i++]);
+		if (arr[i])
+			printf(", ");
+		else
+			printf("}\n");
+	}
+}
+
 int main(){
-    char *s = ft_calloc(64, C_ARENA);
-    char *d = ft_calloc(64, C_ARENA);
-    char *f = ft_calloc(64, C_ARENA);
-    char *x = ft_calloc(64, C_ARENA);
-    char *z = ft_calloc(64, C_ARENA);
-    char *c = ft_calloc(64, C_ARENA);
-    char *v = ft_calloc(64, C_ARENA);
-    char *h = ft_calloc(64, C_ARENA);
-
-    pl();
-    reset_arena();
-    printf("\nafter reset\n\n");
-    pl();
-    ft_free();
-
+    char **tmp = NULL;
+    if (!tmp[1])
+        printf("null\n");
+    else
+        printf("not null\n");
 
 
 }

@@ -3,14 +3,28 @@
 
 /*--->Some func's to debug<---*/
 /*⇓⇓⇓⇓ print_list ⇓⇓⇓⇓*/
-void	pl(t_list *head)
+void	pl(t_list *head, int f)
 {
 	t_list	*tmp;
 
 	tmp = head;
+	t_token	*token;
+	t_cmd	*cmd;
+	if (f == 1)
+	{
+		while (tmp)
+		{
+			cmd = (t_cmd *)tmp->content;
+			parr(cmd->args);
+
+			tmp = tmp->next;
+		}
+		return ;
+	}
 	while (tmp)
 	{
-		printf("value -> [%s]\n", ((t_token *)tmp->content)->value);
+		token = (t_token *)tmp->content;
+		printf("value -> [%s]\n", token->value);
 		tmp = tmp->next;
 	}
 }
@@ -21,17 +35,18 @@ void	parr(char **arr)
 	int	i;
 
 	i = 0;
+	if (!arr)
+		return (void)printf("[null]\n");
+	printf("{");
 	while (arr[i])
 	{
-		printf("[%s]\n", arr[i++]);
+		printf("[%s]", arr[i++]);
+		if (arr[i])
+			printf(", ");
+		else
+			printf("}\n");
 	}
 }
-
-/*
-to handel the wildcard * in the input string.
-Not fully ready yet.
-*/
-
 
 
 /*
@@ -62,6 +77,7 @@ t_list	*tokenize(char *input)
 		{
 			token->type = PIPE;
 			token->value = ft_strdup("|");
+			i++;
 		}
 		else if (input[i] == '<')
 		{
@@ -69,7 +85,7 @@ t_list	*tokenize(char *input)
 			{
 				token->type = HDOC;
 				token->value = ft_strdup("<<");
-				i++;
+				i+=2;
 			}
 			else
 			{
@@ -93,25 +109,6 @@ t_list	*tokenize(char *input)
 				i++;
 			}
 		}
-		// else if (input[i] == '"')
-		// {
-		// 	start = ++i;
-		// 	while (input[i] && input[i] != '"')
-		// 		i++;
-		// 	token->type = DQUOTE;
-		// 	token->value = ft_strjoin(token->value, ft_substr(input, start, i
-		// 				- start));
-		// 	i++;
-		// }
-		// else if (input[i] == '\'')
-		// {
-		// 	start = ++i;
-		// 	while (input[i] && input[i] != '\'')
-		// 		i++;
-		// 	token->type = SQUOTE;
-		// 	token->value = ft_substr(input, start, i - start);
-		// 	i++;
-		// }
 		else
 		{
 			start = i;
@@ -143,24 +140,25 @@ t_list	*parse(t_list *tokens)
 	t_cmd	*cmd;
 	t_list	*cmd_lst;
 	int		ac;
+	char **tmp;
 
 	cmd_lst = NULL;
 	ac = 0;
 	while (tokens)
 	{
+
 		cmd = ft_calloc(sizeof(t_cmd), C_ARENA);
 		cmd->args = ft_calloc(sizeof(char *) * (ft_lstsize(tokens) + 1),
 				C_ARENA);
 		token = tokens->content;
-		while (tokens && token && token->type != PIPE)
+		while ((tokens && token) && token->type != PIPE)
 		{
 			token = tokens->content;
 			if (token->type == WORD || token->type == DOLLAR
 				|| token->type == DQUOTE || token->type == SQUOTE)
 			{
-				char **hh = expand(token->value);
-				cmd->args = ft_arrjoin(cmd->args, hh);
-				parr(cmd->args);
+				char **tmp = expand(token->value);
+				cmd->args = ft_arrjoin(cmd->args, tmp);
 				ac = ft_arrlen(cmd->args);
 
 			}
@@ -173,7 +171,13 @@ t_list	*parse(t_list *tokens)
 					if (token->type == WORD || token->type == DOLLAR
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
-						cmd->in = ft_strdup(token->value);
+						tmp = expand(token->value);
+						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
+							return (throw_error("ambiguous redirect"), NULL);
+						else
+						{
+							cmd->in = ft_strdup(tmp[0]);
+						}
 					}
 					else
 					{
@@ -194,7 +198,11 @@ t_list	*parse(t_list *tokens)
 					if (token->type == WORD || token->type == DOLLAR
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
-						cmd->out = ft_strdup(token->value);
+						tmp = expand(token->value);
+						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
+							return (throw_error("ambiguous redirect"), NULL);
+						else
+							cmd->out = ft_strdup(tmp[0]);
 					}
 					else
 					{
@@ -215,7 +223,11 @@ t_list	*parse(t_list *tokens)
 					if (token->type == WORD || token->type == DOLLAR
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
-						cmd->out = ft_strdup(token->value);
+						tmp = expand(token->value);
+						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
+							return (throw_error("ambiguous redirect"), NULL);
+						else
+							cmd->out = ft_strdup(tmp[0]);
 						cmd->append = TRUE;
 					}
 					else
@@ -249,13 +261,35 @@ t_list	*parse(t_list *tokens)
 					return (throw_error(NULL), NULL);
 				}
 			}
+			if (token->type == PIPE && check_next_pipe(tokens) == ERROR)
+				return ( NULL);
 			tokens = tokens->next;
 		}
 		//cmd->args[ac] = NULL;
 		ft_lstadd_back(&cmd_lst, ft_lstnew(cmd));
-		// under construction
 	}
 	return (cmd_lst);
+}
+
+int check_next_pipe(t_list *head)
+{
+	t_token *tok;
+
+	if (head->next)
+	{
+		tok = head->next->content;
+		if (!(tok->type == WORD || tok->type == DOLLAR
+			|| tok->type == DQUOTE || tok->type == SQUOTE))
+		{
+			return (throw_error("syntax error near unexpected token `|'"), ERROR);
+		}
+	}
+	else
+	{
+		return (throw_error("syntax error near unexpected token `|'"), ERROR);
+	}
+
+	return (SUCCESS);
 }
 void	redirect(t_list *head)
 {
@@ -265,6 +299,8 @@ void	redirect(t_list *head)
 		append(((t_cmd *)head->content)->out);
 	if (((t_cmd *)head->content)->in)
 		red_in(((t_cmd *)head->content)->in);
+	if (((t_cmd *)head->content)->hdoc)
+		heredoc(((t_cmd *)head->content)->hdoc);
 }
 
 /*use ft_getenv("PWD") it's better
@@ -304,66 +340,6 @@ bool	exec_builtin(t_list *cmdlst)
 	}
 	return (false);
 }
-void	pipex(t_list *cmd_lst)
-{
-}
-
-/* SEGV we don't check if the argv is NULL,
-	plus the hash table algo is way faster,
- and it's easier for upgrading
-*/
-// t_builtin	exec_builtin(char **args)
-// {
-// 	if (!ft_strncmp(args[0], "echo", 5))
-// 		return (ft_echo(args + 1), ECHO);
-// 	else if (!ft_strncmp(args[0], "cd", 3))
-// 		return (ft_cd(args + 1), CD);
-// 	else if (!ft_strncmp(args[0], "pwd", 4))
-// 		return (ft_pwd(args + 1), PWD);
-// 	else if (!ft_strncmp(args[0], "EXPORT", 7))
-// 		return (ft_export(args + 1), EXPORT);
-// 	else if (!ft_strncmp(args[0], "UNSET", 6))
-// 		return (ft_unset(args + 1), UNSET);
-// 	else if (!ft_strncmp(args[0], "env", 4))
-// 		return (ft_env(args + 1), ENV);
-// 	else if (!ft_strncmp(args[0], "exit", 5))
-// 		return (ft_exit(args + 1), EXIT);
-// 	else
-// 		return (NONE);
-// }
-
-void	ready_to_expand(t_list *head)
-{
-	t_list		*tmplst;
-	int			i;
-	int j = 0;
-	char		**arr;
-	t_cmd *tmp;
-
-
-	tmp = -1;
-	i = 0;
-	tmplst = head;
-	while (tmplst)
-	{
-		tmp = (t_cmd *)(head->content);
-		while(tmp->args[j]){
-			arr = ft_split(tmp->args[j], "\"'");
-			while (arr[i])
-			{
-				if (arr[i][0] != '\'')
-				{
-					if (arr[i][0] == '"')
-						tmp = DQUOTE;
-					arr[i] = expand(arr[i]);
-				}
-				i++;
-			}
-			j++;
-		}
-		tmplst = tmplst->next;
-	}
-}
 
 int	pass_the_input(char *line)
 {
@@ -381,7 +357,6 @@ int	pass_the_input(char *line)
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
-	// ready_to_expand(cmd_lst);
 	if (!cmd_lst)
 		return (FAILURE);
 	execute(cmd_lst);
