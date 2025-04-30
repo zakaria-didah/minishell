@@ -150,7 +150,7 @@ void	red_out(char *file);
 void	append(char *file);
 // void	hdoc(char *file);
 int	exec_cmd(t_list *cmd);
-void	exec_child(char *path, char **args);
+int	exec_child(char **args);
 bool	exec_builtin(t_list *cmdlst);
 void	execute(t_list *cmd_lst);
 void heredoc(const char *delimiter);

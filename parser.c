@@ -331,7 +331,7 @@ bool	exec_builtin(t_list *cmdlst)
 	cmd = ((t_cmd *)cmdlst->content)->args[0];
 	while (builtin[i].name)
 	{
-		if (ft_strncmp(cmd, builtin[i].name, ft_strlen(cmd) + 1) == 0)
+		if (ft_memcmp(cmd, builtin[i].name, ft_strlen(cmd)) == 0 && ft_strlen(cmd) == ft_strlen(builtin[i].name))
 		{
 			var->curr_cmd = cmd;
 			return (builtin[i].func(++((t_cmd *)cmdlst->content)->args), true);
