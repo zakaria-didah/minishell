@@ -67,15 +67,15 @@ void sigpipe_handler(int sig) {
     write(STDERR_FILENO, "Broken pipe detected\n", 22);
 }
 
-void setup_signals(void) {
-    signal(SIGPIPE, sigpipe_handler);
-	signal(SIGINT, sigint_handler);
-}
+// void setup_signals(void) {
+//     signal(SIGPIPE, sigpipe_handler);
+// 	signal(SIGINT, sigint_handler);
+// }
 
 
 int	init(char **env)
 {
-	setup_signals();
+	// setup_signals();
 	var->env = env;
 	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
 	if (tmp)
@@ -94,6 +94,8 @@ int	main(int ac, char **av, char **env)
 			FAILURE);
 	var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
+	disable_echoctl();
+	setup_signals_interactive();
 	while (true)
 	{
 		line = readline(get_prompt());
@@ -103,7 +105,7 @@ int	main(int ac, char **av, char **env)
 		}
 		add_history(line);
 		pass_the_input(line);
-		//reset_arena();
+		reset_arena();
 	}
 	return (0);
 }

@@ -3,6 +3,8 @@
 
 /*--->Some func's to debug<---*/
 /*⇓⇓⇓⇓ print_list ⇓⇓⇓⇓*/
+
+
 void	pl(t_list *head, int f)
 {
 	t_list	*tmp;
@@ -124,6 +126,7 @@ t_list	*tokenize(char *input)
 			}
 			token->type = WORD;
 			token->value = ft_substr(input, start, i - start);
+			
 		}
 		ft_lstadd_back(&head, ft_lstnew(token));
 	}
@@ -176,7 +179,7 @@ t_list	*parse(t_list *tokens)
 							return (throw_error("ambiguous redirect"), NULL);
 						else
 						{
-							cmd->in = ft_strdup(tmp[0]);
+							ft_lstadd_back(&cmd->in, ft_lstnew(new_red(tmp[0], RED_IN)));
 						}
 					}
 					else
@@ -202,7 +205,7 @@ t_list	*parse(t_list *tokens)
 						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
 							return (throw_error("ambiguous redirect"), NULL);
 						else
-							cmd->out = ft_strdup(tmp[0]);
+							ft_lstadd_back(&cmd->out, ft_lstnew(new_red(tmp[0], RED_OUT)));
 					}
 					else
 					{
@@ -227,8 +230,7 @@ t_list	*parse(t_list *tokens)
 						if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
 							return (throw_error("ambiguous redirect"), NULL);
 						else
-							cmd->out = ft_strdup(tmp[0]);
-						cmd->append = TRUE;
+							ft_lstadd_back(&cmd->out, ft_lstnew(new_red(tmp[0], APPEND)));
 					}
 					else
 					{
@@ -249,7 +251,10 @@ t_list	*parse(t_list *tokens)
 					if (token->type == WORD || token->type == DOLLAR
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
-						cmd->hdoc = ft_strdup(token->value);
+						//tmp = expand(token->value);
+							char *file = heredoc(ft_lstnew(new_red(token->value, HDOC)));
+							if (file)
+								ft_lstadd_back(&cmd->in, ft_lstnew(new_red(file, HDOC)));
 					}
 					else
 					{
@@ -265,7 +270,6 @@ t_list	*parse(t_list *tokens)
 				return ( NULL);
 			tokens = tokens->next;
 		}
-		//cmd->args[ac] = NULL;
 		ft_lstadd_back(&cmd_lst, ft_lstnew(cmd));
 	}
 	return (cmd_lst);
@@ -293,23 +297,22 @@ int check_next_pipe(t_list *head)
 }
 void	redirect(t_list *head)
 {
-	if (((t_cmd *)head->content)->out)
-		red_out(((t_cmd *)head->content)->out);
-	if (((t_cmd *)head->content)->append)
-		append(((t_cmd *)head->content)->out);
-	if (((t_cmd *)head->content)->in)
-		red_in(((t_cmd *)head->content)->in);
-	if (((t_cmd *)head->content)->hdoc)
-		heredoc(((t_cmd *)head->content)->hdoc);
+	t_cmd	*cmd;
+	cmd = (t_cmd *)head->content;
+
+	if (cmd->hdoc)
+		heredoc(cmd->hdoc);
+	if (cmd->out)
+		red_out(cmd->out);
+	if (cmd->in)
+		red_in(cmd->in);
 }
 
-/*use ft_getenv("PWD") it's better
-and options don't have to start with - if argv then throwerror :)*/
 int	ft_pwd(char **argv)
 {
 	__attribute__((cleanup(cleanup))) char *pwd;
-	if (argv[0] && argv[0][0] == '-')
-		return (ft_putstr_fd("minishell: pwd: no options", 1), FAILURE);
+	if (argv[0])
+		return (throw_error("pwd: no options"), FAILURE);
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 		return (perror("minishell: pwd"), FAILURE);
@@ -329,9 +332,10 @@ bool	exec_builtin(t_list *cmdlst)
 	exit_stat = SUCCESS;
 	i = 0;
 	cmd = ((t_cmd *)cmdlst->content)->args[0];
+	size_t len = ft_strlen(cmd);
 	while (builtin[i].name)
 	{
-		if (ft_memcmp(cmd, builtin[i].name, ft_strlen(cmd)) == 0 && ft_strlen(cmd) == ft_strlen(builtin[i].name))
+		if (!ft_strncmp(cmd, builtin[i].name, len) && len == ft_strlen(builtin[i].name))
 		{
 			var->curr_cmd = cmd;
 			return (builtin[i].func(++((t_cmd *)cmdlst->content)->args), true);

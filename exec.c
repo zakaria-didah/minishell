@@ -39,7 +39,7 @@ char	*find_cmd(char *cmd)
 }
 
 
-pid_t	fork_cmd(t_list *cmd)
+pid_t	fork_cmd()
 {
 	pid_t	pid;
 	int		stat;
@@ -47,6 +47,7 @@ pid_t	fork_cmd(t_list *cmd)
 	pid = fork();
 	if (pid == -1)
 		return (throw_error("fork failed\n"), exit(-1), -1);
+	// setup_signals_default();
 	return (pid);
 }
 
@@ -76,7 +77,7 @@ pid_t	exec_cmd(t_list *cmd)
 	int		stat;
 	char	*path;
 
-	pid = fork_cmd(cmd);
+	pid = fork_cmd();
 	if (pid == -1)
 		return (-1);
 	if (pid == 0)

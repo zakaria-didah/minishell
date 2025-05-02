@@ -11,17 +11,20 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <termios.h>
 # include <unistd.h>
 
 // will explain later
 void	cleanup(void *ptr);
 # define auto_free __attribute__((cleanup(cleanup)))
+# define HDOCFILE "/tmp/.heredoc_minishell"
 
 // a boolean type
 typedef enum s_bool
@@ -39,7 +42,6 @@ typedef enum s_status
 
 typedef enum s_builtin
 {
-	ECHO,
 	CD,
 	PWD,
 	EXPORT,
@@ -48,7 +50,6 @@ typedef enum s_builtin
 	EXIT,
 	NONE,
 } t_builtin;
-
 
 typedef struct s_wildcard
 {
@@ -59,7 +60,7 @@ typedef struct s_wildcard
 	int match;
 	int txt_len;
 	int pat_len;
-}	t_wildcard;
+} t_wildcard;
 
 // a structure to store the bultin functions with hash table algorithm
 typedef struct s_builtins
@@ -76,6 +77,8 @@ typedef struct t_var
 	char *pwd;
 	char *oldpwd;
 	char *curr_cmd;
+	int hdoc;
+	int exit_s;
 	t_builtin *bultin;
 
 } t_var;
@@ -106,18 +109,23 @@ typedef struct s_token
 	token_type type;
 } t_token;
 
+typedef struct s_red
+{
+	char *file;
+	token_type type;
+	
+} t_red;
+
 // a structure to store the command line
 typedef struct s_cmd
 {
 	char **args;
-	char *in;
-	char *out;
-	int append;
-	char *hdoc;
+	t_list *in;
+	t_list *out;
 } t_cmd;
 
 //......utiles......
-char **split_(const char *s );
+char	**split_(const char *s);
 bool	is_balanced(char *input);
 size_t	ft_atos(char *num);
 int	ft_exit(char **args);
@@ -135,34 +143,36 @@ char	*join_args(char **args);
 char	*find_cmd(char *cmd);
 void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
-void	red_out(char *file);
-void	append(char *file);
+
 char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
-void	red_in(char *file);
 void	redirect(t_list *head);
 void	ft_error(char *error);
 void	ft_strerror(char *s);
 char	*handel_dollar(int *i, char *input);
-char **	expand(char *arg);
-void	red_in(char *file);
-void	red_out(char *file);
-void	append(char *file);
+char	**expand(char *arg);
+void	red_in(t_list *head);
+void	red_out(t_list *head);
+void	append(t_list *head);
 // void	hdoc(char *file);
 int	exec_cmd(t_list *cmd);
 int	exec_child(char **args);
 bool	exec_builtin(t_list *cmdlst);
 void	execute(t_list *cmd_lst);
-void heredoc(const char *delimiter);
-int pipex(t_list *head);
-
+char *	heredoc(t_list *head);
+int	pipex(t_list *head);
+int	open_file(char *file, int append_redout_redin);
+pid_t	fork_cmd();
 //......parsing......
-int check_next_pipe(t_list *head);
-void sort_alpha(char **arr);
-
+int	check_next_pipe(t_list *head);
+void	sort_alpha(char **arr);
+t_red	*new_red(char *file, token_type type);
+char	*expand_vars(char *arg);
 //.....testing......
 void	parr(char **arr);
 void	pl(t_list *head, int f);
+
+void	default_signal(void);
 
 #endif
 

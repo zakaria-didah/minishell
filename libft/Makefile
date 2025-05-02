@@ -22,7 +22,7 @@ bonus: $(all_obj)
 	@ar rcs $(NAME) $(all_obj)
 
 %.o:	%.c
-	@cc	$(FLAGS) -g3	-o	$@	-c	$<
+	@cc	$(FLAGS)	-o	$@	-c	$<
 	
 clean:
 	@rm	-f	$(all_obj)

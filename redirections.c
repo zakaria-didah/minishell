@@ -1,13 +1,13 @@
 #include "main.h"
 
-int	open_file(char *file, int append_redout_redin)
+int	open_file(char *file, int flag)
 {
 	int	fd;
 
-	if (append_redout_redin == APPEND)
-		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
-	else if (append_redout_redin == RED_OUT)
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (flag == APPEND)
+		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else if (flag == RED_OUT)
+		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else
 		fd = open(file, O_RDONLY);
 	if (fd < 0)
@@ -15,26 +15,51 @@ int	open_file(char *file, int append_redout_redin)
 	return (fd);
 }
 
-void	red_out(char *file)
-{
-	int	fd;
 
-	fd = open_file(file, RED_OUT);
-	dup2(fd, STDOUT_FILENO);
+t_red	*new_red(char *file, token_type type)
+{
+	t_red	*red;
+
+	red = ft_calloc(1 *sizeof(t_red), C_ARENA);
+	red->file = file;
+	red->type = type;
+	return (red);
 }
 
-void	red_in(char *file)
+void	red_out(t_list *head)
 {
 	int	fd;
+	while(head)
+	{
+		t_red *red = (t_red *)head->content;
+		fd = open_file(red->file, RED_OUT);
+		dup2(fd, STDOUT_FILENO);
+		head = head->next;
+	}
 
-	fd = open_file(file, RED_IN);
-	dup2(fd, STDIN_FILENO);
 }
 
-void	append(char *file)
+void	red_in(t_list *head)
+{
+	int	fd;
+	while(head)
+	{
+		t_red *red = (t_red *)head->content;
+		fd = open_file(red->file, RED_IN);
+		dup2(fd, STDIN_FILENO);
+		head = head->next;
+	}
+}
+
+void	append(t_list *head)
 {
 	int	fd;
 
-	fd = open_file(file, APPEND);
-	dup2(fd, STDOUT_FILENO);
+	while(head)
+	{
+		t_red *red = (t_red *)head->content;
+		fd = open_file(red->file, RED_OUT);
+		dup2(fd, STDOUT_FILENO);
+		head = head->next;
+	}
 }

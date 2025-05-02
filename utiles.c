@@ -18,7 +18,7 @@ bool	is_balanced(char *input)
 	ssize_t	j;
 
 	__attribute__((cleanup(cleanup))) char *stack;
-	stack = ft_calloc((ft_strlen(input)+1 )* sizeof(char), C_MALLOC);
+	stack = ft_calloc((ft_strlen(input) + 1) * sizeof(char), C_MALLOC);
 	i = 0;
 	j = 0;
 	while (input[i])
@@ -31,8 +31,8 @@ bool	is_balanced(char *input)
 		{
 			stack[j++] = '\'';
 		}
-		if (j >= 2 && ((stack[j - 1] == '\'' && stack[j - 2] == '\'') || (stack[j
-				- 1] == '"' && stack[j - 2] == '"')))
+		if (j >= 2 && ((stack[j - 1] == '\'' && stack[j - 2] == '\'')
+				|| (stack[j - 1] == '"' && stack[j - 2] == '"')))
 			stack[j -= 2] = 0;
 		i++;
 	}
@@ -82,9 +82,9 @@ int	ft_exit(char **args)
 			exit(FAILURE);
 		}
 	}
-	rl_clear_history();
-	return (ft_putendl_fd("exit", STDOUT_FILENO), ft_free(), exit(status),
-		TRUE);
+	if (isatty(STDIN_FILENO))
+		ft_putendl_fd("exit", STDOUT_FILENO);
+	return (rl_clear_history(),ft_free(), exit(status), TRUE);
 }
 
 char	*join_args(char **args)
