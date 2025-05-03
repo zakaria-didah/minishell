@@ -137,14 +137,14 @@ char	*field_spliting(char *arg)
 	field = 1;
 	while (arg[i])
 	{
-		if (arg[i] && (arg[i] == '\'' || arg[i] == '"'))
+		if (arg[i] && (arg[i] == SEP || arg[i] == SEP2))
 		{
 			field = arg[i++];
 			while (arg[i] && arg[i] != field)
 				i++;
 			i++;
 		}
-		while (arg[i] && (arg[i] != '\'' && arg[i] != '"'))
+		while (arg[i] && (arg[i] != SEP && arg[i] != SEP2))
 		{
 			if (is_in(arg[i], " \t\n"))
 			{
@@ -239,7 +239,7 @@ char	*expand_vars(char *arg)
 	i = 0;
 	while (arg[i])
 	{
-		if (arg[i] == '\'')
+		if (arg[i] == SEP)
 			skip_quote(arg, &i);
 		if (arg[i] == '$' && (arg[i + 1] && arg[i + 1] != '?'))
 		{
@@ -254,9 +254,10 @@ char	*expand_vars(char *arg)
 				i = start - 1;
 			}
 		}
-		else if (arg[i + 1] != '?')
+		else if (arg[i] == '$' && arg[i + 1] == '?')
 		{
-			// somthing here ...
+			tmp = ft_itoa(var->exit_s);
+			arg = ft_strinsert(arg, tmp, i, i + 2);
 		}
 		i++;
 	}
@@ -274,7 +275,7 @@ char	**quet_remove(char **arg)
 	{
 		while (arg[j][i])
 		{
-			if (arg[j][i] == '"' || arg[j][i] == '\'')
+			if (arg[j][i] == SEP || arg[j][i] == SEP2)
 			{
 				ft_strlcpy(arg[j] + i, arg[j] + i + 1, ft_strlen(arg[j] + i));
 				i--;
@@ -301,7 +302,7 @@ char **check_wildcard(char **res)
 	{
 		while (res[j][i])
 		{
-			if (res[j][i] == '"' || res[j][i] == '\'')
+			if (res[j][i] == SEP || res[j][i] == SEP2)
 				quot = ~quot + 2;
 			if (quot && res[j][i] == '*')
 			{
@@ -324,6 +325,31 @@ char **check_wildcard(char **res)
 	return (res);
 
 }
+
+void	sep(unsigned int i, char *s)
+{
+	static int	quot = 0;
+
+	if (*s == '\'' ){
+		if (quot == *s){
+			*s = SEP;
+			quot = 0;
+		}else if (quot == 0){
+			quot = *s;
+			*s = SEP;
+		}
+	}
+	else if (*s == '"'){
+		if (quot == *s){
+			*s = SEP2;
+			quot = 0;
+		}else if (quot == 0){
+			quot = *s;
+			*s = SEP2;
+		}
+	}
+	
+}
 	
 char	**expand(char *arg)
 {
@@ -333,15 +359,14 @@ char	**expand(char *arg)
 	int		j;
 	int		quot;
 
-	res = NULL;
+	res = NULL; 
 	quot = 1;
 	i = 0;
 	j = 0;
+	ft_striteri(arg, &sep);
 	arg = expand_vars(arg);
 	arg = field_spliting(arg);
 	res = ft_split(arg, (char[2]){127, 0});
-	if (!res)
-		(printf("error\n"), exit(1));
 	res = check_wildcard(res);
 	res = quet_remove(res);
 	return (res);

@@ -43,11 +43,12 @@ pid_t	fork_cmd()
 {
 	pid_t	pid;
 	int		stat;
-	
+	on_signal();
 	pid = fork();
+	// sleep(10);
 	if (pid == -1)
 		return (throw_error("fork failed\n"), exit(-1), -1);
-	// setup_signals_default();
+		// setup_signals_default();
 	return (pid);
 }
 
@@ -86,8 +87,8 @@ pid_t	exec_cmd(t_list *cmd)
 		exec_child(((t_cmd *)cmd->content)->args);
 	}
 	else
-		waitpid(pid, &stat, 0);
-	return (pid);
+		waitpid(pid, &var->exit_s, 0);
+	return (var->exit_s = WEXITSTATUS(var->exit_s), pid);
 }
 
 
@@ -107,7 +108,7 @@ int pipex(t_list *head)
 
 		pid = fork_cmd(head);
 		if (pid < 0)
-			return (-1);
+			return (var->exit_s = -1, -1);
 		else if (pid == 0)
 		{
 			if (prev_fd != -1)
@@ -138,8 +139,8 @@ int pipex(t_list *head)
 		i++;
 	}
 	while (i-- > 0)
-		wait(NULL);
-	return (0);
+		waitpid(pid, &var->exit_s, 0);
+	return (var->exit_s = WEXITSTATUS(var->exit_s),0);
 }
 
 

@@ -102,7 +102,7 @@ t_list	*tokenize(char *input)
 			{
 				token->type = APPEND;
 				token->value = ft_strdup(">>");
-				i++;
+				i+=2;
 			}
 			else
 			{
@@ -252,7 +252,7 @@ t_list	*parse(t_list *tokens)
 						|| token->type == DQUOTE || token->type == SQUOTE)
 					{
 						//tmp = expand(token->value);
-							char *file = heredoc(ft_lstnew(new_red(token->value, HDOC)));
+							char *file = heredoc(token->value);
 							if (file)
 								ft_lstadd_back(&cmd->in, ft_lstnew(new_red(file, HDOC)));
 					}
@@ -300,8 +300,6 @@ void	redirect(t_list *head)
 	t_cmd	*cmd;
 	cmd = (t_cmd *)head->content;
 
-	if (cmd->hdoc)
-		heredoc(cmd->hdoc);
 	if (cmd->out)
 		red_out(cmd->out);
 	if (cmd->in)
@@ -327,9 +325,7 @@ bool	exec_builtin(t_list *cmdlst)
 			{"pwd", ft_pwd}, {NULL}};
 	char		*cmd;
 	int			i;
-	int			exit_stat;
 
-	exit_stat = SUCCESS;
 	i = 0;
 	cmd = ((t_cmd *)cmdlst->content)->args[0];
 	size_t len = ft_strlen(cmd);
@@ -338,7 +334,7 @@ bool	exec_builtin(t_list *cmdlst)
 		if (!ft_strncmp(cmd, builtin[i].name, len) && len == ft_strlen(builtin[i].name))
 		{
 			var->curr_cmd = cmd;
-			return (builtin[i].func(++((t_cmd *)cmdlst->content)->args), true);
+			return (var->exit_s = builtin[i].func(++((t_cmd *)cmdlst->content)->args), true);
 		}
 		i++;
 	}
@@ -355,14 +351,14 @@ int	pass_the_input(char *line)
 
 	line = ft_strtrim(line, " ");
 	if (!*line)
-		return (SUCCESS);
+		return (var->exit_s = SUCCESS);
 	if (!is_balanced(line))
-		return (throw_error(NULL), FAILURE);
+		return (throw_error(NULL), var->exit_s = FAILURE);
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
 	if (!cmd_lst)
-		return (FAILURE);
+		return (var->exit_s = FAILURE);
 	execute(cmd_lst);
 	return (0);
 }

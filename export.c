@@ -61,18 +61,38 @@ int	export_asign(char *arg, int i)
 	return (SUCCESS);
 }
 
+int print_vars(void)
+{
+	int		i;
+	char	**env;
+
+	i = 0;
+	env = *unset_env();
+	while (var->env[i])
+	{
+		if (ft_strchr(var->env[i], '='))
+			printf("%s\n", var->env[i]);
+		i++;
+	}
+	if (env){
+		while (env[i])
+			ft_putendl_fd(env[i++], STDOUT_FILENO);
+	}
+	return (SUCCESS);
+}
+
 int	ft_export(char **args)
 {
 	int	i;
 	int	j;
+	static char **unsigned_env;
 
 	i = 0;
 	j = 0;
 	if (!args || !args[0])
 	{
-		while (var->env[i])
-			ft_putendl_fd(var->env[i++], STDOUT_FILENO);
-		return (SUCCESS);
+
+		return (print_vars());
 	}
 	while (args[i])
 	{

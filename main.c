@@ -76,6 +76,7 @@ void sigpipe_handler(int sig) {
 int	init(char **env)
 {
 	// setup_signals();
+	ft_bzero(var, sizeof(t_var));
 	var->env = env;
 	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
 	if (tmp)
@@ -88,16 +89,15 @@ int	init(char **env)
 
 int	main(int ac, char **av, char **env)
 {
-	__attribute__((cleanup(cleanup))) char *line;
 	if (ac != 1)
 		return (ft_putendl_fd("minishell: no arguments", STDERR_FILENO),
-			FAILURE);
+		FAILURE);
 	var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
-	disable_echoctl();
-	setup_signals_interactive();
+	__attribute__((cleanup(cleanup))) char *line;
 	while (true)
 	{
+		default_signal();
 		line = readline(get_prompt());
 		if (!line)
 		{

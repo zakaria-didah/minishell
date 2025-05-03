@@ -12,6 +12,7 @@ void	on_signal(void);
 void	setup_signals_interactive(void);
 void	setup_signals_default(void);
 void	disable_echoctl(void);
+void	default_signal(void);
 
 #endif
 

@@ -25,6 +25,8 @@
 void	cleanup(void *ptr);
 # define auto_free __attribute__((cleanup(cleanup)))
 # define HDOCFILE "/tmp/.heredoc_minishell"
+# define SEP 0x1F
+#define SEP2 0x1E
 
 // a boolean type
 typedef enum s_bool
@@ -143,7 +145,7 @@ char	*join_args(char **args);
 char	*find_cmd(char *cmd);
 void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
-
+char ***unset_env(void);
 char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
 void	redirect(t_list *head);
@@ -159,7 +161,7 @@ int	exec_cmd(t_list *cmd);
 int	exec_child(char **args);
 bool	exec_builtin(t_list *cmdlst);
 void	execute(t_list *cmd_lst);
-char *	heredoc(t_list *head);
+char *	heredoc(char  *head);
 int	pipex(t_list *head);
 int	open_file(char *file, int append_redout_redin);
 pid_t	fork_cmd();
@@ -171,9 +173,7 @@ char	*expand_vars(char *arg);
 //.....testing......
 void	parr(char **arr);
 void	pl(t_list *head, int f);
-
 void	default_signal(void);
-
 #endif
 
 
