@@ -164,15 +164,19 @@ int	ft_unset(char **args)
 	int	j;
 
 	i = 0;
+	int f;
+	char *tmp = NULL;
 	j = 0;
 	while (args[i])
 	{
 		while (var->env[j])
 		{
-			if (ft_strncmp(var->env[j], args[i], ft_strlen(args[i])) == 0)
+			tmp = ft_substr(var->env[j], 0, ft_strlen(args[i]));
+			if (!ft_strncmp(tmp, args[i], ft_strlen(args[i])))
 			{
 				while (var->env[j])
 				{
+					f = j;
 					var->env[j] = var->env[j + 1];
 					j++;
 				}
@@ -183,5 +187,5 @@ int	ft_unset(char **args)
 		i++;
 		j = 0;
 	}
-	return (true);
+	return (SUCCESS);
 }

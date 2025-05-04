@@ -6,7 +6,6 @@ void	signal_handler(int sig)
 	pid_t	pid;
 	int		status;
 
-	pid = waitpid(-1, &status, WNOHANG);
 	if (pid == -1)
 	{
 		write(1, "\n", 1);

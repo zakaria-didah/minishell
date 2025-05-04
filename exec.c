@@ -139,7 +139,7 @@ int pipex(t_list *head)
 		i++;
 	}
 	while (i-- > 0)
-		waitpid(pid, &var->exit_s, 0);
+		waitpid(-1, &var->exit_s, 0);
 	return (var->exit_s = WEXITSTATUS(var->exit_s),0);
 }
 

@@ -94,7 +94,7 @@ int	main(int ac, char **av, char **env)
 		FAILURE);
 	var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
-	__attribute__((cleanup(cleanup))) char *line;
+	char	*line = NULL;
 	while (true)
 	{
 		default_signal();
@@ -106,6 +106,7 @@ int	main(int ac, char **av, char **env)
 		add_history(line);
 		pass_the_input(line);
 		reset_arena();
+		free(line);
 	}
 	return (0);
 }
