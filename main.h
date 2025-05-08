@@ -148,14 +148,11 @@ int	ft_setenv(char *name, char *value);
 char ***unset_env(void);
 char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
-void	redirect(t_list *head);
+int	redirect(t_list *head);
 void	ft_error(char *error);
 void	ft_strerror(char *s);
 char	*handel_dollar(int *i, char *input);
 char	**expand(char *arg);
-void	red_in(t_list *head);
-void	red_out(t_list *head);
-void	append(t_list *head);
 // void	hdoc(char *file);
 int	exec_cmd(t_list *cmd);
 int	exec_child(char **args);
@@ -174,6 +171,17 @@ char	*expand_vars(char *arg);
 void	parr(char **arr);
 void	pl(t_list *head, int f);
 void	default_signal(void);
+
+int ft_pwd(char **args);
+int red_builtin(t_list *head);
+int red_in(t_list *head);
+int red_out(t_list *head);
+
+void skip_quote(char *arg, int *i);
+char *get_ifs(void);
+char	**quet_remove(char **arg);
+char **check_wildcard(char **res);
+void	sep(unsigned int i, char *s);
 #endif
 
 

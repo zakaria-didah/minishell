@@ -25,6 +25,8 @@ char	*find_cmd(char *cmd)
 	if (!path || !cmd)
 		return NULL;
 	j = 0;
+    if (!cmd[0])
+        return (NULL);
 	while (path[j] && access(cmd_path, X_OK))
 	{
 		cmd_path = ft_strjoin(path[j], cmd);
@@ -83,12 +85,33 @@ pid_t	exec_cmd(t_list *cmd)
 		return (-1);
 	if (pid == 0)
 	{
-		redirect(cmd);
+		if(redirect(cmd)<0)
+            exit(ERROR);
 		exec_child(((t_cmd *)cmd->content)->args);
 	}
 	else
 		waitpid(pid, &var->exit_s, 0);
 	return (var->exit_s = WEXITSTATUS(var->exit_s), pid);
+}
+
+void pipe_it(int prev_fd, t_list *head, int fd[2]){
+    if (prev_fd != -1)
+    {
+        dup2(prev_fd, STDIN_FILENO);
+        close(prev_fd);
+    }
+    if (head->next)
+    {
+        close(fd[0]); 
+        dup2(fd[1], STDOUT_FILENO);
+        close(fd[1]);
+    }
+    if (redirect(head)<0)
+        exit(ERROR);
+    if (!exec_builtin(head))
+        exec_child(((t_cmd *)head->content)->args);
+    else 
+        exit(0);
 }
 
 
@@ -97,8 +120,7 @@ int pipex(t_list *head)
 	int		fd[2];
 	int		prev_fd = -1;
 	pid_t	pid;
-	size_t	i = 0;
-	size_t	len = ft_lstsize(head);
+    int i = 0;
 
 
 	while (head)
@@ -110,24 +132,7 @@ int pipex(t_list *head)
 		if (pid < 0)
 			return (var->exit_s = -1, -1);
 		else if (pid == 0)
-		{
-			if (prev_fd != -1)
-			{
-				dup2(prev_fd, STDIN_FILENO);
-				close(prev_fd);
-			}
-			if (head->next)
-			{
-				close(fd[0]); 
-				dup2(fd[1], STDOUT_FILENO);
-				close(fd[1]);
-			}
-			redirect(head);
-			if (!exec_builtin(head))
-				exec_child(((t_cmd *)head->content)->args);
-			else 
-				exit(0);
-		}
+            pipe_it(prev_fd, head, fd);
 		if (prev_fd != -1)
 			close(prev_fd); 
 		if (head->next)
@@ -136,10 +141,10 @@ int pipex(t_list *head)
 			prev_fd = fd[0]; 
 		}
 		head = head->next;
-		i++;
+        i++;
 	}
-	while (i-- > 0)
-		waitpid(-1, &var->exit_s, 0);
+    while (i--)
+	    waitpid(-1, &var->exit_s, 0);
 	return (var->exit_s = WEXITSTATUS(var->exit_s),0);
 }
 

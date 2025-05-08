@@ -12,6 +12,8 @@ void	cleanup(void *ptr)
 	}
 }
 
+
+
 bool	is_balanced(char *input)
 {
 	ssize_t	i;

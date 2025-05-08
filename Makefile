@@ -1,6 +1,7 @@
 SRC= main.c parser.c signals.c utiles.c exec.c echo.c \
-	redirections.c ft_env.c error.c expand.c export.c ft_split_x.c \
-	ft_heredoc.c
+	redirections.c ft_env.c error.c  export.c ft_split_x.c \
+	ft_heredoc.c expand/expand_utils.c expand/expand.c ft_cd.c exec_builtin.c \
+	wildcard.c
 OBJ= $(SRC:.c=.o)
 CC=gcc
 CFLAGS=  -g3 #-fsanitize=address 

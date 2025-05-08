@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/24 14:58:08 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/08 20:12:32 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,13 @@ int	ft_env(char **args)
 	i = 0;
 	(void)args;
 	while (var->env[i])
-		ft_putendl_fd(var->env[i++], STDOUT_FILENO);
+	{
+		if (ft_strchr(var->env[i], '='))
+		{
+			ft_putendl_fd(var->env[i], STDOUT_FILENO);
+		}
+		i++;
+	}
 	return (TRUE);
 }
 
@@ -60,7 +66,7 @@ int	edit_env(char *name, char *value, t_bool APPEND)
 		{
 			gc_mode(C_TRACK);
 			var->env[i] = ft_strjoin(name, value);
-			return (gc_mode(0),SUCCESS);
+			return (gc_mode(0), SUCCESS);
 		}
 		i++;
 	}
@@ -69,28 +75,30 @@ int	edit_env(char *name, char *value, t_bool APPEND)
 	return (gc_mode(0), FAILURE);
 }
 
-char ***unset_env(void)
+char	***unset_env(void)
 {
-	static char **env = NULL;
-	return &env;
+	static char	**env = NULL;
 
+	return (&env);
 }
 
-int remove_unset_env(char *name)
+int	remove_unset_env(char *name)
 {
-	int i;
-	int j;
-	char **env = *unset_env();
+	int		i;
+	int		j;
+	char	**env;
+	size_t	len;
 
+	env = *unset_env();
 	i = 0;
 	j = 0;
-	size_t len = ft_strlen(name);
+	len = ft_strlen(name);
 	if (!env)
 		return (FALSE);
-		
 	while (env[i])
 	{
-		if (!ft_strncmp(env[i], name, ft_strlen(env[i])) && len == ft_strlen(env[i]))
+		if (!ft_strncmp(env[i], name, ft_strlen(env[i]))
+			&& len == ft_strlen(env[i]))
 		{
 			while (env[i])
 			{
@@ -98,37 +106,38 @@ int remove_unset_env(char *name)
 				i++;
 			}
 			return (SUCCESS);
-		
 		}
 		i++;
 	}
 	return (FALSE);
 }
 
-int set_unset_env(char *name)
+int	set_unset_env(char *name)
 {
-	int i;
-	int j;
-	char **env = *unset_env();
+	int		i;
+	int		j;
+	char	**env;
+	size_t	len;
+
+	env = *unset_env();
 	i = 0;
 	j = 0;
-	size_t len = ft_strlen(name);
-	if (env){
+	len = ft_strlen(name);
+	if (env)
+	{
 		while (env[i])
 		{
-			if (!ft_strncmp(env[i], name, ft_strlen(env[i])) && len == ft_strlen(env[i]))
+			if (!ft_strncmp(env[i], name, ft_strlen(env[i]))
+				&& len == ft_strlen(env[i]))
 			{
 				return (SUCCESS);
 			}
 			i++;
 		}
 	}
-
 	env = ft_arradd(env, name);
 	return (SUCCESS);
 }
-
-
 
 int	ft_setenv(char *name, char *value)
 {
@@ -136,7 +145,7 @@ int	ft_setenv(char *name, char *value)
 	size_t	len;
 
 	if (!value)
-		return(set_unset_env(name));
+		return (set_unset_env(name));
 	if (!name)
 		return (FAILURE);
 	remove_unset_env(name);
@@ -155,17 +164,18 @@ int	ft_setenv(char *name, char *value)
 		i++;
 	}
 	var->env = ft_arradd(var->env, ft_strjoin(name, value));
-	return (gc_mode(0),SUCCESS);
+	return (gc_mode(0), SUCCESS);
 }
 
 int	ft_unset(char **args)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
+	int		f;
+	char	*tmp;
 
 	i = 0;
-	int f;
-	char *tmp = NULL;
+	tmp = NULL;
 	j = 0;
 	while (args[i])
 	{
