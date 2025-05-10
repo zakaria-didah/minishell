@@ -79,8 +79,9 @@ typedef struct t_var
 	char *pwd;
 	char *oldpwd;
 	char *curr_cmd;
-	int hdoc;
+	volatile sig_atomic_t	 hdoc;
 	int exit_s;
+	volatile sig_atomic_t child;
 	t_builtin *bultin;
 
 } t_var;

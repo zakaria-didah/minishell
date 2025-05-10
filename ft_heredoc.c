@@ -59,6 +59,7 @@ void sig_heredoc(int sig){
 	var->hdoc = 1;
 	var->exit_s = 130;
 	write(1,"\n", 1);
+	exit(130);
 }
 
 char	*heredoc(char *delemiter)
@@ -75,9 +76,11 @@ char	*heredoc(char *delemiter)
 	if (is_quoted(delemiter))
 		(delemiter = remove_quotes(delemiter), expand = 0);
 	fd = open_heredoc(&file);
-	pid = fork_cmd();
+	signal(SIGINT, SIG_IGN	);
+	signal(SIGQUIT, SIG_IGN);
+	pid = fork();
 	if (pid == -1)
-		return (NULL);
+	return (NULL);
 	if (pid == 0)
 	{
 		signal(SIGINT, sig_heredoc);
@@ -97,12 +100,10 @@ char	*heredoc(char *delemiter)
 			if (!expand)
 				free(line);
 		}
-		close(fd);
-		if (var->hdoc)
-			exit(var->exit_s);
 		exit(0);
 	}
 	else
 		waitpid(pid, &var->exit_s, 0), WEXITSTATUS(var->exit_s);
+	close(fd);
 	return (file);
 }
