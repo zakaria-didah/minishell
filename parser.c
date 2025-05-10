@@ -232,8 +232,11 @@ int	parse_heredoc(t_list **tokens, t_cmd *cmd)
 		if (token->type == WORD)
 		{
 			file = heredoc(token->value);
-			if (file)
+			if (file && !var->exit_s)
 				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(file, HDOC)));
+			else {
+				return false;
+			}
 		}
 		else
 		{
@@ -363,9 +366,9 @@ int	pass_the_input(char *line)
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
-    pl(cmd_lst, 1);
+    // pl(cmd_lst, 1);
 	if (!cmd_lst)
-		return (var->exit_s = FAILURE);
+		return (FAILURE);
 	execute(cmd_lst);
 	return (0);
 }

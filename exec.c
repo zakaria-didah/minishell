@@ -68,6 +68,7 @@ int	exec_child(char **args)
 	{
 		exit(127);
 	}
+
 	execve(path, args, var->env);
 	ft_putendl_fd("shit happend", 2);
 	ft_free();

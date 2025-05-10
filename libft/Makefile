@@ -16,13 +16,13 @@ NAME = libft.a
 all: $(NAME)
 
 $(NAME):	$(OBJS)
-	@ar	rcs	$(NAME)	$(OBJS)
+	@ar	rcs	$(NAME)	$(OBJS) 
 
 bonus: $(all_obj)
 	@ar rcs $(NAME) $(all_obj)
 
 %.o:	%.c
-	@cc	$(FLAGS)	-o	$@	-c	$<
+	@cc	$(FLAGS)	-o	$@	-c	$< -fPIE
 	
 clean:
 	@rm	-f	$(all_obj)

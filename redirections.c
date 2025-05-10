@@ -76,9 +76,9 @@ int red_builtin(t_list *head)
 	{
 		fd = dup(STDOUT_FILENO);
 		fd2 = dup(STDIN_FILENO);
-		if (red_out(head) < 0)
+		if (red_out(((t_cmd *)head->content)->out) < 0)
 			return -1;
-		if (red_in(head) < 0)
+		if (red_in(((t_cmd *)head->content)->in) < 0)
 			return -1;
 	}
 	else
@@ -88,6 +88,5 @@ int red_builtin(t_list *head)
 		close(fd);
 		close(fd2);
 	}
-
 	
 }

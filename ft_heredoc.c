@@ -55,6 +55,12 @@ int	is_quoted(char *input)
 	return (0);
 }
 
+void sig_heredoc(int sig){
+	var->hdoc = 1;
+	var->exit_s = 130;
+	write(1,"\n", 1);
+}
+
 char	*heredoc(char *delemiter)
 {
 	int		fd;
@@ -74,10 +80,9 @@ char	*heredoc(char *delemiter)
 		return (NULL);
 	if (pid == 0)
 	{
+		signal(SIGINT, sig_heredoc);
 		len = ft_strlen(delemiter);
-		var->hdoc = 1;
-		len = ft_strlen(delemiter);
-		while (1)
+		while (!var->hdoc)
 		{
 			line = readline("> ");
 			if (!line || (!ft_strncmp(line, delemiter, len)
@@ -93,11 +98,11 @@ char	*heredoc(char *delemiter)
 				free(line);
 		}
 		close(fd);
+		if (var->hdoc)
+			exit(var->exit_s);
 		exit(0);
 	}
 	else
-	{
-		waitpid(pid, NULL, 0);
-	}
+		waitpid(pid, &var->exit_s, 0), WEXITSTATUS(var->exit_s);
 	return (file);
 }

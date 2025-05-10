@@ -3,17 +3,14 @@
 
 void	signal_handler(int sig)
 {
-	pid_t	pid;
 	int		status;
 
-	if (pid == -1)
-	{
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 		var->exit_s = 130;
-	}
+
 
 }
 
@@ -31,7 +28,7 @@ void	on_signal(void)
 
 void	default_signal(void)
 {
-	off_echoctl();
+	// off_echoctl();
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
