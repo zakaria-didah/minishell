@@ -292,7 +292,9 @@ t_list	*parse(t_list *tokens)
 		token = tokens->content;
 		while (tokens && token)
 		{
-            token = tokens->content;
+			token = tokens->content;
+			if (!parse_(&tokens, cmd))
+				return (NULL);
             if (token->type == PIPE)
             {
                 tokens = tokens->next;
@@ -303,8 +305,6 @@ t_list	*parse(t_list *tokens)
                 
                 break;
             }
-            if (!parse_(&tokens, cmd))
-            return (NULL);
 			tokens = tokens->next;
 		}
 		ft_lstadd_back(&cmd_lst, ft_lstnew(cmd));

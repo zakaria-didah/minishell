@@ -122,19 +122,17 @@ int pipex(t_list *head)
 	pid_t	pid;
     int i = 0;
 
-
 	while (head)
 	{
 		if (head->next && pipe(fd) < 0)
 			return (perror("pipe"), -1);
-
 		pid = fork_cmd(head);
 		if (pid < 0)
 			return (var->exit_s = -1, -1);
 		else if (pid == 0)
             pipe_it(prev_fd, head, fd);
 		if (prev_fd != -1)
-			close(prev_fd); 
+			close(prev_fd);
 		if (head->next)
 		{
 			close(fd[1]); 

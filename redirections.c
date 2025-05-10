@@ -21,7 +21,7 @@ int	redirect(t_list *head)
 	t_cmd	*cmd;
 
 	cmd = (t_cmd *)head->content;
-	if (cmd->out)
+	if (cmd->out) 
 		if (red_out(cmd->out) < 0)
 			return -1;
 	if (cmd->in)
