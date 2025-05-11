@@ -190,7 +190,7 @@ int	parse_redout(t_list **tokens, t_cmd *cmd)
 	{
 		return (throw_error(NULL), false);
 	}
-    return (true);
+	return (true);
 }
 
 int	parse_append(t_list **tokens, t_cmd *cmd)
@@ -217,7 +217,7 @@ int	parse_append(t_list **tokens, t_cmd *cmd)
 	}
 	else
 		return (throw_error(NULL), false);
-    return (true);
+	return (true);
 }
 
 int	parse_heredoc(t_list **tokens, t_cmd *cmd)
@@ -225,7 +225,7 @@ int	parse_heredoc(t_list **tokens, t_cmd *cmd)
 	t_token	*token;
 	char	*file;
 
-	if ((*tokens)->next) // Change tokens to (*tokens)
+	if ((*tokens)->next)
 	{
 		*tokens = (*tokens)->next;
 		token = (*tokens)->content;
@@ -233,21 +233,16 @@ int	parse_heredoc(t_list **tokens, t_cmd *cmd)
 		{
 			file = heredoc(token->value);
 			if (file && !var->exit_s)
-				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(file, HDOC)));
-			else {
-				return false;
-			}
+				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(file, RED_IN)));
+			else
+				return (false);
 		}
 		else
-		{
 			return (throw_error(NULL), false);
-		}
 	}
 	else
-	{
 		return (throw_error(NULL), false);
-	}
-    return (true);
+	return (true);
 }
 
 int	parse_(t_list **tokens, t_cmd *cmd)
@@ -258,15 +253,11 @@ int	parse_(t_list **tokens, t_cmd *cmd)
 	if (token->type == WORD)
 		cmd->args = ft_arrjoin(cmd->args, expand(token->value));
 	else if (token->type == RED_IN)
-	{
 		if (!parse_redin(tokens, cmd))
 			return (false);
-	}
 	else if (token->type == RED_OUT)
-	{
 		if (!parse_redout(tokens, cmd))
 			return (false);
-	}
 	else if (token->type == APPEND)
 	{
 		if (!parse_append(tokens, cmd))
@@ -279,7 +270,7 @@ int	parse_(t_list **tokens, t_cmd *cmd)
 	}
 	if (token->type == PIPE && check_next_pipe(*tokens) == ERROR)
 		return (false);
-    return (true);
+	return (true);
 }
 
 t_list	*parse(t_list *tokens)
@@ -298,16 +289,13 @@ t_list	*parse(t_list *tokens)
 			token = tokens->content;
 			if (!parse_(&tokens, cmd))
 				return (NULL);
-            if (token->type == PIPE)
-            {
-                tokens = tokens->next;
-                if (!cmd->args && !cmd->in && !cmd->out)
-                {
-                    return (throw_error("syntax error near  token `|'"), NULL);
-                }
-                
-                break;
-            }
+			if (token->type == PIPE)
+			{
+				tokens = tokens->next;
+				if (!cmd->args && !cmd->in && !cmd->out)
+					return (throw_error("syntax error near  token `|'"), NULL);
+				break ;
+			}
 			tokens = tokens->next;
 		}
 		ft_lstadd_back(&cmd_lst, ft_lstnew(cmd));
@@ -338,15 +326,21 @@ int	check_next_pipe(t_list *head)
 
 int	ft_pwd(char **argv)
 {
-	__attribute__((cleanup(cleanup))) char *pwd;
+	char	*pwd;
+	char	*fre;
+
 	if (argv[0])
 		return (throw_error("pwd: no options"), FAILURE);
 	pwd = ft_getenv("PWD");
 	if (!pwd)
-		pwd = getcwd(NULL, 0);
+	{
+		fre = getcwd(NULL, 0);
+		pwd = ft_strdup(fre);
+		free(fre);
+	}
 	if (!pwd)
 		return (perror("minishell: pwd"), FAILURE);
-	printf("%s\n", pwd);
+	ft_putendl_fd(pwd, STDOUT_FILENO);
 	return (SUCCESS);
 }
 
@@ -366,7 +360,7 @@ int	pass_the_input(char *line)
 	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
-    // pl(cmd_lst, 1);
+	// pl(cmd_lst, 1);
 	if (!cmd_lst)
 		return (FAILURE);
 	execute(cmd_lst);

@@ -55,11 +55,35 @@ int	is_quoted(char *input)
 	return (0);
 }
 
-void sig_heredoc(int sig){
-	var->hdoc = 1;
+void	sig_heredoc(int sig)
+{
+	var->hdoc = 130;
 	var->exit_s = 130;
-	write(1,"\n", 1);
-	exit(130);
+	close(STDIN_FILENO);
+}
+
+void read_heredoc(int fd, char *delemiter, bool expand)
+{
+	char	*line;
+	size_t	len;
+
+	len = ft_strlen(delemiter);
+	while (!var->hdoc)
+	{
+		line = readline("> ");
+		if (!line || (!ft_strncmp(line, delemiter, len)
+				&& ft_strlen(line) == len))
+		{
+			free(line);
+			break ;
+		}
+		if (expand)
+			line = expand_vars(line);
+		ft_putendl_fd(line, fd);
+		if (!expand)
+			free(line);
+	}
+	(close(fd),exit(var->hdoc));
 }
 
 char	*heredoc(char *delemiter)
@@ -76,34 +100,13 @@ char	*heredoc(char *delemiter)
 	if (is_quoted(delemiter))
 		(delemiter = remove_quotes(delemiter), expand = 0);
 	fd = open_heredoc(&file);
-	signal(SIGINT, SIG_IGN	);
-	signal(SIGQUIT, SIG_IGN);
-	pid = fork();
-	if (pid == -1)
-	return (NULL);
+	if (fd < 0)
+		return (NULL);
+	pid = fork_cmd();
 	if (pid == 0)
 	{
-		signal(SIGINT, sig_heredoc);
-		len = ft_strlen(delemiter);
-		while (!var->hdoc)
-		{
-			line = readline("> ");
-			if (!line || (!ft_strncmp(line, delemiter, len)
-					&& ft_strlen(line) == len))
-			{
-				free(line);
-				break ;
-			}
-			if (expand)
-				line = expand_vars(line);
-			ft_putendl_fd(line, fd);
-			if (!expand)
-				free(line);
-		}
-		exit(0);
+		(signal(SIGINT, sig_heredoc), signal(SIGQUIT, SIG_IGN));
+		read_heredoc(fd, delemiter, expand);
 	}
-	else
-		waitpid(pid, &var->exit_s, 0), WEXITSTATUS(var->exit_s);
-	close(fd);
-	return (file);
+	return (wait_for_it(pid, 1), close(fd), file);
 }

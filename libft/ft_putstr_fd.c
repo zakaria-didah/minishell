@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:43 by zdidah            #+#    #+#             */
-/*   Updated: 2024/11/10 19:20:46 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/11 10:41:38 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,8 @@ void	ft_putstr_fd(char *s, int fd)
 {
 	if (!s)
 		return ;
-	write(fd, s, ft_strlen(s));
+	if (write(fd, s, ft_strlen(s)) < 0)
+	{
+		perror("write");
+	}
 }

@@ -186,7 +186,7 @@ void	sep(unsigned int i, char *s);
 
 
 
-
+void	wait_for_it(pid_t pid, int count);
 void	ft_strerror(char *s);
 void	ft_error(char *s);
 #endif

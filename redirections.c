@@ -49,14 +49,16 @@ int	red_out(t_list *head)
 		if (fd < 0)
 			return fd;
 		dup2(fd, STDOUT_FILENO);
+		close(fd);
 		head = head->next;
 	}
-
+	
 }
 
 int	red_in(t_list *head)
 {
 	int	fd;
+	
 	while(head)
 	{
 		t_red *red = (t_red *)head->content;
@@ -64,6 +66,7 @@ int	red_in(t_list *head)
 		if (fd < 0)
 			return fd;
 		dup2(fd, STDIN_FILENO);
+		close(fd);
 		head = head->next;
 	}
 }

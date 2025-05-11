@@ -40,24 +40,28 @@ char	*find_cmd(char *cmd)
 	char	**path;
 
 	cmd_path = cmd;
-	if (access(cmd_path, F_OK))
+	if (ft_strchr(cmd_path, '/'))
+	{
+		if (access(cmd_path, F_OK | X_OK))
+			return (perror(cmd_path), NULL);
+		else if (is_directory(cmd_path))
+			return (ft_strerror("is a directory\n"), NULL);
+	}
+	else
 	{
 		path = get_path();
 		if (!path || !cmd || !*cmd)
 			return (NULL);
 		j = 0;
-		while (path[j] && access(cmd_path, X_OK))
+		while (path[j] )
 		{
 			cmd_path = ft_strjoin(path[j], cmd);
+			if (access(cmd_path, F_OK | X_OK) == 0)
+				return (cmd_path);
 			j++;
 		}
-		if (!path[j])
-			return (ft_strerror("command not found\n"), NULL);
+		return (ft_strerror("command not found\n"), NULL);
 	}
-	if (is_directory(cmd_path))
-		return (ft_strerror("is a directory\n"), NULL);
-	if (!is_executable(cmd_path))
-		return (ft_strerror("Permission denied\n"), NULL);
 	return (cmd_path);
 }
 

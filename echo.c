@@ -1,5 +1,23 @@
 #include "main.h"
 
+static bool option_n(char *arg)
+{
+	if (arg[0] == '-' && arg[1] == 'n')
+	{
+		int	i;
+
+		i = 2;
+		while (arg[i])
+		{
+			if (arg[i] != 'n')
+				return (false);
+			i++;
+		}
+		return (true);
+	}
+	return (false);
+}
+
 int	ft_echo(char **argv)
 {
 	int	i;
@@ -7,7 +25,7 @@ int	ft_echo(char **argv)
 
 	i = 0;
 	option = false;
-	while (argv[i] && !ft_strncmp(argv[i], "-n", 3))
+	while (argv[i] && option_n(argv[i]))
 		i++;
 	if (i)
 		option = true;
