@@ -4,58 +4,28 @@
 #include "main.h"
 
 
-char *foo(char *str)
+/*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
+void	parr(char **arr)
 {
-    char *new_str;
-    int i = 0;
-    int j = 0;
-    char c = 128;
+	int	i;
 
-
-
-    while (str[i])
-    {
-        if (str[i] == '\'' || str[i] == '"')
-            str[i] = c;
-        i++;
-    }
-    return (str);
+	i = 0;
+	if (!arr)
+		return (void)printf("[null]\n");
+	printf("{");
+	while (arr[i])
+	{
+		printf("[%s]", arr[i++]);
+		if (arr[i])
+			printf(", ");
+		else
+			printf("}\n");
+	}
 }
 
+int main(int ac, char **av, char **env)
+{
+    exit(-51);
 
-int is_directory(const char *path) {
-    struct stat statbuf;
-    if (stat(path, &statbuf) != 0)
-        return 0;
-    return S_ISDIR(statbuf.st_mode);
-}
-
-int is_executable(const char *path) {
-    struct stat statbuf;
-    if (stat(path, &statbuf) != 0)
-        return 0;
-    return (statbuf.st_mode & S_IXUSR) || 
-           (statbuf.st_mode & S_IXGRP) || 
-           (statbuf.st_mode & S_IXOTH);
-}
-
-
-int main(){
- if (access(NULL, X_OK) == 0)
- {
-    printf("test is executable\n");
- }
- else
- {
-    printf("test is not executable\n");
- }
- if (is_directory(NULL))
- {
-    printf("test is directory\n");
- }
- else
- {
-    printf("test is not directory\n");
- }
     
 }

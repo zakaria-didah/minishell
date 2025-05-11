@@ -26,7 +26,7 @@ void	cleanup(void *ptr);
 # define auto_free __attribute__((cleanup(cleanup)))
 # define HDOCFILE "/tmp/.heredoc_minishell"
 # define SEP 0x1F
-#define SEP2 0x1E
+# define SEP2 0x1E
 
 // a boolean type
 typedef enum s_bool
@@ -79,7 +79,7 @@ typedef struct t_var
 	char *pwd;
 	char *oldpwd;
 	char *curr_cmd;
-	volatile sig_atomic_t	 hdoc;
+	volatile sig_atomic_t hdoc;
 	int exit_s;
 	volatile sig_atomic_t child;
 	t_builtin *bultin;
@@ -116,7 +116,7 @@ typedef struct s_red
 {
 	char *file;
 	token_type type;
-	
+
 } t_red;
 
 // a structure to store the command line
@@ -130,7 +130,7 @@ typedef struct s_cmd
 //......utiles......
 char	**split_(const char *s);
 bool	is_balanced(char *input);
-size_t	ft_atos(char *num);
+int32_t	ft_atos(char *num);
 int	ft_exit(char **args);
 char	*get_prompt(void);
 int	ft_cd(char **args);
@@ -146,7 +146,7 @@ char	*join_args(char **args);
 char	*find_cmd(char *cmd);
 void	add_slash_to_path(char **path);
 int	ft_setenv(char *name, char *value);
-char ***unset_env(void);
+char	***unset_env(void);
 char	*ft_getenv(char *name);
 int	edit_env(char *name, char *value, t_bool APPEND);
 int	redirect(t_list *head);
@@ -159,10 +159,10 @@ int	exec_cmd(t_list *cmd);
 int	exec_child(char **args);
 bool	exec_builtin(t_list *cmdlst);
 void	execute(t_list *cmd_lst);
-char *	heredoc(char  *head);
+char	*heredoc(char *head);
 int	pipex(t_list *head);
 int	open_file(char *file, int append_redout_redin);
-pid_t	fork_cmd();
+pid_t	fork_cmd(void);
 //......parsing......
 int	check_next_pipe(t_list *head);
 void	sort_alpha(char **arr);
@@ -173,18 +173,16 @@ void	parr(char **arr);
 void	pl(t_list *head, int f);
 void	default_signal(void);
 
-int ft_pwd(char **args);
-int red_builtin(t_list *head);
-int red_in(t_list *head);
-int red_out(t_list *head);
+int	ft_pwd(char **args);
+int	red_builtin(t_list *head);
+int	red_in(t_list *head);
+int	red_out(t_list *head);
 
-void skip_quote(char *arg, int *i);
-char *get_ifs(void);
+void	skip_quote(char *arg, int *i);
+char	*get_ifs(void);
 char	**quet_remove(char **arg);
-char **check_wildcard(char **res);
+char	**check_wildcard(char **res);
 void	sep(unsigned int i, char *s);
-
-
 
 void	wait_for_it(pid_t pid, int count);
 void	ft_strerror(char *s);

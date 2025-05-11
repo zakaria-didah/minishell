@@ -56,8 +56,10 @@ char	*find_cmd(char *cmd)
 		while (path[j] )
 		{
 			cmd_path = ft_strjoin(path[j], cmd);
-			if (access(cmd_path, F_OK | X_OK) == 0)
-				return (cmd_path);
+			if (access(cmd_path, F_OK | X_OK) == 0){
+				if (!is_directory(cmd_path))
+					return (cmd_path);
+			}
 			j++;
 		}
 		return (ft_strerror("command not found\n"), NULL);

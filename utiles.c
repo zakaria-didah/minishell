@@ -12,8 +12,6 @@ void	cleanup(void *ptr)
 	}
 }
 
-
-
 bool	is_balanced(char *input)
 {
 	ssize_t	i;
@@ -41,52 +39,73 @@ bool	is_balanced(char *input)
 	return (j == 0);
 }
 
-size_t	ft_atos(char *num)
+int32_t	ft_atos(char *num)
 {
 	int		i;
-	size_t	res;
+	int32_t	res;
+	int 	sign;
+	sign = 1;
+	if (num[0] == '-')
+	{
+		sign = -1;
+		num++;
+	}
+	else if (num[0] == '+')
+		num++;
 
 	i = 0;
 	res = 0;
 	while (num[i] >= '0' && num[i] <= '9' && num[i])
 	{
-		res = res * 10 + ((num[i] - 48));
+		res = (res * 10) + (num[i] - 48);
 		if (res > LONG_MAX)
-			return (-1);
+			return (int32_t)(__INT32_MAX__);
 		i++;
 	}
-	return (res);
+	return (res * sign);
+}
+
+bool is_numeric(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (true);
+		i++;
+	}
+	return (false);
 }
 
 int	ft_exit(char **args)
 {
-	size_t	status;
-	int		i;
+	int32_t	status;
 	char	*arg;
-	size_t	len;
 
 	status = 0;
-	i = 4;
 	if (args && args[0])
 	{
 		arg = args[0];
-		if (ft_arrlen(args) > 1)
-			return (throw_error("exit: too many arguments\n"), ERROR);
-		while (arg[i] && isdigit(arg[i++]) == TRUE)
-		{
+		if (!is_numeric(arg)){
 			printf("exit: %s: numeric argument required\n", arg);
 			exit(FAILURE);
 		}
+		if (ft_arrlen(args) > 1)
+			return (throw_error("exit: too many arguments\n"), ERROR);
 		status = ft_atos(arg);
-		if (status < 0)
+		if (status > (int32_t)LONG_MAX)
 		{
 			printf("exit: %s: numeric argument required\n", arg);
 			exit(FAILURE);
 		}
 	}
 	if (isatty(STDIN_FILENO))
-		ft_putendl_fd("exit", STDOUT_FILENO);
-	return (rl_clear_history(),ft_free(), exit(status), TRUE);
+		ft_putendl_fd("exit", STDERR_FILENO);
+	return (rl_clear_history(), ft_free(), exit(status), TRUE);
 }
 
 char	*join_args(char **args)

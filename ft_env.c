@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/08 20:12:32 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/11 19:49:16 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,80 +75,14 @@ int	edit_env(char *name, char *value, t_bool APPEND)
 	return (gc_mode(0), FAILURE);
 }
 
-char	***unset_env(void)
-{
-	static char	**env = NULL;
-
-	return (&env);
-}
-
-int	remove_unset_env(char *name)
-{
-	int		i;
-	int		j;
-	char	**env;
-	size_t	len;
-
-	env = *unset_env();
-	i = 0;
-	j = 0;
-	len = ft_strlen(name);
-	if (!env)
-		return (FALSE);
-	while (env[i])
-	{
-		if (!ft_strncmp(env[i], name, ft_strlen(env[i]))
-			&& len == ft_strlen(env[i]))
-		{
-			while (env[i])
-			{
-				env[i] = env[i + 1];
-				i++;
-			}
-			return (SUCCESS);
-		}
-		i++;
-	}
-	return (FALSE);
-}
-
-int	set_unset_env(char *name)
-{
-	int		i;
-	int		j;
-	char	**env;
-	size_t	len;
-
-	env = *unset_env();
-	i = 0;
-	j = 0;
-	len = ft_strlen(name);
-	if (env)
-	{
-		while (env[i])
-		{
-			if (!ft_strncmp(env[i], name, ft_strlen(env[i]))
-				&& len == ft_strlen(env[i]))
-			{
-				return (SUCCESS);
-			}
-			i++;
-		}
-	}
-	env = ft_arradd(env, name);
-	return (SUCCESS);
-}
 
 int	ft_setenv(char *name, char *value)
 {
 	int		i;
 	size_t	len;
 
-	if (!value)
-		return (set_unset_env(name));
 	if (!name)
 		return (FAILURE);
-	remove_unset_env(name);
 	gc_mode(C_TRACK);
 	if (!ft_strchr(name, '='))
 		name = ft_strjoin(name, "=");

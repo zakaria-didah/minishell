@@ -24,7 +24,6 @@ int	match(char *txt, char *pat)
 	return (w.j == w.pat_len);
 }
 
-
 char	**wildcard(char *pat)
 {
 	struct dirent	*dir;
@@ -38,7 +37,7 @@ char	**wildcard(char *pat)
 	dir = readdir(dp);
 	while (dir != NULL)
 	{
-		if (dir->d_name[0] == '.')
+		if (dir->d_name[0] == '.' && !ft_strchr(pat, '.'))
 		{
 			dir = readdir(dp);
 			continue ;
@@ -53,9 +52,6 @@ char	**wildcard(char *pat)
 	// sort_alpha(res);
 	return (res);
 }
-
-
-
 
 char	*get_pattren(char *arg, int start)
 {
@@ -83,17 +79,16 @@ char	*get_pattren(char *arg, int start)
 	return (pattren);
 }
 
-
-char **check_wildcard(char **res)
+char	**check_wildcard(char **res)
 {
-	int i;
-	int j;
-	char ** wc;
-	int quot;
+	int		i;
+	int		j;
+	char	**wc;
+	int		quot;
+
 	i = 0;
 	j = 0;
 	quot = 1;
-
 	while (res[j])
 	{
 		while (res[j][i])
@@ -119,7 +114,4 @@ char **check_wildcard(char **res)
 		j++;
 	}
 	return (res);
-
 }
-
-
