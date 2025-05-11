@@ -13,20 +13,23 @@ char	**get_path(void)
 	return (path);
 }
 
-int is_directory(const char *path) {
-    struct stat statbuf;
-    if (stat(path, &statbuf) != 0)
-        return 0;
-    return S_ISDIR(statbuf.st_mode);
+int	is_directory(const char *path)
+{
+	struct stat	statbuf;
+
+	if (stat(path, &statbuf) != 0)
+		return (0);
+	return (S_ISDIR(statbuf.st_mode));
 }
 
-int is_executable(const char *path) {
-    struct stat statbuf;
-    if (stat(path, &statbuf) != 0)
-        return 0;
-    return (statbuf.st_mode & S_IXUSR) || 
-           (statbuf.st_mode & S_IXGRP) || 
-           (statbuf.st_mode & S_IXOTH);
+int	is_executable(const char *path)
+{
+	struct stat	statbuf;
+
+	if (stat(path, &statbuf) != 0)
+		return (0);
+	return (statbuf.st_mode & S_IXUSR) || (statbuf.st_mode & S_IXGRP)
+		|| (statbuf.st_mode & S_IXOTH);
 }
 
 char	*find_cmd(char *cmd)
@@ -36,37 +39,25 @@ char	*find_cmd(char *cmd)
 	int		j;
 	char	**path;
 
-	if (!access(cmd, X_OK) == 0)
+	cmd_path = cmd;
+	if (access(cmd_path, F_OK))
 	{
-		cmd_path = cmd;
 		path = get_path();
-		if (!path || !cmd)
+		if (!path || !cmd || !*cmd)
 			return (NULL);
 		j = 0;
-		if (!cmd[0])
-			return (NULL);
 		while (path[j] && access(cmd_path, X_OK))
 		{
 			cmd_path = ft_strjoin(path[j], cmd);
 			j++;
 		}
 		if (!path[j])
-		{
-			throw_error(ft_strjoin(cmd, ": command not found"));
-			return (NULL);
-		}
+			return (ft_strerror("command not found\n"), NULL);
 	}
-	else if (is_directory(cmd))
-	{
-		throw_error(ft_strjoin(cmd, ": is a directory"));
-		return (NULL);
-	}
-	else if (!is_executable(cmd))
-	{
-		throw_error(ft_strjoin(cmd, ": permission denied"));
-		return (NULL);
-	}
-
+	if (is_directory(cmd_path))
+		return (ft_strerror("is a directory\n"), NULL);
+	if (!is_executable(cmd_path))
+		return (ft_strerror("Permission denied\n"), NULL);
 	return (cmd_path);
 }
 
@@ -122,6 +113,7 @@ int	exec_child(char **args)
 	{
 		exit(SUCCESS);
 	}
+	var->curr_cmd = args[0];
 	path = find_cmd(args[0]);
 	if (!path)
 	{
@@ -202,8 +194,6 @@ int	pipex(t_list *head)
 		head = head->next;
 		i++;
 	}
-
-	
 	wait_for_it(-1, i);
 	var->child = false;
 	return (var->exit_s = WEXITSTATUS(var->exit_s), 0);

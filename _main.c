@@ -22,10 +22,40 @@ char *foo(char *str)
     return (str);
 }
 
+
+int is_directory(const char *path) {
+    struct stat statbuf;
+    if (stat(path, &statbuf) != 0)
+        return 0;
+    return S_ISDIR(statbuf.st_mode);
+}
+
+int is_executable(const char *path) {
+    struct stat statbuf;
+    if (stat(path, &statbuf) != 0)
+        return 0;
+    return (statbuf.st_mode & S_IXUSR) || 
+           (statbuf.st_mode & S_IXGRP) || 
+           (statbuf.st_mode & S_IXOTH);
+}
+
+
 int main(){
-    char *str = strdup("'hello' \"world\"");
-    char *new_str = foo(str);
-    printf("%s\n", new_str);
-    return 0;
+ if (access(NULL, X_OK) == 0)
+ {
+    printf("test is executable\n");
+ }
+ else
+ {
+    printf("test is not executable\n");
+ }
+ if (is_directory(NULL))
+ {
+    printf("test is directory\n");
+ }
+ else
+ {
+    printf("test is not directory\n");
+ }
     
 }

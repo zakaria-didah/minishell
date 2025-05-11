@@ -4,16 +4,14 @@ void	ft_strerror(char *s)
 {
 	size_t	len;
 	char	prefix[ft_strlen(var->curr_cmd) + 3];
-
 	len = ft_strlen(var->curr_cmd) + 3;
 	ft_strlcpy(prefix, var->curr_cmd, len);
 	ft_strlcat(prefix, ": ", len);
 	ft_putstr_fd(prefix, STDERR_FILENO);
 	if (s)
-	{
 		ft_putstr_fd(s, STDERR_FILENO);
-	}
-	ft_putendl_fd(strerror(errno), STDERR_FILENO);
+	else
+		ft_putendl_fd(strerror(errno), STDERR_FILENO);
 }
 
 void ft_error(char *s){

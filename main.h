@@ -183,6 +183,12 @@ char *get_ifs(void);
 char	**quet_remove(char **arg);
 char **check_wildcard(char **res);
 void	sep(unsigned int i, char *s);
+
+
+
+
+void	ft_strerror(char *s);
+void	ft_error(char *s);
 #endif
 
 
