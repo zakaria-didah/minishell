@@ -11,15 +11,22 @@ char	*get_prompt(void)
 
 	option = 0;
 	cwd = getcwd(NULL, 0);
-	if (!cwd)
+	if (cwd)
+	{
+		prompt = ft_strdup(cwd);
+		free(cwd);
+		cwd = ft_strrchr(prompt, '/')+1;
+	}else
 	{
 		option = TRUE;
 		cwd = ft_getenv("PWD");
+		if (!cwd){
+			cwd = ft_strdup("seriously");
+		}
 	}
-	prompt = ft_strrchr(cwd, '/') + 1;
-	prompt = ft_strjoin(prompt, "$> ");
-	if (!option)
-		free(cwd);
+	if (ft_strchr(cwd, '/'))
+		cwd = ft_strrchr(cwd, '/')+1;
+	prompt = ft_strjoin(cwd, "$> ");
 	return (prompt);
 }
 
@@ -35,28 +42,17 @@ void	add_slash_to_path(char **path)
 	}
 }
 
-void	sigpipe_handler(int sig)
-{
-	(void)sig;
-	write(STDERR_FILENO, "Broken pipe detected\n", 22);
-}
-
-// void setup_signals(void) {
-//     signal(SIGPIPE, sigpipe_handler);
-// 	signal(SIGINT, sigint_handler);
-// }
-
 int	init(char **env)
 {
-	// setup_signals();
 	ft_bzero(var, sizeof(t_var));
 	var->env = env;
 	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
 	if (tmp)
 		var->pwd = ft_strdup(tmp);
-	else
-		var->pwd = ft_getenv("PATH");
-	var->oldpwd = NULL;
+	else{
+		perror("minishell: error retrieving current directory");
+		var->pwd = ft_getenv("PWD");
+	}
 	return (0);
 }
 

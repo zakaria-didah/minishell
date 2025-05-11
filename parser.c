@@ -331,15 +331,19 @@ int	ft_pwd(char **argv)
 
 	if (argv[0])
 		return (throw_error("pwd: no options"), FAILURE);
-	pwd = ft_getenv("PWD");
-	if (!pwd)
+	fre = getcwd(NULL, 0);
+	if (fre)
 	{
-		fre = getcwd(NULL, 0);
 		pwd = ft_strdup(fre);
 		free(fre);
+		edit_env("PWD", pwd, FALSE);
 	}
-	if (!pwd)
-		return (perror("minishell: pwd"), FAILURE);
+	else
+	{
+		pwd = ft_getenv("PWD");
+		if (!pwd)
+			return (perror("minishell: pwd"), FAILURE);
+	}
 	ft_putendl_fd(pwd, STDOUT_FILENO);
 	return (SUCCESS);
 }

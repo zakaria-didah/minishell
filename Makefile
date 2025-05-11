@@ -4,7 +4,7 @@ SRC= main.c parser.c signals.c utiles.c exec.c echo.c \
 	wildcard.c
 OBJ= $(SRC:.c=.o)
 CC=gcc
-CFLAGS=  -g3 #-fsanitize=address 
+CFLAGS=  -g3 -fsanitize=address 
 LDFLAGS= -lreadline 
 lib= libft/libft.a
 NAME= minishell

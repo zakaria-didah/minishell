@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/11 19:49:16 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/11 22:41:37 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*ft_getenv(char *name)
 	size_t	len;
 
 	i = 0;
+	if (!var->env || !name)
+		return (NULL);
 	len = ft_strlen(name);
 	while (var->env[i])
 	{
@@ -84,7 +86,7 @@ int	ft_setenv(char *name, char *value)
 	if (!name)
 		return (FAILURE);
 	gc_mode(C_TRACK);
-	if (!ft_strchr(name, '='))
+	if (!ft_strchr(name, '=') && value)
 		name = ft_strjoin(name, "=");
 	i = 0;
 	len = ft_strlen(name);
