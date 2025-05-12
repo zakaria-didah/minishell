@@ -8,6 +8,9 @@ char	*handel_dollar(int *i, char *input)
 
 	start = 0;
 	start = (*i);
+	if (ft_isdigit(input[(*i)++])){
+		return NULL;
+	}
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
 	{
 		(*i)++;
@@ -81,7 +84,7 @@ char	*expand_vars(char *arg)
 			else
 				q = !q;
 		}
-		if (arg[i] == '$' && (arg[i + 1] && arg[i + 1] != '?'))
+		if (arg[i] == '$' && (arg[i + 1] && ft_isalnum(arg[i + 1])))
 		{
 			arg = expand_var(arg, &i);
 			if (q)

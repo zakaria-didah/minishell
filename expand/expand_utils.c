@@ -36,6 +36,11 @@ char	*get_ifs(void)
 	return (ft_strdup(ifs));
 }
 
+void swap_(char *s, int *quote, int i, int j){
+	*s = i;
+	*quote = j;
+}
+
 void	sep(unsigned int i, char *s)
 {
 	static int	quot = 0;
@@ -44,15 +49,9 @@ void	sep(unsigned int i, char *s)
 	if (*s == '\'')
 	{
 		if (quot == *s)
-		{
-			*s = SEP;
-			quot = 0;
-		}
+			swap_(s, &quot, SEP, 0);
 		else if (quot == 0)
-		{
-			quot = *s;
-			*s = SEP;
-		}
+			swap_(s, &quot, SEP, *s);
 	}
 	else if (*s == '"')
 	{

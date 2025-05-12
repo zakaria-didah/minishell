@@ -7,7 +7,7 @@ char	**get_path(void)
 
 	tmp = ft_getenv("PATH");
 	if (!tmp)
-		return (throw_error("PATH not found"), NULL);
+		return (ft_strerror("command not found\n"), NULL);
 	path = ft_split(tmp, ":");
 	add_slash_to_path(path);
 	return (path);
@@ -22,14 +22,14 @@ int	is_directory(const char *path)
 	return (S_ISDIR(statbuf.st_mode));
 }
 
-int	is_executable(const char *path)
+char *	absolute_path(char *cmd)
 {
-	struct stat	statbuf;
-
-	if (stat(path, &statbuf) != 0)
-		return (0);
-	return (statbuf.st_mode & S_IXUSR) || (statbuf.st_mode & S_IXGRP)
-		|| (statbuf.st_mode & S_IXOTH);
+	
+	if (access(cmd, F_OK | X_OK))
+		return (perror(cmd), NULL);
+	else if (is_directory(cmd))
+		return (ft_strerror("is a directory\n"), NULL);
+	return (cmd);
 }
 
 char	*find_cmd(char *cmd)
@@ -40,12 +40,7 @@ char	*find_cmd(char *cmd)
 
 	cmd_path = cmd;
 	if (ft_strchr(cmd_path, '/'))
-	{
-		if (access(cmd_path, F_OK | X_OK))
-			return (perror(cmd_path), NULL);
-		else if (is_directory(cmd_path))
-			return (ft_strerror("is a directory\n"), NULL);
-	}
+		return (absolute_path(cmd_path));
 	else
 	{
 		path = get_path();
@@ -62,9 +57,8 @@ char	*find_cmd(char *cmd)
 			}
 			j++;
 		}
-		return (ft_strerror("command not found\n"), NULL);
 	}
-	return (cmd_path);
+	return (ft_strerror("command not found\n"), NULL);
 }
 
 pid_t	fork_cmd(void)
