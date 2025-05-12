@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include "main.h"
@@ -25,7 +26,9 @@ void	parr(char **arr)
 
 int main(int ac, char **av, char **env)
 {
-    exit(-51);
+	uint64_t i = 9223372036854775807;
+	i+=5;
+	printf("%lu\n", i);
 
     
 }

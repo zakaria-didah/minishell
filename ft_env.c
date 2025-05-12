@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/11 22:41:37 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/12 19:15:47 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,17 @@ int	edit_env(char *name, char *value, t_bool APPEND)
 	return (gc_mode(0), FAILURE);
 }
 
+char *insert_env(char *name, char *value)
+{
+
+	if (!name || !value)
+		return (NULL);
+	if (!ft_strchr(name, '=') && value)
+		name = ft_strjoin(name, "=");
+	name = ft_strjoin(name, value);
+	return (name);
+}
+
 
 int	ft_setenv(char *name, char *value)
 {
@@ -86,15 +97,13 @@ int	ft_setenv(char *name, char *value)
 	if (!name)
 		return (FAILURE);
 	gc_mode(C_TRACK);
-	if (!ft_strchr(name, '=') && value)
-		name = ft_strjoin(name, "=");
 	i = 0;
 	len = ft_strlen(name);
 	while (var->env[i])
 	{
 		if (ft_memcmp(var->env[i], name, len) == 0)
 		{
-			var->env[i] = ft_strjoin(name, value);
+			var->env[i] = insert_env(name, value);
 			return (gc_mode(0), SUCCESS);
 		}
 		i++;

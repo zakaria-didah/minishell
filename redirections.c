@@ -21,12 +21,13 @@ int	redirect(t_list *head)
 	t_cmd	*cmd;
 
 	cmd = (t_cmd *)head->content;
-	if (cmd->out) 
-		if (red_out(cmd->out) < 0)
-			return -1;
 	if (cmd->in)
 		if(red_in(cmd->in)<0)
 			return -1;
+	if (cmd->out) 
+		if (red_out(cmd->out) < 0)
+			return -1;
+	return SUCCESS;
 }
 
 t_red	*new_red(char *file, token_type type)
@@ -45,6 +46,8 @@ int	red_out(t_list *head)
 	while(head)
 	{
 		t_red *red = (t_red *)head->content;
+		if (!red->file)
+			return throw_error("ambiguous redirect"), -1;
 		fd = open_file(red->file, red->type);
 		if (fd < 0)
 			return fd;
@@ -52,6 +55,7 @@ int	red_out(t_list *head)
 		close(fd);
 		head = head->next;
 	}
+	return SUCCESS;
 	
 }
 
@@ -62,6 +66,8 @@ int	red_in(t_list *head)
 	while(head)
 	{
 		t_red *red = (t_red *)head->content;
+		if (!red->file)
+			return throw_error("ambiguous redirect"), -1;
 		fd = open_file(red->file, RED_IN);
 		if (fd < 0)
 			return fd;
@@ -69,6 +75,7 @@ int	red_in(t_list *head)
 		close(fd);
 		head = head->next;
 	}
+	return SUCCESS;
 }
 
 int red_builtin(t_list *head)
@@ -91,5 +98,6 @@ int red_builtin(t_list *head)
 		close(fd);
 		close(fd2);
 	}
+	return SUCCESS;
 	
 }

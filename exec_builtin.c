@@ -5,7 +5,7 @@ bool	exec_builtin(t_list *cmdlst)
 {
 	t_builtins	builtin[] = {{"cd", ft_cd}, {"echo", ft_echo}, {"export",
 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-			{"pwd", ft_pwd}, {NULL}};
+			{"pwd", ft_pwd}, {NULL, NULL}};
 	char		*cmd;
 	int			i;
 	size_t		len;

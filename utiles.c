@@ -1,4 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utiles.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/12 22:14:02 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/12 22:16:24 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
+#include <stdint.h>
 
 void	cleanup(void *ptr)
 {
@@ -24,26 +37,26 @@ bool	is_balanced(char *input)
 	while (input[i])
 	{
 		if (input[i] == '"' && (!j || stack[j - 1] == '"'))
-		{
 			stack[j++] = '"';
-		}
 		else if (input[i] == '\'' && (!j || stack[j - 1] == '\''))
-		{
 			stack[j++] = '\'';
-		}
 		if (j >= 2 && ((stack[j - 1] == '\'' && stack[j - 2] == '\'')
 				|| (stack[j - 1] == '"' && stack[j - 2] == '"')))
-			stack[j -= 2] = 0;
+		{
+			j -= 2;
+			stack[j] = 0;
+		}
 		i++;
 	}
 	return (j == 0);
 }
 
-int32_t	ft_atos(char *num)
+uint64_t	ft_atos(char *num)
 {
-	int		i;
-	int32_t	res;
-	int 	sign;
+	int			i;
+	uint64_t	res;
+	int			sign;
+
 	sign = 1;
 	if (num[0] == '-')
 	{
@@ -52,20 +65,21 @@ int32_t	ft_atos(char *num)
 	}
 	else if (num[0] == '+')
 		num++;
-
 	i = 0;
 	res = 0;
 	while (num[i] >= '0' && num[i] <= '9' && num[i])
 	{
 		res = (res * 10) + (num[i] - 48);
-		if (res > LONG_MAX)
-			return (int32_t)(__INT32_MAX__);
+		if (res > LONG_MAX && sign == 1)
+			return (UINT64_MAX);
+		else if (res > (uint64_t)LONG_MAX + 1 && sign == -1)
+			return (UINT64_MAX);
 		i++;
 	}
 	return (res * sign);
 }
 
-bool is_numeric(char *str)
+bool	is_numeric(char *str)
 {
 	int	i;
 
@@ -75,37 +89,39 @@ bool is_numeric(char *str)
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
-			return (true);
+			return (false);
 		i++;
 	}
-	return (false);
+	return (true);
 }
 
 int	ft_exit(char **args)
 {
-	int32_t	status;
-	char	*arg;
+	uint64_t	status;
+	char		*arg;
 
-	status = 0;
+	status = var->exit_s;
 	if (args && args[0])
 	{
 		arg = args[0];
-		if (!is_numeric(arg)){
-			printf("exit: %s: numeric argument required\n", arg);
-			exit(FAILURE);
-		}
 		if (ft_arrlen(args) > 1)
-			return (throw_error("exit: too many arguments\n"), ERROR);
-		status = ft_atos(arg);
-		if (status > (int32_t)LONG_MAX)
+			return (throw_error("exit: too many arguments"), ERROR);
+		if (!is_numeric(arg))
 		{
 			printf("exit: %s: numeric argument required\n", arg);
-			exit(FAILURE);
+			status = FAILURE;
+		}
+		status = ft_atos(arg);
+		if (status == UINT64_MAX)
+		{
+			printf("exit: %s: numeric argument required\n", arg);
+			status = FAILURE;
 		}
 	}
 	if (isatty(STDIN_FILENO))
 		ft_putendl_fd("exit", STDERR_FILENO);
-	return (rl_clear_history(), ft_free(), exit(status), TRUE);
+	return (rl_clear_history(), ft_free(), red_builtin(NULL), exit(status),
+		TRUE);
 }
 
 char	*join_args(char **args)

@@ -34,7 +34,6 @@ int	is_executable(const char *path)
 
 char	*find_cmd(char *cmd)
 {
-	int		i;
 	char	*cmd_path;
 	int		j;
 	char	**path;
@@ -53,10 +52,11 @@ char	*find_cmd(char *cmd)
 		if (!path || !cmd || !*cmd)
 			return (NULL);
 		j = 0;
-		while (path[j] )
+		while (path[j])
 		{
 			cmd_path = ft_strjoin(path[j], cmd);
-			if (access(cmd_path, F_OK | X_OK) == 0){
+			if (access(cmd_path, F_OK | X_OK) == 0)
+			{
 				if (!is_directory(cmd_path))
 					return (cmd_path);
 			}
@@ -70,7 +70,6 @@ char	*find_cmd(char *cmd)
 pid_t	fork_cmd(void)
 {
 	pid_t	pid;
-	int		stat;
 
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
@@ -133,8 +132,6 @@ int	exec_child(char **args)
 pid_t	exec_cmd(t_list *cmd)
 {
 	pid_t	pid;
-	int		stat;
-	char	*path;
 
 	pid = fork_cmd();
 	if (pid == -1)
@@ -147,8 +144,7 @@ pid_t	exec_cmd(t_list *cmd)
 	}
 	else
 		wait_for_it(pid, 1);
-	var->child = false;
-	return (var->exit_s = WEXITSTATUS(var->exit_s), pid);
+	return (pid);
 }
 
 void	pipe_it(int prev_fd, t_list *head, int fd[2])
@@ -200,24 +196,18 @@ int	pipex(t_list *head)
 		head = head->next;
 		i++;
 	}
-	wait_for_it(-1, i);
-	var->child = false;
-	return (var->exit_s = WEXITSTATUS(var->exit_s), 0);
+	return (wait_for_it(-1, i), 0);
 }
 
 void	execute(t_list *cmd_lst)
 {
-	pid_t	pid;
-
 	if (ft_lstsize(cmd_lst) > 1)
 		pipex(cmd_lst);
 	else
 	{
 		if (!exec_builtin(cmd_lst))
 		{
-			pid = exec_cmd(cmd_lst);
-			if (pid < 0)
-				; // handel exit here...
+			exec_cmd(cmd_lst);
 		}
 	}
 }

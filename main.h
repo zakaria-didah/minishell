@@ -13,6 +13,7 @@
 # include <signal.h>
 # include <stdbool.h>
 # include <stdio.h>
+# include <stdint.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/stat.h>
@@ -130,7 +131,7 @@ typedef struct s_cmd
 //......utiles......
 char	**split_(const char *s);
 bool	is_balanced(char *input);
-int32_t	ft_atos(char *num);
+uint64_t	ft_atos(char *num);
 int	ft_exit(char **args);
 char	*get_prompt(void);
 int	ft_cd(char **args);
@@ -187,6 +188,9 @@ void	sep(unsigned int i, char *s);
 void	wait_for_it(pid_t pid, int count);
 void	ft_strerror(char *s);
 void	ft_error(char *s);
+
+
+t_list	*tokenize(char *input);
 #endif
 
 

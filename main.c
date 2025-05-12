@@ -15,17 +15,19 @@ char	*get_prompt(void)
 	{
 		prompt = ft_strdup(cwd);
 		free(cwd);
-		cwd = ft_strrchr(prompt, '/')+1;
-	}else
+		cwd = ft_strrchr(prompt, '/') + 1;
+	}
+	else
 	{
 		option = TRUE;
 		cwd = ft_getenv("PWD");
-		if (!cwd){
+		if (!cwd)
+		{
 			cwd = ft_strdup("seriously");
 		}
 	}
 	if (ft_strchr(cwd, '/'))
-		cwd = ft_strrchr(cwd, '/')+1;
+		cwd = ft_strrchr(cwd, '/') + 1;
 	prompt = ft_strjoin(cwd, "$> ");
 	return (prompt);
 }
@@ -47,9 +49,12 @@ int	init(char **env)
 	ft_bzero(var, sizeof(t_var));
 	var->env = env;
 	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
-	if (tmp)
+	if (tmp){
+		ft_setenv("PWD", tmp);
 		var->pwd = ft_strdup(tmp);
-	else{
+	}
+	else
+	{
 		perror("minishell: error retrieving current directory");
 		var->pwd = ft_getenv("PWD");
 	}
@@ -59,10 +64,10 @@ int	init(char **env)
 int	main(int ac, char **av, char **env)
 {
 	char	*line;
+	(void)av;
 
 	if (ac != 1)
-		return (ft_putendl_fd("minishell: no arguments", STDERR_FILENO),
-			FAILURE);
+		return (ft_putendl_fd("minishell: no arguments", 2), FAILURE);
 	var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
 	line = NULL;

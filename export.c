@@ -28,7 +28,7 @@ int	export_append(char *arg, int i)
 	if (arg[i] == '=')
 		i++;
 	else
-		return (throw_error("there is an invalid identifier\n"), ERROR);
+		return (throw_error("there is an invalid identifier"), ERROR);
 	value = arg + i;
 	old = ft_getenv(name);
 	if (old)
@@ -64,7 +64,6 @@ int	export_asign(char *arg, int i)
 int print_vars(void)
 {
 	int		i;
-	char	**env;
 
 	i = 0;
 	while (var->env[i])
@@ -75,11 +74,24 @@ int print_vars(void)
 	return (SUCCESS);
 }
 
+char *name_of_var(char *arg, int *i)
+{
+	char	*name;
+
+	if (ft_isdigit(arg[*i]))
+		return NULL;
+	while (arg[*i] && ft_isalnum(arg[*i]))
+		(*i)++;
+	name = ft_substr(arg, 0, *i);
+	if (!name[0])
+		return (NULL);
+	return (name);
+}
+
 int	ft_export(char **args)
 {
 	int	i;
 	int	j;
-	static char **unsigned_env;
 
 	i = 0;
 	j = 0;
@@ -89,10 +101,10 @@ int	ft_export(char **args)
 	}
 	while (args[i])
 	{
-		while ((args[i][j] &&!ft_isdigit(args[i][0])) && ft_isalnum(args[i][j]))
-			j++;
+		if (!name_of_var(args[i], &j))
+			return (throw_error("there is an invalid identifier"), ERROR);
 		if (args[i][j] == '+')
-			export_append(args[i], j++);
+			export_append(args[i], ++j);
 		else 
 			export_asign(args[i], j);
 		j = 0;

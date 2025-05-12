@@ -48,96 +48,6 @@ void	parr(char **arr)
 	}
 }
 
-/*
-A func to tokenize the input.
-*/
-
-void	handel_redin(char *input, int *i, t_token *token)
-{
-	if (input[*i + 1] && input[*i + 1] == '<')
-	{
-		token->type = HDOC;
-		token->value = ft_strdup("<<");
-		(*i) += 2;
-	}
-	else
-	{
-		token->type = RED_IN;
-		token->value = ft_strdup("<");
-		(*i)++;
-	}
-}
-
-void	handel_redout(char *input, int *i, t_token *token)
-{
-	if (input[*i + 1] && input[*i + 1] == '>')
-	{
-		token->type = APPEND;
-		token->value = ft_strdup(">>");
-		(*i) += 2;
-	}
-	else
-	{
-		token->type = RED_OUT;
-		token->value = ft_strdup(">");
-		(*i)++;
-	}
-}
-
-void	handel_word(char *input, int *i, t_token *token)
-{
-	int		start;
-	char	quot;
-
-	start = *i;
-	while (input[*i] && !ft_strchr("\t\n |<>", input[*i]))
-	{
-		if (input[*i] == '\'' || input[*i] == '"')
-		{
-			quot = input[*i];
-			(*i)++;
-			while (input[*i] != quot)
-				(*i)++;
-		}
-		(*i)++;
-	}
-	token->type = WORD;
-	token->value = ft_substr(input, start, *i - start);
-}
-
-t_list	*tokenize(char *input)
-{
-	t_token	*token;
-	t_list	*head;
-	int		i;
-
-	head = NULL;
-	i = 0;
-	while (input[i])
-	{
-		while (ft_isspace(input[i]))
-			i++;
-		token = ft_calloc(sizeof(t_token), C_ARENA);
-		if (input[i] == '|')
-		{
-			token->type = PIPE;
-			i++;
-		}
-		else if (input[i] == '<')
-			handel_redin(input, &i, token);
-		else if (input[i] == '>')
-			handel_redout(input, &i, token);
-		else
-			handel_word(input, &i, token);
-		ft_lstadd_back(&head, ft_lstnew(token));
-	}
-	return (head);
-}
-
-/*
-A func to parse the input
-*/
-
 int	parse_redin(t_list **tokens, t_cmd *cmd)
 {
 	t_token	*token;
@@ -151,7 +61,7 @@ int	parse_redin(t_list **tokens, t_cmd *cmd)
 		{
 			tmp = expand(token->value);
 			if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
-				return (throw_error("ambiguous redirect"), false);
+				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(NULL, RED_IN)));
 			else
 			{
 				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(tmp[0], RED_IN)));
@@ -162,6 +72,7 @@ int	parse_redin(t_list **tokens, t_cmd *cmd)
 	}
 	else
 		return (throw_error(NULL), false);
+	return (true);
 }
 
 int	parse_redout(t_list **tokens, t_cmd *cmd)
@@ -176,8 +87,8 @@ int	parse_redout(t_list **tokens, t_cmd *cmd)
 		if (token->type == WORD)
 		{
 			tmp = expand(token->value);
-			if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
-				return (throw_error("ambiguous redirect"), false);
+			if (ft_arrlen(tmp) > 1 || (!tmp[0] || !tmp[0][0]))
+				ft_lstadd_back(&cmd->out, ft_lstnew(new_red(NULL, RED_OUT)));
 			else
 				ft_lstadd_back(&cmd->out, ft_lstnew(new_red(tmp[0], RED_OUT)));
 		}
@@ -206,7 +117,7 @@ int	parse_append(t_list **tokens, t_cmd *cmd)
 		{
 			tmp = expand(token->value);
 			if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
-				return (throw_error("ambiguous redirect"), false);
+				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(NULL, RED_IN)));
 			else
 				ft_lstadd_back(&cmd->out, ft_lstnew(new_red(tmp[0], APPEND)));
 		}
@@ -253,11 +164,15 @@ int	parse_(t_list **tokens, t_cmd *cmd)
 	if (token->type == WORD)
 		cmd->args = ft_arrjoin(cmd->args, expand(token->value));
 	else if (token->type == RED_IN)
+	{
 		if (!parse_redin(tokens, cmd))
 			return (false);
+	}
 	else if (token->type == RED_OUT)
+	{
 		if (!parse_redout(tokens, cmd))
 			return (false);
+	}
 	else if (token->type == APPEND)
 	{
 		if (!parse_append(tokens, cmd))
@@ -268,14 +183,11 @@ int	parse_(t_list **tokens, t_cmd *cmd)
 		if (!parse_heredoc(tokens, cmd))
 			return (false);
 	}
-	if (token->type == PIPE && check_next_pipe(*tokens) == ERROR)
-		return (false);
 	return (true);
 }
 
 t_list	*parse(t_list *tokens)
 {
-	t_token	*token;
 	t_cmd	*cmd;
 	t_list	*cmd_lst;
 
@@ -283,13 +195,14 @@ t_list	*parse(t_list *tokens)
 	while (tokens)
 	{
 		cmd = ft_calloc(sizeof(t_cmd), C_ARENA);
-		token = tokens->content;
-		while (tokens && token)
+		while (tokens && (t_token *)tokens->content)
 		{
-			token = tokens->content;
 			if (!parse_(&tokens, cmd))
 				return (NULL);
-			if (token->type == PIPE)
+			if (((t_token *)tokens->content)->type == PIPE
+				&& check_next_pipe(tokens))
+				return (NULL);
+			if (((t_token *)tokens->content)->type == PIPE)
 			{
 				tokens = tokens->next;
 				if (!cmd->args && !cmd->in && !cmd->out)
@@ -350,23 +263,18 @@ int	ft_pwd(char **argv)
 
 int	pass_the_input(char *line)
 {
-	int		i;
-	int		res;
 	t_list	*head;
 	t_list	*cmd_lst;
-	char	*l;
 
 	line = ft_strtrim(line, " ");
 	if (!*line)
 		return (var->exit_s = SUCCESS);
 	if (!is_balanced(line))
 		return (throw_error(NULL), var->exit_s = FAILURE);
-	i = 0;
 	head = tokenize(line);
 	cmd_lst = parse(head);
-	// pl(cmd_lst, 1);
 	if (!cmd_lst)
-		return (FAILURE);
+		return (var->exit_s = FAILURE);
 	execute(cmd_lst);
 	return (0);
 }

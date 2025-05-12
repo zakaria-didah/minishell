@@ -39,6 +39,7 @@ char	*get_ifs(void)
 void	sep(unsigned int i, char *s)
 {
 	static int	quot = 0;
+	(void)i;
 
 	if (*s == '\'')
 	{

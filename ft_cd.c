@@ -1,37 +1,44 @@
 #include "main.h"
 
+char	*check_path(char **args)
+{
+	char	*path;
+
+	path = NULL;
+	if (ft_arrlen(args) > 1)
+		return (ft_strerror("too many arguments\n"), NULL);
+	if (args && args[0])
+		path = args[0];
+	else
+		return (throw_error("cd: [relative or absolute path]"), NULL);
+	return (path);
+}
 
 int	ft_cd(char **args)
 {
 	char	*path;
-	char	*home;
-	int		stat;
 
 	__attribute__((cleanup(cleanup))) char *tmp;
-	stat = 0;
 	tmp = NULL;
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
-		(perror("getcwd"), var->oldpwd = var->pwd, ERROR);
-	else{
-	var->oldpwd = ft_strdup(tmp);
-	free(tmp);
-	tmp = NULL;
-	}
-	if (ft_arrlen(args) > 1)
-		return (ft_strerror("too many arguments\n"), ERROR);
-	if (args && args[0])
-		path = args[0];
+		(perror("getcwd"), var->oldpwd = var->pwd);
 	else
-		return (throw_error("cd: [relative or absolute path]"), ERROR);
+	{
+		var->oldpwd = ft_strdup(tmp);
+		free(tmp);
+		tmp = NULL;
+	}
+	path = check_path(args);
+	if (!path)
+		return (ERROR);
 	if (chdir(path))
 		return (perror("minishell: cd"), ERROR);
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
-		(perror("cd: error retrieving current directory"), ERROR);
+		(perror("cd: error retrieving current directory"));
 	else
 		var->pwd = ft_strdup(tmp);
 	ft_setenv("OLDPWD", var->oldpwd);
-	ft_setenv("PWD", var->pwd);
-	return ( SUCCESS);
+	return (ft_setenv("PWD", var->pwd), SUCCESS);
 }
