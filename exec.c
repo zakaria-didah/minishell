@@ -1,65 +1,5 @@
 #include "main.h"
 
-char	**get_path(void)
-{
-	char	**path;
-	char	*tmp;
-
-	tmp = ft_getenv("PATH");
-	if (!tmp)
-		return (ft_strerror("command not found\n"), NULL);
-	path = ft_split(tmp, ":");
-	add_slash_to_path(path);
-	return (path);
-}
-
-int	is_directory(const char *path)
-{
-	struct stat	statbuf;
-
-	if (stat(path, &statbuf) != 0)
-		return (0);
-	return (S_ISDIR(statbuf.st_mode));
-}
-
-char	*absolute_path(char *cmd)
-{
-	if (access(cmd, F_OK | X_OK))
-		return (perror(cmd), NULL);
-	else if (is_directory(cmd))
-		return (ft_strerror("is a directory\n"),var->exit_s = 126, NULL);
-	return (cmd);
-}
-
-char	*find_cmd(char *cmd)
-{
-	char	*cmd_path;
-	int		j;
-	char	**path;
-
-	cmd_path = cmd;
-	if (ft_strchr(cmd_path, '/'))
-		return (absolute_path(cmd_path));
-	else
-	{
-		path = get_path();
-		if (!path || !cmd || !*cmd)
-			return (NULL);
-		j = 0;
-		while (path[j])
-		{
-			cmd_path = ft_strjoin(path[j], cmd);
-			if (access(cmd_path, F_OK | X_OK) == 0)
-			{
-				if (!is_directory(cmd_path))
-					return (cmd_path);
-			}
-			j++;
-		}
-	}
-	return (ft_strerror("command not found\n"), var->exit_s = 127, NULL);
-}
-
 pid_t	fork_cmd(void)
 {
 	pid_t	pid;
@@ -76,34 +16,6 @@ pid_t	fork_cmd(void)
 	}
 	var->child = true;
 	return (pid);
-}
-
-void	wait_for_it(pid_t pid, pid_t lastpid, int count)
-{
-	int		i;
-	pid_t	res;
-	int		stat;
-
-	i = 0;
-	while (i < count)
-	{
-		res = waitpid(pid, &stat, 0);
-		if (res == lastpid)
-		{
-			if (WIFEXITED(stat))
-				var->exit_s = WEXITSTATUS(stat);
-			else if (WIFSIGNALED(stat))
-				var->exit_s = WTERMSIG(stat) + 128;
-			else
-				var->exit_s = ERROR;
-		}
-		i++;
-	}
-	var->child = false;
-	if (var->exit_s == 130)
-		write(1, "\n", 1);
-	else if (var->exit_s == 131)
-		write(1, "Quit (core dumped)\n", 20);
 }
 
 int	exec_child(char **args)
@@ -142,58 +54,6 @@ pid_t	exec_cmd(t_list *cmd)
 	else
 		wait_for_it(pid, pid, 1);
 	return (pid);
-}
-
-void	pipe_it(int prev_fd, t_list *head, int fd[2])
-{
-	if (prev_fd != -1)
-	{
-		dup2(prev_fd, STDIN_FILENO);
-		close(prev_fd);
-	}
-	if (head->next)
-	{
-		close(fd[0]);
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
-	}
-	if (redirect(head) < 0)
-		exit(ERROR);
-	if (!exec_builtin(head))
-		exec_child(((t_cmd *)head->content)->args);
-	else
-		exit(var->exit_s);
-}
-
-int	pipex(t_list *head)
-{
-	int		fd[2];
-	int		prev_fd;
-	pid_t	pid;
-	int		i;
-
-	prev_fd = -1;
-	i = 0;
-	while (head)
-	{
-		if (head->next && pipe(fd) < 0)
-			return (perror("pipe"), -1);
-		pid = fork_cmd();
-		if (pid < 0)
-			return (var->exit_s = -1, -1);
-		else if (pid == 0)
-			pipe_it(prev_fd, head, fd);
-		if (prev_fd != -1)
-			close(prev_fd);
-		if (head->next)
-		{
-			close(fd[1]);
-			prev_fd = fd[0];
-		}
-		head = head->next;
-		i++;
-	}
-	return (wait_for_it(-1, pid, i), 0);
 }
 
 void	execute(t_list *cmd_lst)

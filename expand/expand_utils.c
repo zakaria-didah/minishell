@@ -49,15 +49,9 @@ void	sep(unsigned int i, char *s)
 	if (*s == '\'')
 	{
 		if (quot == *s)
-		{
-			*s = SEP;
-			quot = 0;
-		}
+			swap_(s, quot, SEP, 0);
 		else if (quot == 0)
-		{
-			quot = *s;
-			*s = SEP;
-		}
+			swap_(s, quot, SEP, *s);
 	}
 	else if (*s == '"')
 	{

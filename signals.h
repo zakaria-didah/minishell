@@ -14,6 +14,6 @@ void	disable_echoctl(void);
 void	default_signal(void);
 void	sigquit_handler(int sig);
 void	handler(int sig);
-
+void	sig_heredoc(int sig);
 #endif
 

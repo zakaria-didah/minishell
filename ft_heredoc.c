@@ -55,13 +55,7 @@ int	is_quoted(char *input)
 	return (0);
 }
 
-void	sig_heredoc(int sig)
-{
-	(void)sig;
-	var->hdoc = 130;
-	var->exit_s = 130;
-	close(STDIN_FILENO);
-}
+
 
 void read_heredoc(int fd, char *delemiter, bool expand)
 {

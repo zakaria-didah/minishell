@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/13 19:25:25 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 00:39:36 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,35 +112,3 @@ int	ft_setenv(char *name, char *value)
 	return (gc_mode(0), SUCCESS);
 }
 
-int	ft_unset(char **args)
-{
-	int		i;
-	int		j;
-	int		f;
-	char	*tmp;
-
-	i = 0;
-	tmp = NULL;
-	j = 0;
-	while (args[i])
-	{
-		while (var->env[j])
-		{
-			tmp = ft_substr(var->env[j], 0, ft_strlen(args[i]));
-			if (!ft_strncmp(tmp, args[i], ft_strlen(args[i])))
-			{
-				while (var->env[j])
-				{
-					f = j;
-					var->env[j] = var->env[j + 1];
-					j++;
-				}
-				break ;
-			}
-			j++;
-		}
-		i++;
-		j = 0;
-	}
-	return (SUCCESS);
-}

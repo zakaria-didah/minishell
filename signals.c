@@ -17,11 +17,10 @@ void	default_signal(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	off_echoctl(void)
+void	sig_heredoc(int sig)
 {
-	struct termios	new_term;
-
-	tcgetattr(STDOUT_FILENO, &new_term);
-	new_term.c_lflag &= (~ECHOCTL);
-	tcsetattr(STDOUT_FILENO, TCSANOW, &new_term);
+	(void)sig;
+	var->hdoc = 130;
+	var->exit_s = 130;
+	close(STDIN_FILENO);
 }

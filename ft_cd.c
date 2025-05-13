@@ -14,6 +14,31 @@ char	*check_path(char **args)
 	return (path);
 }
 
+
+int	ft_pwd(char **argv)
+{
+	char	*pwd;
+	char	*fre;
+
+	if (argv[0])
+		return (throw_error("pwd: no options"), FAILURE);
+	fre = getcwd(NULL, 0);
+	if (fre)
+	{
+		pwd = ft_strdup(fre);
+		free(fre);
+		edit_env("PWD", pwd, FALSE);
+	}
+	else
+	{
+		pwd = ft_getenv("PWD");
+		if (!pwd)
+			return (perror("minishell: pwd"), FAILURE);
+	}
+	ft_putendl_fd(pwd, STDOUT_FILENO);
+	return (SUCCESS);
+}
+
 int	ft_cd(char **args)
 {
 	char	*path;

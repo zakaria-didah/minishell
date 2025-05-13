@@ -61,19 +61,6 @@ int	export_asign(char *arg, int i)
 	return (SUCCESS);
 }
 
-int print_vars(void)
-{
-	int		i;
-
-	i = 0;
-	while (var->env[i])
-	{
-		ft_putendl_fd(var->env[i], STDOUT_FILENO);
-        i++;
-	}
-	return (SUCCESS);
-}
-
 char *name_of_var(char *arg, int *i)
 {
 	char	*name;
@@ -97,7 +84,8 @@ int	ft_export(char **args)
 	j = 0;
 	if (!args || !args[0])
 	{
-		return (print_vars());
+		ft_putstr_fd("export: not enough arguments\n", 2);
+		return (SUCCESS);
 	}
 	while (args[i])
 	{
