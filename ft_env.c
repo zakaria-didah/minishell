@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/12 19:15:47 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/13 19:25:25 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	ft_env(char **args)
 		}
 		i++;
 	}
-	return (TRUE);
+	return (SUCCESS);
 }
 
 int	edit_env(char *name, char *value, t_bool APPEND)

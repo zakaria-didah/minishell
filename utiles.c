@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:14:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/12 22:16:24 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/13 19:22:20 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,13 +106,13 @@ int	ft_exit(char **args)
 		arg = args[0];
 		if (ft_arrlen(args) > 1)
 			return (throw_error("exit: too many arguments"), ERROR);
-		if (!is_numeric(arg))
+		status = ft_atos(arg);
+		if (status == UINT64_MAX)
 		{
 			printf("exit: %s: numeric argument required\n", arg);
 			status = FAILURE;
 		}
-		status = ft_atos(arg);
-		if (status == UINT64_MAX)
+		if (!is_numeric(arg))
 		{
 			printf("exit: %s: numeric argument required\n", arg);
 			status = FAILURE;

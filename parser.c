@@ -223,8 +223,8 @@ int	check_next_pipe(t_list *head)
 	if (head->next)
 	{
 		tok = head->next->content;
-		if (!(tok->type == WORD || tok->type == DOLLAR || tok->type == DQUOTE
-				|| tok->type == SQUOTE))
+		if (!(tok->type == WORD || tok->type == RED_IN || tok->type == RED_OUT
+				|| tok->type == APPEND || tok->type == HDOC))
 		{
 			return (throw_error("syntax error near unexpected token `|'"),
 				ERROR);

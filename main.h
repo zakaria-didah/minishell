@@ -185,7 +185,7 @@ char	**quet_remove(char **arg);
 char	**check_wildcard(char **res);
 void	sep(unsigned int i, char *s);
 
-void	wait_for_it(pid_t pid, int count);
+void	wait_for_it(pid_t pid, pid_t lastpid ,int count);
 void	ft_strerror(char *s);
 void	ft_error(char *s);
 

@@ -57,8 +57,10 @@ char	*expand_var(char *arg, int *i)
 
 	start = ++(*i);
 	expande = handel_dollar(i, arg);
-	if (expande)
+	if (expande){
 		arg = ft_strinsert(arg, expande, start, *i);
+		*i = (start-1) + ft_strlen(expande)-1;
+	}
 	else
 	{
 		ft_bzero(arg + start - 1, *i - start + 1);

@@ -22,13 +22,12 @@ int	is_directory(const char *path)
 	return (S_ISDIR(statbuf.st_mode));
 }
 
-char *	absolute_path(char *cmd)
+char	*absolute_path(char *cmd)
 {
-	
 	if (access(cmd, F_OK | X_OK))
 		return (perror(cmd), NULL);
 	else if (is_directory(cmd))
-		return (ft_strerror("is a directory\n"), NULL);
+		return (ft_strerror("is a directory\n"),var->exit_s = 126, NULL);
 	return (cmd);
 }
 
@@ -58,7 +57,7 @@ char	*find_cmd(char *cmd)
 			j++;
 		}
 	}
-	return (ft_strerror("command not found\n"), NULL);
+	return (ft_strerror("command not found\n"), var->exit_s = 127, NULL);
 }
 
 pid_t	fork_cmd(void)
@@ -79,22 +78,25 @@ pid_t	fork_cmd(void)
 	return (pid);
 }
 
-void	wait_for_it(pid_t pid, int count)
+void	wait_for_it(pid_t pid, pid_t lastpid, int count)
 {
-	int	i;
+	int		i;
+	pid_t	res;
+	int		stat;
 
 	i = 0;
 	while (i < count)
 	{
-		waitpid(pid, &var->exit_s, 0);
-		if (WIFEXITED(var->exit_s))
-			var->exit_s = WEXITSTATUS(var->exit_s);
-		else if (WIFSIGNALED(var->exit_s))
-			var->exit_s = WTERMSIG(var->exit_s) + 128;
-		else if (WIFSTOPPED(var->exit_s))
-			var->exit_s = WSTOPSIG(var->exit_s);
-		else
-			var->exit_s = ERROR;
+		res = waitpid(pid, &stat, 0);
+		if (res == lastpid)
+		{
+			if (WIFEXITED(stat))
+				var->exit_s = WEXITSTATUS(stat);
+			else if (WIFSIGNALED(stat))
+				var->exit_s = WTERMSIG(stat) + 128;
+			else
+				var->exit_s = ERROR;
+		}
 		i++;
 	}
 	var->child = false;
@@ -108,7 +110,7 @@ int	exec_child(char **args)
 {
 	char	*path;
 
-	if (!args[0])
+	if (!args || !args[0])
 	{
 		exit(SUCCESS);
 	}
@@ -116,10 +118,11 @@ int	exec_child(char **args)
 	path = find_cmd(args[0]);
 	if (!path)
 	{
-		exit(127);
+		exit(var->exit_s);
 	}
 	execve(path, args, var->env);
 	ft_putendl_fd("shit happend", 2);
+	perror(path);
 	exit(errno);
 }
 
@@ -137,7 +140,7 @@ pid_t	exec_cmd(t_list *cmd)
 		exec_child(((t_cmd *)cmd->content)->args);
 	}
 	else
-		wait_for_it(pid, 1);
+		wait_for_it(pid, pid, 1);
 	return (pid);
 }
 
@@ -159,14 +162,14 @@ void	pipe_it(int prev_fd, t_list *head, int fd[2])
 	if (!exec_builtin(head))
 		exec_child(((t_cmd *)head->content)->args);
 	else
-		exit(0);
+		exit(var->exit_s);
 }
 
 int	pipex(t_list *head)
 {
 	int		fd[2];
 	int		prev_fd;
-	pid_t	pid[ft_lstsize(head)];
+	pid_t	pid;
 	int		i;
 
 	prev_fd = -1;
@@ -175,10 +178,10 @@ int	pipex(t_list *head)
 	{
 		if (head->next && pipe(fd) < 0)
 			return (perror("pipe"), -1);
-		pid[i] = fork_cmd();
-		if (pid[i] < 0)
+		pid = fork_cmd();
+		if (pid < 0)
 			return (var->exit_s = -1, -1);
-		else if (pid[i] == 0)
+		else if (pid == 0)
 			pipe_it(prev_fd, head, fd);
 		if (prev_fd != -1)
 			close(prev_fd);
@@ -190,7 +193,7 @@ int	pipex(t_list *head)
 		head = head->next;
 		i++;
 	}
-	return (wait_for_it(-1, i), 0);
+	return (wait_for_it(-1, pid, i), 0);
 }
 
 void	execute(t_list *cmd_lst)

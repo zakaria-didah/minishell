@@ -4,18 +4,19 @@ t_builtins	*get_builtin(void)
 {
 	static t_builtins	builtin[] = {{"cd", ft_cd}, {"pwd", ft_pwd}, {"export",
 			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-			{NULL, NULL}};
+			{"echo", ft_echo}, {NULL, NULL}};
 
 	return (builtin);
 }
 
 bool	exec_builtin(t_list *cmdlst)
 {
-	t_builtins	*builtin = get_builtin();
+	t_builtins	*builtin;
 	char		*cmd;
 	int			i;
 	size_t		len;
 
+	builtin = get_builtin();
 	i = 0;
 	if (!((t_cmd *)cmdlst->content)->args)
 		return (false);

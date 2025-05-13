@@ -107,5 +107,5 @@ char	*heredoc(char *delemiter)
 		(signal(SIGINT, sig_heredoc), signal(SIGQUIT, SIG_IGN));
 		read_heredoc(fd, delemiter, expand);
 	}
-	return (wait_for_it(pid, 1), close(fd), file);
+	return (wait_for_it(pid,pid, 1), close(fd), file);
 }
