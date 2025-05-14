@@ -1,5 +1,16 @@
-#include   "main.h"
+#include "main.h"
 
+void	add_slash_to_path(char **path)
+{
+	int	i;
+
+	i = 0;
+	while (path[i])
+	{
+		path[i] = ft_strjoin(path[i], "/");
+		i++;
+	}
+}
 
 char	**get_path(void)
 {
@@ -12,18 +23,6 @@ char	**get_path(void)
 	path = ft_split(tmp, ":");
 	add_slash_to_path(path);
 	return (path);
-}
-
-void	add_slash_to_path(char **path)
-{
-	int	i;
-
-	i = 0;
-	while (path[i])
-	{
-		path[i] = ft_strjoin(path[i], "/");
-		i++;
-	}
 }
 
 int	is_directory(const char *path)
@@ -40,7 +39,7 @@ char	*absolute_path(char *cmd)
 	if (access(cmd, F_OK | X_OK))
 		return (perror(cmd), NULL);
 	else if (is_directory(cmd))
-		return (ft_strerror("is a directory\n"),var->exit_s = 126, NULL);
+		return (ft_strerror("is a directory\n"), g_var->exit_s = 126, NULL);
 	return (cmd);
 }
 
@@ -57,7 +56,7 @@ char	*find_cmd(char *cmd)
 	{
 		path = get_path();
 		if (!path || !cmd || !*cmd)
-			return (NULL);
+			return (g_var->exit_s = 127, NULL);
 		j = 0;
 		while (path[j])
 		{
@@ -70,5 +69,5 @@ char	*find_cmd(char *cmd)
 			j++;
 		}
 	}
-	return (ft_strerror("command not found\n"), var->exit_s = 127, NULL);
+	return (ft_strerror("command not found\n"), g_var->exit_s = 127, NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:06:33 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/25 11:44:16 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:34:37 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,11 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-
 typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
 }					t_list;
-# include "garb.h"
 
 char				*ft_itoa(int n);
 int					ft_isalpha(int c);

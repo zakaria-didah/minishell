@@ -6,10 +6,11 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:22:06 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/19 12:15:23 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:37:05 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "garb.h"
 #include "libft.h"
 
 static char	*new_str(const char *s1, size_t start, size_t len)

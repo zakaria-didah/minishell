@@ -3,9 +3,9 @@
 void	ft_strerror(char *s)
 {
 	size_t	len;
-	char	prefix[ft_strlen(var->curr_cmd) + 3];
-	len = ft_strlen(var->curr_cmd) + 3;
-	ft_strlcpy(prefix, var->curr_cmd, len);
+	char	prefix[ft_strlen(g_var->curr_cmd) + 3];
+	len = ft_strlen(g_var->curr_cmd) + 3;
+	ft_strlcpy(prefix, g_var->curr_cmd, len);
 	ft_strlcat(prefix, ": ", len);
 	ft_putstr_fd(prefix, STDERR_FILENO);
 	if (s)

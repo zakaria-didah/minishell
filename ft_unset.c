@@ -10,14 +10,14 @@ int	ft_unset(char **args)
 	j = 0;
 	while (args[i])
 	{
-		while (var->env[j])
+		while (g_var->env[j])
 		{
-			tmp = ft_substr(var->env[j], 0, ft_strlen(args[i]));
+			tmp = ft_substr(g_var->env[j], 0, ft_strlen(args[i]));
 			if (!ft_strncmp(tmp, args[i], ft_strlen(args[i])))
 			{
-				while (var->env[j])
+				while (g_var->env[j])
 				{
-					var->env[j] = var->env[j + 1];
+					g_var->env[j] = g_var->env[j + 1];
 					j++;
 				}
 				break ;

@@ -14,7 +14,7 @@ pid_t	fork_cmd(void)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 	}
-	var->child = true;
+	g_var->child = true;
 	return (pid);
 }
 
@@ -26,13 +26,13 @@ int	exec_child(char **args)
 	{
 		exit(SUCCESS);
 	}
-	var->curr_cmd = args[0];
+	g_var->curr_cmd = args[0];
 	path = find_cmd(args[0]);
 	if (!path)
 	{
-		exit(var->exit_s);
+		exit(g_var->exit_s);
 	}
-	execve(path, args, var->env);
+	execve(path, args, g_var->env);
 	ft_putendl_fd("shit happend", 2);
 	perror(path);
 	exit(errno);
@@ -62,7 +62,7 @@ void	execute(t_list *cmd_lst)
 		pipex(cmd_lst);
 	else
 	{
-		if (!exec_builtin(cmd_lst))
+		if (((t_cmd *)cmd_lst->content)->args && !exec_builtin(cmd_lst))
 		{
 			exec_cmd(cmd_lst);
 		}

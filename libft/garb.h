@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:32:49 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/26 08:57:49 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:36:16 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,14 @@
 
 # include "libft.h"
 # include <errno.h>
-# include <stdlib.h>
-# include <string.h>
-# include <unistd.h>
-
-
 
 # define CHUNK 64
 # define ARENA_SIZE 1024
 
-/*flags for the garbeg collector*/
-# define C_ARENA (1 << 0)
-# define C_PARENA (1 << 1)
-# define C_MALLOC (1 << 2)
-# define C_TRACK (1 << 3)
+# define C_ARENA 0x01
+# define C_PARENA 0x02
+# define C_MALLOC 0x04
+# define C_TRACK 0x08
 
 typedef struct s_mem
 {

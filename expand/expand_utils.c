@@ -1,18 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 10:42:22 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/14 10:43:26 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../main.h"
-
-int	check_is_in(char c, const char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == c)
-			return (i);
-		i++;
-	}
-	return (-1);
-}
 
 void	skip_quote(char *arg, int *i)
 {
@@ -36,7 +34,8 @@ char	*get_ifs(void)
 	return (ft_strdup(ifs));
 }
 
-void swap_(char *s, int *quote, int i, int j){
+void	swap_(char *s, int *quote, int i, int j)
+{
 	*s = i;
 	*quote = j;
 }
@@ -44,14 +43,14 @@ void swap_(char *s, int *quote, int i, int j){
 void	sep(unsigned int i, char *s)
 {
 	static int	quot = 0;
-	(void)i;
 
+	(void)i;
 	if (*s == '\'')
 	{
 		if (quot == *s)
-			swap_(s, quot, SEP, 0);
+			swap_(s, &quot, SEP, 0);
 		else if (quot == 0)
-			swap_(s, quot, SEP, *s);
+			swap_(s, &quot, SEP, *s);
 	}
 	else if (*s == '"')
 	{

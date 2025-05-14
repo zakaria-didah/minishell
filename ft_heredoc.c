@@ -1,4 +1,6 @@
 #include "main.h"
+#include "parser.h"
+#include "signals.h"
 
 int	open_heredoc(char **file)
 {
@@ -63,7 +65,7 @@ void read_heredoc(int fd, char *delemiter, bool expand)
 	size_t	len;
 
 	len = ft_strlen(delemiter);
-	while (!var->hdoc)
+	while (!g_var->hdoc)
 	{
 		line = readline("> ");
 		if (!line || (!ft_strncmp(line, delemiter, len)
@@ -73,12 +75,12 @@ void read_heredoc(int fd, char *delemiter, bool expand)
 			break ;
 		}
 		if (expand)
-			line = expand_vars(line);
+			line = expand_vars(line, true);
 		ft_putendl_fd(line, fd);
 		if (!expand)
 			free(line);
 	}
-	(close(fd),exit(var->hdoc));
+	(close(fd),exit(g_var->hdoc));
 }
 
 char	*heredoc(char *delemiter)

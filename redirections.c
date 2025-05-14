@@ -15,31 +15,6 @@ int	open_file(char *file, int flag)
 	return (fd);
 }
 
-
-int	redirect(t_list *head)
-{
-	t_cmd	*cmd;
-
-	cmd = (t_cmd *)head->content;
-	if (cmd->in)
-		if(red_in(cmd->in)<0)
-			return -1;
-	if (cmd->out) 
-		if (red_out(cmd->out) < 0)
-			return -1;
-	return SUCCESS;
-}
-
-t_red	*new_red(char *file, token_type type)
-{
-	t_red	*red;
-
-	red = ft_calloc(1 *sizeof(t_red), C_ARENA);
-	red->file = file;
-	red->type = type;
-	return (red);
-}
-
 int	red_out(t_list *head)
 {
 	int	fd;
@@ -77,6 +52,33 @@ int	red_in(t_list *head)
 	}
 	return SUCCESS;
 }
+
+
+
+int	redirect(t_list *head)
+{
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)head->content;
+	if (cmd->in)
+		if(red_in(cmd->in)<0)
+			return -1;
+	if (cmd->out) 
+		if (red_out(cmd->out) < 0)
+			return -1;
+	return SUCCESS;
+}
+
+t_red	*new_red(char *file, t_token_type type)
+{
+	t_red	*red;
+
+	red = ft_calloc(1 *sizeof(t_red), C_ARENA);
+	red->file = file;
+	red->type = type;
+	return (red);
+}
+
 
 int red_builtin(t_list *head)
 {

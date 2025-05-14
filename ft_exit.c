@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include "parser.h"
 
 uint64_t	ft_atos(char *num)
 {
@@ -50,7 +50,7 @@ int	ft_exit(char **args)
 	uint64_t	status;
 	char		*arg;
 
-	status = var->exit_s;
+	status = g_var->exit_s;
 	if (args && args[0])
 	{
 		arg = args[0];

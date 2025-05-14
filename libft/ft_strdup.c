@@ -6,10 +6,11 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:55 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/19 12:16:02 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:37:19 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "garb.h"
 #include "libft.h"
 
 char	*ft_strdup(const char *s1)
@@ -20,7 +21,7 @@ char	*ft_strdup(const char *s1)
 
 	i = 0;
 	len = ft_strlen(s1);
-	s = (char *)ft_calloc(sizeof(char)* (len + 1), C_ARENA);
+	s = (char *)ft_calloc(sizeof(char) * (len + 1), C_ARENA);
 	if (!s)
 		return (NULL);
 	while (s1[i])

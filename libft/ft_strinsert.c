@@ -6,11 +6,12 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 18:28:28 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/23 10:09:46 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:38:58 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "garb.h"
 
 char	*ft_strinsert(char *s, char *txt, int index, int end)
 {
@@ -24,6 +25,5 @@ char	*ft_strinsert(char *s, char *txt, int index, int end)
 	ft_strlcpy(new, s, index);
 	ft_strlcat(new, txt, len_s + len_txt + 1);
 	ft_strlcat(new, s + end, len_s + len_txt + 1);
-	
 	return (new);
 }

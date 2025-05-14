@@ -13,18 +13,18 @@ void	wait_for_it(pid_t pid, pid_t lastpid, int count)
 		if (res == lastpid)
 		{
 			if (WIFEXITED(stat))
-				var->exit_s = WEXITSTATUS(stat);
+				g_var->exit_s = WEXITSTATUS(stat);
 			else if (WIFSIGNALED(stat))
-				var->exit_s = WTERMSIG(stat) + 128;
+				g_var->exit_s = WTERMSIG(stat) + 128;
 			else
-				var->exit_s = ERROR;
+				g_var->exit_s = ERROR;
 		}
 		i++;
 	}
-	var->child = false;
-	if (var->exit_s == 130)
+	g_var->child = false;
+	if (g_var->exit_s == 130)
 		write(1, "\n", 1);
-	else if (var->exit_s == 131)
+	else if (g_var->exit_s == 131)
 		write(1, "Quit (core dumped)\n", 20);
 }
 
@@ -46,7 +46,7 @@ void	pipe_it(int prev_fd, t_list *head, int fd[2])
 	if (!exec_builtin(head))
 		exec_child(((t_cmd *)head->content)->args);
 	else
-		exit(var->exit_s);
+		exit(g_var->exit_s);
 }
 
 
@@ -86,7 +86,7 @@ int	pipex(t_list *head)
 			return (perror("pipe"), -1);
 		pid = fork_cmd();
 		if (pid < 0)
-			return (var->exit_s = -1, -1);
+			return (g_var->exit_s = -1, -1);
 		else if (pid == 0)
 			pipe_it(prev_fd, head, fd);
 		if (prev_fd != -1)

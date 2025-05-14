@@ -1,4 +1,16 @@
-#include "../main.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 10:43:58 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/14 11:43:06 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../parser.h"
 
 char	*handel_dollar(int *i, char *input)
 {
@@ -8,8 +20,9 @@ char	*handel_dollar(int *i, char *input)
 
 	start = 0;
 	start = (*i);
-	if (ft_isdigit(input[(*i)++])){
-		return NULL;
+	if (ft_isdigit(input[(*i)++]))
+	{
+		return (NULL);
 	}
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
 	{
@@ -57,9 +70,10 @@ char	*expand_var(char *arg, int *i)
 
 	start = ++(*i);
 	expande = handel_dollar(i, arg);
-	if (expande){
+	if (expande)
+	{
 		arg = ft_strinsert(arg, expande, start, *i);
-		*i = (start-1) + ft_strlen(expande)-1;
+		*i = (start - 1) + ft_strlen(expande) - 1;
 	}
 	else
 	{
@@ -70,7 +84,7 @@ char	*expand_var(char *arg, int *i)
 	return (arg);
 }
 
-char	*expand_vars(char *arg)
+char	*expand_vars(char *arg, bool here_doc)
 {
 	int	i;
 	int	q;
@@ -89,11 +103,11 @@ char	*expand_vars(char *arg)
 		if (arg[i] == '$' && (arg[i + 1] && ft_isalnum(arg[i + 1])))
 		{
 			arg = expand_var(arg, &i);
-			if (q)
+			if (q && !here_doc)
 				arg = field_spliting(arg);
 		}
 		else if (arg[i] == '$' && arg[i + 1] == '?')
-			arg = ft_strinsert(arg, ft_itoa(var->exit_s), i+1, i + 2);
+			arg = ft_strinsert(arg, ft_itoa(g_var->exit_s), i + 1, i + 2);
 		i++;
 	}
 	return (arg);
@@ -105,8 +119,8 @@ char	**expand(char *arg)
 
 	res = NULL;
 	ft_striteri(arg, &sep);
-	arg = expand_vars(arg);
-	res = ft_split(arg, (char[2]){127, 0});
+	arg = expand_vars(arg, false);
+	res = ft_split(arg, (char [2]){127, 0});
 	res = check_wildcard(res);
 	res = quet_remove(res);
 	return (res);

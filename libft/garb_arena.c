@@ -1,11 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   garb_arena.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 10:55:54 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/14 10:56:35 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "garb.h"
 
+t_list	**parena_head(void)
+{
+	static t_list	*lst = NULL;
+	t_mem			*mem;
+
+	if (!lst)
+	{
+		mem = malloc(sizeof(t_mem));
+		mem->offset = 0;
+		mem->size = ARENA_SIZE;
+		mem->mempool = malloc(mem->size);
+		ft_bzero(mem->mempool, mem->size);
+		lst = malloc(sizeof(t_list));
+		lst->content = mem;
+		lst->next = NULL;
+	}
+	return (&lst);
+}
 
 void	reset_arena(void)
 {
 	t_list	*alloc;
 	t_mem	*mem;
 	t_list	*tmp;
+
 	alloc = *arena_head();
 	if (alloc)
 	{

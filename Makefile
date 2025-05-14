@@ -1,5 +1,5 @@
-SRC= main.c parser.c signals.c utiles.c exec.c echo.c \
-	redirections.c ft_env.c error.c  export.c \
+SRC= main.c parser.c signals.c utiles.c exec.c echo.c ft_unset.c pipe.c\
+	redirections.c ft_env.c error.c  export.c	ft_exit.c find_cmd.c\
 	ft_heredoc.c expand/expand_utils.c expand/expand.c ft_cd.c exec_builtin.c \
 	wildcard.c	tokenize.c
 OBJ= $(SRC:.c=.o)

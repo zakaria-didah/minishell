@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wildcard.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 11:12:59 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/14 12:31:04 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
 
 int	match(char *txt, char *pat)
@@ -49,7 +61,6 @@ char	**wildcard(char *pat)
 	closedir(dp);
 	if (!res)
 		return (NULL);
-	// sort_alpha(res);
 	return (res);
 }
 
@@ -79,12 +90,24 @@ char	*get_pattren(char *arg, int start)
 	return (pattren);
 }
 
+char	**voo(char **res, int j)
+{
+	char	**wc;
+
+	wc = wildcard(res[j]);
+	if (wc)
+	{
+		res[j] = 0;
+		res = ft_arrjoin(res, wc);
+	}
+	return (res);
+}
+
 char	**check_wildcard(char **res)
 {
-	int		i;
-	int		j;
-	char	**wc;
-	int		quot;
+	int	i;
+	int	j;
+	int	quot;
 
 	i = 0;
 	j = 0;
@@ -97,17 +120,7 @@ char	**check_wildcard(char **res)
 				quot = ~quot + 2;
 			if (quot && res[j][i] == '*')
 			{
-				wc = wildcard(res[j]);
-				if (wc)
-				{
-					res[j] = 0;
-					res = ft_arrjoin(res, wc);
-				}
-				else
-				{
-					if (res[j][ft_strlen(res[j]) - 1] == '*')
-						res[j][i] = 0;
-				}
+				res = voo(res, j);
 			}
 			i++;
 		}

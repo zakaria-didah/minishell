@@ -8,7 +8,7 @@ void	signal_handler(int sig)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
-	var->exit_s = 130;
+	g_var->exit_s = 130;
 }
 
 void	default_signal(void)
@@ -20,7 +20,7 @@ void	default_signal(void)
 void	sig_heredoc(int sig)
 {
 	(void)sig;
-	var->hdoc = 130;
-	var->exit_s = 130;
+	g_var->hdoc = 130;
+	g_var->exit_s = 130;
 	close(STDIN_FILENO);
 }

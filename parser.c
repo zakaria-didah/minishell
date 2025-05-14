@@ -1,7 +1,7 @@
 // #include "parser.h"
 #include "main.h"
-
-
+#include "parser.h"
+#include "signals.h"
 
 int	parse_redin(t_list **tokens, t_cmd *cmd)
 {

@@ -35,6 +35,7 @@ int	export_append(char *arg, int i)
 	{
 		value = ft_strjoin(old, value);
 	}
+	printf("name = %s\n", name);
 	return (ft_setenv(name, value), SUCCESS);
 }
 

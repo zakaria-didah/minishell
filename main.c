@@ -1,6 +1,9 @@
 #include "main.h"
+#include "parser.h"
+#include "signals.h"
+#include "exec.h"
 
-t_var	*var = NULL;
+t_var	*g_var = NULL;
 
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
@@ -40,30 +43,30 @@ int	pass_the_input(char *line)
 
 	line = ft_strtrim(line, " ");
 	if (!*line)
-		return (var->exit_s = SUCCESS);
+		return (g_var->exit_s = SUCCESS);
 	if (!is_balanced(line))
-		return (throw_error(NULL), var->exit_s = FAILURE);
+		return (throw_error(NULL), g_var->exit_s = FAILURE);
 	head = tokenize(line);
 	cmd_lst = parse(head);
 	if (!cmd_lst)
-		return (var->exit_s = FAILURE);
+		return (g_var->exit_s = FAILURE);
 	execute(cmd_lst);
 	return (0);
 }
 
 int	init(char **env)
 {
-	ft_bzero(var, sizeof(t_var));
-	var->env = env;
+	ft_bzero(g_var, sizeof(t_var));
+	g_var->env = env;
 	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
 	if (tmp){
 		ft_setenv("PWD", tmp);
-		var->pwd = ft_strdup(tmp);
+		g_var->pwd = ft_strdup(tmp);
 	}
 	else
 	{
 		perror("minishell: error retrieving current directory");
-		var->pwd = ft_getenv("PWD");
+		g_var->pwd = ft_getenv("PWD");
 	}
 	return (0);
 }
@@ -75,7 +78,7 @@ int	main(int ac, char **av, char **env)
 
 	if (ac != 1)
 		return (ft_putendl_fd("minishell: no arguments", 2), FAILURE);
-	var = ft_calloc(sizeof(t_var), C_TRACK);
+	g_var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
 	line = NULL;
 	while (true)

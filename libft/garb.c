@@ -6,20 +6,19 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:41:16 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/24 13:29:02 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 12:41:44 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "garb.h"
 
-int gc_mode(int mode)
+int	gc_mode(int mode)
 {
-	static int gc_mode = 0;
+	static int	gc_mode = 0;
 
 	if (mode >= 0)
 		gc_mode = mode;
 	return (gc_mode);
-
 }
 
 void	ft_remove(void *ptr)
@@ -69,62 +68,41 @@ t_list	**arena_head(void)
 	return (&lst);
 }
 
-t_list	**parena_head(void)
-{
-	static t_list	*lst = NULL;
-	t_mem			*mem;
-
-	if (!lst)
-	{
-		mem = malloc(sizeof(t_mem));
-		mem->offset = 0;
-		mem->size = ARENA_SIZE;
-		mem->mempool = malloc(mem->size);
-		ft_bzero(mem->mempool, mem->size);
-		lst = malloc(sizeof(t_list));
-		lst->content = mem;
-		lst->next = NULL;
-	}
-	return (&lst);
-}
-
-void	*ft_calloc(size_t size, int cflags)
+void	*if_need_to_realloc(t_list **head, size_t size)
 {
 	void	*ptr;
 	t_mem	*alloc;
 
 	ptr = NULL;
-	if (!(cflags & C_PARENA) && gc_mode(-1) )
+	alloc = (t_mem *)ft_lstlast(*head)->content;
+	if (alloc->offset + size > alloc->size)
+		alloc = realloc_arena(*head);
+	ptr = alloc->mempool + alloc->offset;
+	alloc->offset += size;
+	return (ptr);
+}
+
+void	*ft_calloc(size_t size, int cflags)
+{
+	void	*ptr;
+
+	ptr = NULL;
+	if (!(cflags & C_PARENA) && gc_mode(-1))
 		cflags = gc_mode(-1);
 	if (cflags & C_ARENA)
 	{
 		if (size <= CHUNK)
-		{
-			alloc = (t_mem *)ft_lstlast(*arena_head())->content;
-			if (alloc->offset + size > alloc->size)
-				alloc = realloc_arena(*arena_head());
-			ptr = alloc->mempool + alloc->offset;
-			alloc->offset += size;
-			return (ptr);
-		}
+			return (if_need_to_realloc(arena_head(),size));
 		else
-
 			cflags = C_TRACK;
 	}
 	if (cflags & C_PARENA)
-	{
-		alloc = (t_mem *)ft_lstlast(*parena_head())->content;
-		if (alloc->offset + size > alloc->size)
-			alloc = realloc_arena(*parena_head());
-		ptr = alloc->mempool + alloc->offset;
-		alloc->offset += size;
-		return (ptr);
-	}
+		return (if_need_to_realloc(parena_head(), size));
 	if ((cflags & C_MALLOC) || (cflags & C_TRACK))
 	{
 		ptr = malloc(size);
 		if (!ptr)
-			return (ft_putendl_fd(strerror(errno), 2), exit(1), NULL);
+			return (perror("malloc"), ft_free(), exit(1), NULL);
 		ft_bzero(ptr, size);
 	}
 	if (cflags & C_TRACK)

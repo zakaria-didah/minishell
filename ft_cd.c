@@ -47,10 +47,10 @@ int	ft_cd(char **args)
 	tmp = NULL;
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
-		(perror("getcwd"), var->oldpwd = var->pwd);
+		(perror("getcwd"), g_var->oldpwd = g_var->pwd);
 	else
 	{
-		var->oldpwd = ft_strdup(tmp);
+		g_var->oldpwd = ft_strdup(tmp);
 		free(tmp);
 		tmp = NULL;
 	}
@@ -63,7 +63,7 @@ int	ft_cd(char **args)
 	if (!tmp)
 		(perror("cd: error retrieving current directory"));
 	else
-		var->pwd = ft_strdup(tmp);
-	ft_setenv("OLDPWD", var->oldpwd);
-	return (ft_setenv("PWD", var->pwd), SUCCESS);
+		g_var->pwd = ft_strdup(tmp);
+	ft_setenv("OLDPWD", g_var->oldpwd);
+	return (ft_setenv("PWD", g_var->pwd), SUCCESS);
 }

@@ -6,10 +6,11 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:47 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/19 12:16:13 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:37:56 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "garb.h"
 #include "libft.h"
 
 int	is_in(char c, const char *charset)
@@ -57,7 +58,7 @@ char	*create_word(const char *s, const char *c, int *j)
 		i++;
 	str = ft_substr(s, *j, i - *j);
 	*j = i;
-	return (str); 
+	return (str);
 }
 
 char	**ft_split(const char *s, char *charset)

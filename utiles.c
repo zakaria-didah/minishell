@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:14:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 00:46:14 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:43:01 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	parse_heredoc(t_list **tokens, t_cmd *cmd)
 		if (token->type == WORD)
 		{
 			file = heredoc(token->value);
-			if (file && !var->exit_s)
+			if (file && !g_var->exit_s)
 				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(file, RED_IN)));
 			else
 				return (false);
@@ -98,4 +98,18 @@ char	*join_args(char **args)
 		ft_strlcat(arg, " ", len);
 	}
 	return (arg);
+}
+
+int	check_is_in(char c, const char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == c)
+			return (i);
+		i++;
+	}
+	return (-1);
 }
