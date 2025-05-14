@@ -18,6 +18,25 @@ pid_t	fork_cmd(void)
 	return (pid);
 }
 
+/*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
+void	parr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return (void)printf("[null]\n");
+	printf("{");
+	while (arr[i])
+	{
+		printf("[%s]", arr[i++]);
+		if (arr[i])
+			printf(", ");
+		else
+			printf("}\n");
+	}
+}
+
 int	exec_child(char **args)
 {
 	char	*path;
@@ -32,7 +51,7 @@ int	exec_child(char **args)
 	{
 		exit(g_var->exit_s);
 	}
-	execve(path, args, g_var->env);
+	execve(path, args, envtoarr());
 	ft_putendl_fd("shit happend", 2);
 	perror(path);
 	exit(errno);

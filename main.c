@@ -25,9 +25,7 @@ char	*get_prompt(void)
 		option = TRUE;
 		cwd = ft_getenv("PWD");
 		if (!cwd)
-		{
 			cwd = ft_strdup("seriously");
-		}
 	}
 	if (ft_strchr(cwd, '/'))
 		cwd = ft_strrchr(cwd, '/') + 1;
@@ -56,8 +54,7 @@ int	pass_the_input(char *line)
 
 int	init(char **env)
 {
-	ft_bzero(g_var, sizeof(t_var));
-	g_var->env = env;
+	fill_bucket(env);
 	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
 	if (tmp){
 		ft_setenv("PWD", tmp);
@@ -84,7 +81,7 @@ int	main(int ac, char **av, char **env)
 	while (true)
 	{
 		default_signal();
-		line = readline(get_prompt());
+		line = readline("\033[92mminishell$>\033[0m ");
 		if (!line)
 		{
 			return (ft_exit(0), 0);

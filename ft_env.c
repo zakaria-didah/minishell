@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 11:52:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 17:31:19 by zdidah           ###   ########.fr       */
+/*   Created: 2025/05/14 19:01:17 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/14 23:53:32 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,36 +47,53 @@ t_env	*add_env(char *var)
 
 	if (!var)
 		return (NULL);
+	split = ft_split(var, "=");
 	env = ft_calloc(sizeof(t_env), C_PARENA);
-	gc_mode(C_PARENA | C_TRACK);
-	split = ft_split(var, '=');
 	name = split[0];
 	value = split[1];
 	env->name = ft_strdup(name);
-	env->value = ft_strdup(value);
-	gc_mode(0);
+	if (value)
+		env->value = ft_strdup(value);
 	return (env);
 }
 
 char	**envtoarr(void)
 {
 	int		i;
-	char	**arr;
+	char	**env;
 	size_t	len;
+	t_list	*tmp;
+	int		j;
 
+	j = 0;
 	i = 0;
-	len = ft_lstsize(g_var->env);
-	arr = ft_calloc(sizeof(char *) * (len + 1), C_ARENA);
-	i = 0;
-	while (g_var->env)
+	len = 0;
+	while (i <= BUCKET_SIZE)
 	{
-		arr[i] = ft_strjoin(((t_env *)(g_var->env->content))->name, "=");
-		arr[i] = ft_strjoin(arr[i], ((t_env *)(g_var->env->content))->value);
+		len += ft_lstsize(g_var->bucket[i]);
 		i++;
-		g_var->env = g_var->env->next;
 	}
-	arr[i] = NULL;
-	return (arr);
+	i = 0;
+	gc_mode(C_TRACK);
+	env = ft_calloc(sizeof(char *) * len, C_TRACK);
+	while (i <= BUCKET_SIZE)
+	{
+		tmp = g_var->bucket[i];
+		while (tmp)
+		{
+			if (((t_env *)(tmp)->content)->value)
+			{
+				env[j] = ft_strjoin(((t_env *)(tmp)->content)->name, "=");
+				env[j] = ft_strjoin(env[j], ((t_env *)(tmp)->content)->value);
+				j++;
+			}
+			tmp = tmp->next;
+		}
+		i++;
+	}
+	env[j] = NULL;
+	gc_mode(0);
+	return (env);
 }
 
 // void	fill_env(char **env)
@@ -102,11 +119,13 @@ void	fill_bucket(char **env)
 	i = 0;
 	while (env[i])
 	{
-		name = ft_split(env[i], '=')[0];
+		name = ft_split(env[i], "=")[0];
 		len = ft_strlen(name);
-		if (len > 24)
-			len = 25;
+		gc_mode(C_PARENA | C_TRACK);
+		if (len > BUCKET_SIZE - 1)
+			len = BUCKET_SIZE;
 		ft_lstadd_back(&g_var->bucket[len], ft_lstnew(add_env(env[i])));
+		gc_mode(0);
 		i++;
 	}
 }
@@ -118,9 +137,9 @@ void	insert_env(char *env)
 
 	i = 0;
 	len = ft_strlen(env);
-	if (len > 24)
+	if (len > BUCKET_SIZE - 1)
 	{
-		ft_lstadd_back(&g_var->bucket[25], ft_lstnew(add_env(env)));
+		ft_lstadd_back(&g_var->bucket[BUCKET_SIZE], ft_lstnew(add_env(env)));
 		return ;
 	}
 	else
@@ -158,20 +177,20 @@ void	ft_lstremove(t_list **head, t_list *node)
 	}
 }
 
-void	unset_env(char *env)
+void	unset_env(char *name)
 {
 	int		i;
 	size_t	len;
 	t_list	*tmp;
 
 	i = 0;
-	len = ft_strlen(env);
-	if (len > 24)
-		len = 25;
+	len = ft_strlen(name);
+	if (len > BUCKET_SIZE - 1)
+		len = BUCKET_SIZE;
 	tmp = g_var->bucket[len];
 	while (tmp)
 	{
-		if (ft_strncmp(((t_env *)(tmp->content))->name, env, len) == 0)
+		if (ft_strncmp(((t_env *)(tmp->content))->name, name, len) == 0)
 		{
 			ft_lstremove(&g_var->bucket[len], tmp);
 			return ;
@@ -180,49 +199,83 @@ void	unset_env(char *env)
 	}
 }
 
-char	*get_env(const char *name)
+char	*ft_getenv(const char *name)
 {
 	int		i;
 	size_t	len;
+	t_list	*tmp;
 
 	i = 0;
 	len = ft_strlen(name);
-	if (len > 24)
-		len = 25;
-	while ( i <= 26)
+	if (len > BUCKET_SIZE - 1)
+		len = BUCKET_SIZE;
+	tmp = g_var->bucket[len];
+	while (tmp)
 	{
-		if (ft_strncmp(((t_env *)(g_var->bucket[len]->content))->name, name,
-				len) == 0)
-			return (((t_env *)(g_var->bucket[len]->content))->value);
-		g_var->bucket[len] = g_var->bucket[len]->next;
-		i++;
+		if (!ft_strncmp(((t_env *)(tmp)->content)->name, name, len))
+			return (((t_env *)(tmp)->content)->value);
+		tmp = tmp->next;
 	}
 	return (NULL);
 }
 
-int set_env(char *name, char *value)
+int	ft_setenv(char *name, char *value)
 {
 	int		i;
 	size_t	len;
+	t_list	*tmp;
 
 	i = 0;
 	len = ft_strlen(name);
-	if (len > 24)
-		len = 25;
-	while (i<=26)
+	tmp = g_var->bucket[len];
+	if (len > BUCKET_SIZE - 1)
+		tmp = g_var->bucket[BUCKET_SIZE];
+	gc_mode(C_PARENA);
+	printf("name={%s} value=%s\n", name, value);
+	while (tmp)
 	{
-		if (ft_strncmp(((t_env *)(g_var->bucket[len]->content))->name, name,
-				len) == 0)
+		if (!ft_strncmp(((t_env *)(tmp->content))->name, name, len))
 		{
-			((t_env *)(g_var->bucket[len]->content))->value = value;
-			return (SUCCESS);
+			((t_env *)(tmp->content))->value = ft_strdup(value);
+			return (gc_mode(0),printf("yes\n"), SUCCESS);
 		}
-		g_var->bucket[len] = g_var->bucket[len]->next;
-		i++;
+		tmp = tmp->next;
 	}
 	name = ft_strjoin(name, "=");
 	name = ft_strjoin(name, value);
-	insert_env(name);
+	ft_lstadd_back(&g_var->bucket[len], ft_lstnew(add_env(name)));
+	gc_mode(0);
+	return (SUCCESS);
+}
+
+int	ft_env(char **args)
+{
+	int		i;
+	int		res;
+	t_list	*tmp;
+
+	i = 0;
+	(void)args;
+	res = 0;
+	while (i <= BUCKET_SIZE)
+	{
+		tmp = g_var->bucket[i];
+		while (tmp)
+		{
+			if (((t_env *)(tmp->content))->value)
+			{
+				res = printf("%s=%s\n", ((t_env *)(tmp->content))->name,
+						((t_env *)(tmp->content))->value);
+				if (res < 0)
+				{
+					perror("Write error");
+					return (ERROR);
+				}
+			}
+			tmp = tmp->next;
+		}
+		i++;
+	}
 	return (SUCCESS);
 }
 /*

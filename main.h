@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 16:30:37 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 19:22:38 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 # define HDOCFILE "/tmp/.heredoc_minishell"
 # define SEP 0x1F
 # define SEP2 0x1E
+# define BUCKET_SIZE 255
 
 typedef enum s_bool
 {
@@ -87,7 +88,7 @@ typedef struct s_env
 typedef struct t_var
 {
 	t_list					*env;
-	t_list					*bucket[26];
+	t_list					*bucket[BUCKET_SIZE+1];
 	char					*pwd;
 	char					*oldpwd;
 	char					*curr_cmd;
@@ -153,8 +154,7 @@ char						*join_args(char **args);
 char						*find_cmd(char *cmd);
 int							ft_setenv(char *name, char *value);
 void						cleanup(void *ptr);
-char						***unset_env(void);
-char						*ft_getenv(char *name);
+char						*ft_getenv(const char *name);
 int							edit_env(char *name, char *value, t_bool APPEND);
 int							redirect(t_list *head);
 void						ft_error(char *error);
@@ -178,5 +178,10 @@ void						wait_for_it(pid_t pid, pid_t lastpid, int count);
 void						ft_strerror(char *s);
 void						ft_error(char *s);
 int							check_is_in(char c, const char *s);
+
+
+void	fill_bucket(char **env);
+void unset_env(char *name);
+char	**envtoarr(void);
 
 #endif

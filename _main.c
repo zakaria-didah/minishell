@@ -32,23 +32,7 @@ void	pl(t_list *head, int f)
 }
 
 /*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
-void	parr(char **arr)
-{
-	int	i;
 
-	i = 0;
-	if (!arr)
-		return (void)printf("[null]\n");
-	printf("{");
-	while (arr[i])
-	{
-		printf("[%s]", arr[i++]);
-		if (arr[i])
-			printf(", ");
-		else
-			printf("}\n");
-	}
-}
 
 /*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
 void	parr(char **arr)

@@ -27,7 +27,8 @@ int	ft_pwd(char **argv)
 	{
 		pwd = ft_strdup(fre);
 		free(fre);
-		edit_env("PWD", pwd, FALSE);
+		// edit_env("PWD", pwd, FALSE);
+		ft_setenv("PWD", pwd);
 	}
 	else
 	{

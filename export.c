@@ -46,7 +46,7 @@ int	export_asign(char *arg, int i)
 
 	if (arg[i] == '=')
 	{
-		value = arg + ++i;
+		value = arg + (i+1);
 		name = ft_substr(arg, 0, i);
 		return (ft_setenv(name, value), SUCCESS);
 	}

@@ -18,6 +18,7 @@ char	**get_path(void)
 	char	*tmp;
 
 	tmp = ft_getenv("PATH");
+	printf("tmp = %s\n", tmp);
 	if (!tmp)
 		return (ft_strerror("command not found\n"), NULL);
 	path = ft_split(tmp, ":");
