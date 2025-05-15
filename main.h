@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:20:01 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 13:29:44 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,7 @@ typedef struct s_red
 typedef struct s_cmd
 {
 	char					**args;
-	t_list					*in;
-	t_list					*out;
+	t_list					*red;
 }							t_cmd;
 
 uint64_t					ft_atos(char *num);

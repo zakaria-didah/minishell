@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:14:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 12:39:42 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 13:41:46 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	parse_heredoc(t_list **tokens, t_cmd *cmd)
 		{
 			file = heredoc(token->value);
 			if (file && !g_var->exit_s)
-				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(file, RED_IN)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(file, RED_IN)));
 			else
 				return (false);
 		}
@@ -55,8 +55,8 @@ bool	is_balanced(char *input)
 	ssize_t	i;
 	ssize_t	j;
 
-	__attribute__((cleanup(cleanup))) char *stack;
-	stack = ft_calloc((ft_strlen(input) + 1) * sizeof(char), C_MALLOC);
+	char *stack;
+	stack = ft_calloc((ft_strlen(input) + 1) * sizeof(char), C_ARENA);
 	i = 0;
 	j = 0;
 	while (input[i])

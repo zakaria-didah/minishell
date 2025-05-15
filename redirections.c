@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:26:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:26:03 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 13:49:58 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	open_file(char *file, int flag)
 	return (fd);
 }
 
-int	red_out(t_list *head)
+int	red(t_list *head)
 {
 	int		fd;
 	t_red	*red;
@@ -40,27 +40,10 @@ int	red_out(t_list *head)
 		fd = open_file(red->file, red->type);
 		if (fd < 0)
 			return (fd);
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-		head = head->next;
-	}
-	return (SUCCESS);
-}
-
-int	red_in(t_list *head)
-{
-	int		fd;
-	t_red	*red;
-
-	while (head)
-	{
-		red = (t_red *)head->content;
-		if (!red->file)
-			return (throw_error("ambiguous redirect"), -1);
-		fd = open_file(red->file, RED_IN);
-		if (fd < 0)
-			return (fd);
-		dup2(fd, STDIN_FILENO);
+		if (red->type == RED_OUT || red->type == APPEND)
+			dup2(fd, STDOUT_FILENO);
+		else if (red->type == RED_IN || red->type == HDOC)
+			dup2(fd, STDIN_FILENO);
 		close(fd);
 		head = head->next;
 	}
@@ -72,11 +55,8 @@ int	redirect(t_list *head)
 	t_cmd	*cmd;
 
 	cmd = (t_cmd *)head->content;
-	if (cmd->in)
-		if (red_in(cmd->in) < 0)
-			return (-1);
-	if (cmd->out)
-		if (red_out(cmd->out) < 0)
+	if (cmd->red)
+		if (red(cmd->red) < 0)
 			return (-1);
 	return (SUCCESS);
 }
@@ -100,9 +80,7 @@ int	red_builtin(t_list *head)
 	{
 		fd = dup(STDOUT_FILENO);
 		fd2 = dup(STDIN_FILENO);
-		if (red_out(((t_cmd *)head->content)->out) < 0)
-			return (-1);
-		if (red_in(((t_cmd *)head->content)->in) < 0)
+		if (red(((t_cmd *)head->content)->red) < 0)
 			return (-1);
 	}
 	else

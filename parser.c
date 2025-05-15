@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:52 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:25:53 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 13:43:23 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ int	parse_redin(t_list **tokens, t_cmd *cmd)
 		{
 			tmp = expand(token->value);
 			if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
-				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(NULL, RED_IN)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(NULL, RED_IN)));
 			else
 			{
-				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(tmp[0], RED_IN)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(tmp[0], RED_IN)));
 			}
 		}
 		else
@@ -55,9 +55,9 @@ int	parse_redout(t_list **tokens, t_cmd *cmd)
 		{
 			tmp = expand(token->value);
 			if (ft_arrlen(tmp) > 1 || (!tmp[0] || !tmp[0][0]))
-				ft_lstadd_back(&cmd->out, ft_lstnew(new_red(NULL, RED_OUT)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(NULL, token->type)));
 			else
-				ft_lstadd_back(&cmd->out, ft_lstnew(new_red(tmp[0], RED_OUT)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(tmp[0], RED_OUT)));
 		}
 		else
 		{
@@ -84,9 +84,9 @@ int	parse_append(t_list **tokens, t_cmd *cmd)
 		{
 			tmp = expand(token->value);
 			if (ft_arrlen(tmp) > 1 || (ft_arrlen(tmp) == 1 && tmp[0][0] == 0))
-				ft_lstadd_back(&cmd->in, ft_lstnew(new_red(NULL, RED_IN)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(NULL, RED_IN)));
 			else
-				ft_lstadd_back(&cmd->out, ft_lstnew(new_red(tmp[0], APPEND)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(tmp[0], APPEND)));
 		}
 		else
 		{
@@ -147,7 +147,7 @@ t_list	*parse(t_list *tokens)
 			if (((t_token *)tokens->content)->type == PIPE)
 			{
 				tokens = tokens->next;
-				if (!cmd->args && !cmd->in && !cmd->out)
+				if (!cmd->args && !cmd->red )
 					return (throw_error("syntax error near  token `|'"), NULL);
 				break ;
 			}
