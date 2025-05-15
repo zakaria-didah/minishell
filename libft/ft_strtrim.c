@@ -6,10 +6,11 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:22:06 by zdidah            #+#    #+#             */
-/*   Updated: 2024/11/10 19:53:10 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:37:05 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "garb.h"
 #include "libft.h"
 
 static char	*new_str(const char *s1, size_t start, size_t len)
@@ -19,7 +20,7 @@ static char	*new_str(const char *s1, size_t start, size_t len)
 
 	if (len <= 0 || start >= ft_strlen(s1))
 		return (ft_strdup(""));
-	str = ft_calloc((len + 1) * sizeof(char));
+	str = ft_calloc((len + 1) * sizeof(char), C_ARENA);
 	if (!str)
 		return (NULL);
 	i = 0;

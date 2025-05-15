@@ -1,19 +1,38 @@
-#include "signals.h"
-#include "main.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:26:05 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 10:26:06 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// ctrl + c
-void	sigint_handler(int sig)
+#include "main.h"
+#include "signals.h"
+
+void	signal_handler(int sig)
 {
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
+	(void)sig;
+	write(1, "\n", 1);
 	rl_replace_line("", 0);
+	rl_on_new_line();
 	rl_redisplay();
-	
+	g_var->exit_s = 130;
 }
 
-
-void	sigquit_handler(int sig)
+void	default_signal(void)
 {
-	write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
-	exit(131);
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	sig_heredoc(int sig)
+{
+	(void)sig;
+	g_var->hdoc = 130;
+	g_var->exit_s = 130;
+	close(STDIN_FILENO);
 }

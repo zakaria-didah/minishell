@@ -6,10 +6,11 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:22:09 by zdidah            #+#    #+#             */
-/*   Updated: 2024/11/10 19:56:25 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:37:41 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "garb.h"
 #include "libft.h"
 
 char	*ft_substr(const char *s, unsigned int start, size_t len)
@@ -23,7 +24,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 		return (ft_strdup(""));
 	if (len > ft_strlen(s + start))
 		len = ft_strlen(s + start);
-	new = ft_calloc((len + 1)* sizeof(char));
+	new = ft_calloc((len + 1) * sizeof(char), C_ARENA);
 	if (!new)
 		return (NULL);
 	i = 0;

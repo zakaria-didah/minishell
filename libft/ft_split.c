@@ -3,23 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:47 by zdidah            #+#    #+#             */
-/*   Updated: 2025/02/01 14:21:33 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/14 11:37:56 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "garb.h"
 #include "libft.h"
 
-int	is_in(char c, const char *s)
+int	is_in(char c, const char *charset)
 {
 	int	i;
 
 	i = 0;
-	while (s[i])
+	while (charset[i])
 	{
-		if (s[i] == c)
+		if (charset[i] == c)
 			return (1);
 		i++;
 	}
@@ -57,7 +58,7 @@ char	*create_word(const char *s, const char *c, int *j)
 		i++;
 	str = ft_substr(s, *j, i - *j);
 	*j = i;
-	return (str); 
+	return (str);
 }
 
 char	**ft_split(const char *s, char *charset)
@@ -70,7 +71,7 @@ char	**ft_split(const char *s, char *charset)
 	if (!s)
 		return (NULL);
 	words_len = count_words(s, charset);
-	words = ft_calloc((words_len + 1) * sizeof(char *));
+	words = ft_calloc((words_len + 1) * sizeof(char *), C_ARENA);
 	i = 0;
 	j = 0;
 	while (i < words_len)

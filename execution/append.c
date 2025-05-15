@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../main.h"
 
 int	open_file(char *file, int append_redout_redin)
 {

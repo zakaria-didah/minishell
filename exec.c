@@ -1,76 +1,101 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:25:26 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 10:25:27 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
 
-char	*find_cmd(char *cmd)
+pid_t	fork_cmd(void)
 {
-	int		i;
-	char	*cmd_path;
-	int		j;
+	pid_t	pid;
 
-	cmd_path = cmd;
-	i = access(cmd, X_OK);
-	j = 0;
-	while (var->path[j] && access(cmd_path, X_OK))
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	pid = fork();
+	if (pid == -1)
+		return (throw_error("fork failed\n"), exit(-1), -1);
+	if (pid == 0)
 	{
-		cmd_path = ft_strjoin(var->path[j], cmd);
-		j++;
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 	}
-	if (!var->path[j])
-	{
-		throw_error(ft_strjoin(cmd, ": command not found\n"));
-		return (NULL);
-	}
-	return (cmd_path);
+	g_var->child = true;
+	return (pid);
 }
 
-char	*join_args(char **args)
+/*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
+void	parr(char **arr)
 {
-	int		i;
-	size_t	len;
-	char	*arg;
+	int	i;
 
 	i = 0;
-	len = 0;
-	if (!args[i])
-		return (NULL);
-	while (args[i])
-		len += ft_strlen(args[i++]) + 1;
-	arg = ft_calloc(len);
-	i = 0;
-	while (args[i])
+	if (!arr)
+		return (void)printf("[null]\n");
+	printf("{");
+	while (arr[i])
 	{
-		ft_strlcat(arg, args[i++], len);
-		ft_strlcat(arg, " ", len);
+		printf("[%s]", arr[i++]);
+		if (arr[i])
+			printf(", ");
+		else
+			printf("}\n");
 	}
-	return (arg);
 }
-// void	pipex(t_list *cmd_lst)
-// {
 
-// }
-
-int	exec(t_list *head)
+int	exec_child(char **args)
 {
-	pid_t child_pid;
+	char	*path;
 
-	// if (ft_lstsize(head) > 1)
-	// 	pipex(head);
-	char *cmd = find_cmd(((t_cmd *)head->content)->args[0]);
-	if (!cmd)
-		return (127);
-	child_pid = fork();
-	if (child_pid < 0)
-		exit(-1);
-	var->curr_cmd = cmd;
-	if (child_pid == 0)
+	if (!args || !args[0])
 	{
-		redirect(head);
-		execv(cmd, ((t_cmd *)head->content)->args);
-		perror("shit happend\n");
-		exit(1);
+		exit(SUCCESS);
+	}
+	g_var->curr_cmd = args[0];
+	path = find_cmd(args[0]);
+	if (!path)
+	{
+		exit(g_var->exit_s);
+	}
+	execve(path, args, envtoarr());
+	ft_putendl_fd("shit happend", 2);
+	perror(path);
+	exit(errno);
+}
+
+pid_t	exec_cmd(t_list *cmd)
+{
+	pid_t	pid;
+
+	pid = fork_cmd();
+	if (pid == -1)
+		return (-1);
+	if (pid == 0)
+	{
+		if (redirect(cmd) < 0)
+			exit(ERROR);
+		exec_child(((t_cmd *)cmd->content)->args);
 	}
 	else
+		wait_for_it(pid, pid, 1);
+	return (pid);
+}
+
+void	execute(t_list *cmd_lst)
+{
+	if (ft_lstsize(cmd_lst) > 1)
+		pipex(cmd_lst);
+	else
 	{
-		wait(NULL);
+		if (((t_cmd *)cmd_lst->content)->args && !exec_builtin(cmd_lst))
+		{
+			exec_cmd(cmd_lst);
+		}
 	}
-	return (SUCCESS);
 }

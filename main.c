@@ -1,62 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:21:18 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 12:45:09 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "exec.h"
 #include "main.h"
+#include "parser.h"
+#include "signals.h"
 
-t_var	*var = NULL;
+t_var	*g_var = NULL;
 
-int	ft_export(char **args)
-{
-	char	*value;
-	char	*name;
-	int		i;
-	int		j;
-
-	value = NULL;
-	name = NULL;
-	i = 0;
-	j = 0;
-	while (args[i])
-	{
-		while (args[i][j] && args[i][j] != '=')
-			j++;
-		name = ft_substr(args[i], 0, j);
-		if (args[i][j] == '=')
-		{
-			j++;
-			value = args[i] + j;
-		}
-		ft_setenv(name, value);
-		j = 0;
-		i++;
-	}
-	return SUCCESS;
-}
-
-int	ft_cd(char **args)
-{
-	char	*path;
-	char	*home;
-	int		stat;
-	char	*tmp;
-
-	stat = 0;
-	if (ft_arrlen(args) > 1)
-		return (ft_putstr_fd("minishell: cd: too many arguments\n", 2), ERROR);
-	if (args && args[0])
-	{
-		path = args[0];
-	}
-	else
-		return (throw_error("cd: [relative or absolute path]"), ERROR);
-	if (chdir(path))
-		return (perror("minishell: cd"), ERROR);
-	var->oldpwd = var->pwd;
-	tmp = getcwd(NULL, 0);
-	if (!tmp)
-		return (ft_putendl_fd(strerror(errno),2), ERROR);
-	var->pwd = ft_strdup(tmp);
-	free(tmp);
-	edit_env("PWD=", var->pwd, true);
-	return edit_env("OLDPWD=", var->oldpwd, true), SUCCESS;
-}
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
 {
@@ -66,66 +26,83 @@ char	*get_prompt(void)
 
 	option = 0;
 	cwd = getcwd(NULL, 0);
-	if (!cwd)
+	if (cwd)
+	{
+		prompt = ft_strdup(cwd);
+		free(cwd);
+		cwd = ft_strrchr(prompt, '/') + 1;
+	}
+	else
 	{
 		option = TRUE;
 		cwd = ft_getenv("PWD");
+		if (!cwd)
+			cwd = ft_strdup("seriously");
 	}
-	prompt = ft_strrchr(cwd, '/') + 1;
-	prompt = ft_strjoin(prompt, "$> ");
-	if (!option)
-		free(cwd);
+	if (ft_strchr(cwd, '/'))
+		cwd = ft_strrchr(cwd, '/') + 1;
+	prompt = ft_strjoin(cwd, "$> ");
 	return (prompt);
 }
 
-void	add_slash_to_path(char **path)
+int	pass_the_input(char *line)
 {
-	int	i;
+	t_list	*head;
+	t_list	*cmd_lst;
 
-	i = 0;
-	while (path[i])
-	{
-		path[i] = ft_strjoin(path[i], "/");
-		i++;
-	}
+	line = ft_strtrim(line, " ");
+	if (!*line)
+		return (g_var->exit_s = SUCCESS);
+	if (!is_balanced(line))
+		return (throw_error(NULL), g_var->exit_s = FAILURE);
+	head = tokenize(line);
+	cmd_lst = parse(head);
+	if (!cmd_lst)
+		return (g_var->exit_s = FAILURE);
+	execute(cmd_lst);
+	return (0);
 }
 
 int	init(char **env)
 {
-	signal(SIGINT, sigint_handler);
-	var->env = env;
-	var->path = ft_split(getenv("PATH"), ":");
-	add_slash_to_path(var->path);
-	var->pwd = getenv("PWD");
-	var->oldpwd = getenv("OLDPWD");
-	var->home = getenv("HOME");
-	var->user = getenv("USER");
+	fill_bucket(env);
+	__attribute__((cleanup(cleanup))) char *tmp;
+	tmp = getcwd(NULL, 0);
+	if (tmp)
+	{
+		ft_setenv("PWD", tmp);
+		g_var->pwd = ft_strdup(tmp);
+	}
+	else
+	{
+		perror("minishell: error retrieving current directory");
+		g_var->pwd = ft_getenv("PWD");
+	}
 	return (0);
 }
 
 int	main(int ac, char **av, char **env)
 {
-	ssize_t	read;
-	size_t	len;
 	char	*line;
 
-	setbuf(stdout, NULL);
+	(void)av;
 	if (ac != 1)
-		return (ft_putendl_fd("minishell: no arguments", STDERR_FILENO),
-			FAILURE);
-	var = ft_calloc(sizeof(t_var));
+		return (ft_putendl_fd("minishell: no arguments", 2), FAILURE);
+	g_var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
-	len = 0;
+	line = NULL;
 	while (true)
 	{
-		line = readline(get_prompt());
+		default_signal();
+		line = readline("\033[92mminishell$>\033[0m ");
 		if (!line)
 		{
 			return (ft_exit(0), 0);
 		}
 		add_history(line);
 		pass_the_input(line);
+		reset_arena();
 		free(line);
 	}
-	return 0;
+	return (0);
 }
