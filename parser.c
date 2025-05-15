@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:52 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 13:43:23 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 14:06:04 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ t_list	*parse(t_list *tokens)
 	cmd_lst = NULL;
 	while (tokens)
 	{
-		cmd = ft_calloc(sizeof(t_cmd), C_ARENA);
+		cmd = ft_calloc(sizeof(t_cmd), C_PARENA );
 		while (tokens && (t_token *)tokens->content)
 		{
 			if (!parse_(&tokens, cmd))

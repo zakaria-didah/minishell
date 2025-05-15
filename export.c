@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:23 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:25:24 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 20:20:27 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ int	export_append(char *arg, int i)
 	{
 		value = ft_strjoin(old, value);
 	}
-	printf("name = %s\n", name);
 	return (ft_setenv(name, value), SUCCESS);
 }
 

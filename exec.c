@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:26 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:25:27 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 19:55:20 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,21 @@ int	exec_child(char **args)
 
 	if (!args || !args[0])
 	{
+		ft_free();
 		exit(SUCCESS);
 	}
 	g_var->curr_cmd = args[0];
 	path = find_cmd(args[0]);
 	if (!path)
 	{
-		exit(g_var->exit_s);
+		int stat = g_var->exit_s;
+		ft_free();
+		exit(stat);
 	}
 	execve(path, args, envtoarr());
 	ft_putendl_fd("shit happend", 2);
 	perror(path);
+	ft_free();
 	exit(errno);
 }
 

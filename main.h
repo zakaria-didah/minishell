@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 13:29:44 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 18:16:21 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ typedef struct s_wildcard
 {
 	int						i;
 	int						j;
-
 	int						start_index;
 	int						match;
 	int						txt_len;

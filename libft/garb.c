@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:41:16 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 12:45:44 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 20:19:49 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,15 +94,10 @@ void	*if_need_to_realloc(t_list **head, size_t size)
 void	*ft_calloc(size_t size, int cflags)
 {
 	void	*ptr;
-	static int	i = 0;
-	i++;
 
 	ptr = NULL;
 	if (!(cflags & C_PARENA) && gc_mode(-1))
 		cflags = gc_mode(-1);
-	if ((cflags & C_MALLOC)){
-		// printf("FUCKED i=%d size=%zu cflags=%d\n", i, size, cflags);
-	}
 	if (cflags & C_ARENA)
 	{
 		if (size <= CHUNK)
