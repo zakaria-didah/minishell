@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstremove.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:57:48 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:58:43 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 23:56:34 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,5 @@ void	ft_lstremove(t_list **head, t_list *node)
 		if (next)
 			next = next->next;
 	}
-    (ft_remove(node->content), ft_remove(node));
+	(ft_remove(node->content), ft_remove(node));
 }

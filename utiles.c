@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utiles.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:14:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 13:41:46 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 21:18:04 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ bool	is_balanced(char *input)
 {
 	ssize_t	i;
 	ssize_t	j;
+	char	*stack;
 
-	char *stack;
 	stack = ft_calloc((ft_strlen(input) + 1) * sizeof(char), C_ARENA);
 	i = 0;
 	j = 0;

@@ -1,26 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 23:59:21 by obendaou          #+#    #+#             */
+/*   Updated: 2025/05/16 00:09:15 by obendaou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../main.h"
 
-bool is_valid_name(char *name)
+bool	is_valid_name(char *name)
 {
-    size_t i = 1;
+	size_t	i;
 
+	i = 1;
 	if (name == NULL || *name == '\0')
 	{
-        return (false);
-    }
-    if (!ft_isalpha(name[0]) && name[0] != '_') {
-        return (false);
-    }
-    while (name[i])
+		return (false);
+	}
+	if (!ft_isalpha(name[0]) && name[0] != '_')
 	{
-        if (!ft_isalnum(name[i]) && name[i] != '_')
-            return (false);
+		return (false);
+	}
+	while (name[i])
+	{
+		if (!ft_isalnum(name[i]) && name[i] != '_')
+			return (false);
 		i++;
-    }
-    return (true);
+	}
+	return (true);
 }
 
-int		arr_size(char **arr)
+int	arr_size(char **arr)
 {
 	int	size;
 
@@ -29,11 +43,12 @@ int		arr_size(char **arr)
 		size++;
 	return (size);
 }
+
 void	put_sorted_env(void)
 {
 	char	**envcp;
-	int	i;
-	int	size;
+	int		i;
+	int		size;
 	char	*tmp;
 
 	size = arr_size(var->env);
@@ -63,11 +78,11 @@ void	put_sorted_env(void)
 	}
 }
 
-
 int	export(char **argv)
 {
 	char	*value;
 	int		i;
+
 	if (!argv[0])
 		return (put_sorted_env(), SUCCESS);
 	if (argv[0][0] == '-')
@@ -86,5 +101,5 @@ int	export(char **argv)
 			i = ft_setenv(*argv, value);
 		argv++;
 	}
-	return(SUCCESS);
+	return (SUCCESS);
 }

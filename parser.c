@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:52 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 14:06:04 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 20:56:41 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,19 +55,16 @@ int	parse_redout(t_list **tokens, t_cmd *cmd)
 		{
 			tmp = expand(token->value);
 			if (ft_arrlen(tmp) > 1 || (!tmp[0] || !tmp[0][0]))
-				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(NULL, token->type)));
+				ft_lstadd_back(&cmd->red, \
+				ft_lstnew(new_red(NULL, token->type)));
 			else
 				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(tmp[0], RED_OUT)));
 		}
 		else
-		{
 			return (throw_error(NULL), false);
-		}
 	}
 	else
-	{
 		return (throw_error(NULL), false);
-	}
 	return (true);
 }
 
@@ -105,26 +102,14 @@ int	parse_(t_list **tokens, t_cmd *cmd)
 	token = (*tokens)->content;
 	if (token->type == WORD)
 		cmd->args = ft_arrjoin(cmd->args, expand(token->value));
-	else if (token->type == RED_IN)
-	{
-		if (!parse_redin(tokens, cmd))
-			return (false);
-	}
-	else if (token->type == RED_OUT)
-	{
-		if (!parse_redout(tokens, cmd))
-			return (false);
-	}
-	else if (token->type == APPEND)
-	{
-		if (!parse_append(tokens, cmd))
-			return (false);
-	}
-	else if (token->type == HDOC)
-	{
-		if (!parse_heredoc(tokens, cmd))
-			return (false);
-	}
+	else if (token->type == RED_IN && !parse_redin(tokens, cmd))
+		return (false);
+	else if (token->type == RED_OUT && !parse_redout(tokens, cmd))
+		return (false);
+	else if (token->type == APPEND && !parse_append(tokens, cmd))
+		return (false);
+	else if (token->type == HDOC && !parse_heredoc(tokens, cmd))
+		return (false);
 	return (true);
 }
 
@@ -136,18 +121,17 @@ t_list	*parse(t_list *tokens)
 	cmd_lst = NULL;
 	while (tokens)
 	{
-		cmd = ft_calloc(sizeof(t_cmd), C_PARENA );
+		cmd = ft_calloc(sizeof(t_cmd), C_PARENA);
 		while (tokens && (t_token *)tokens->content)
 		{
 			if (!parse_(&tokens, cmd))
 				return (NULL);
-			if (((t_token *)tokens->content)->type == PIPE
-				&& check_next_pipe(tokens))
-				return (NULL);
 			if (((t_token *)tokens->content)->type == PIPE)
 			{
+				if (check_next_pipe(tokens))
+					return (NULL);
 				tokens = tokens->next;
-				if (!cmd->args && !cmd->red )
+				if (!cmd->args && !cmd->red)
 					return (throw_error("syntax error near  token `|'"), NULL);
 				break ;
 			}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:59 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:26:00 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 23:55:33 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,31 +84,28 @@ int	check_next_pipe(t_list *head)
 
 int	pipex(t_list *head)
 {
-	int		fd[2];
-	int		prev_fd;
-	pid_t	pid;
-	int		i;
+	t_pipeline	data;
 
-	prev_fd = -1;
-	i = 0;
+	data.prev_fd = -1;
+	data.i = 0;
 	while (head)
 	{
-		if (head->next && pipe(fd) < 0)
-			return (perror("pipe"), -1);
-		pid = fork_cmd();
-		if (pid < 0)
+		if (head->next && pipe(data.fds) < 0)
+			return (perror("pipe"), g_var->exit_s = -1, -1);
+		data.pid = fork_cmd();
+		if (data.pid < 0)
 			return (g_var->exit_s = -1, -1);
-		else if (pid == 0)
-			pipe_it(prev_fd, head, fd);
-		if (prev_fd != -1)
-			close(prev_fd);
+		else if (data.pid == 0)
+			pipe_it(data.prev_fd, head, data.fds);
+		if (data.prev_fd != -1)
+			close(data.prev_fd);
 		if (head->next)
 		{
-			close(fd[1]);
-			prev_fd = fd[0];
+			close(data.fds[1]);
+			data.prev_fd = data.fds[0];
 		}
 		head = head->next;
-		i++;
+		data.i++;
 	}
-	return (wait_for_it(-1, pid, i), 0);
+	return (wait_for_it(-1, data.pid, data.i), 0);
 }

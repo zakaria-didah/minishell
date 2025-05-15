@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 18:16:21 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 23:57:04 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,14 @@ typedef struct t_var
 
 }							t_var;
 
+typedef struct s_pipeline
+{
+	pid_t					pid;
+	int						i;
+	int						fds[2];
+	int						prev_fd;
+}							t_pipeline;
+
 extern t_var				*g_var;
 
 typedef enum t_token_type
@@ -176,9 +184,14 @@ void						wait_for_it(pid_t pid, pid_t lastpid, int count);
 void						ft_strerror(char *s);
 void						ft_error(char *s);
 int							check_is_in(char c, const char *s);
+char						*get_pattren(char *arg, int start);
+char						**voo(char **res, int j);
 
 void						fill_bucket(char **env);
 void						unset_env(char *name);
 char						**envtoarr(void);
+char						*compine_name_value(t_env *env);
+size_t						calucate_len(void);
+t_env						*add_env(char *var);
 
 #endif

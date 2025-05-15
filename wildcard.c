@@ -3,23 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:12:59 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 19:26:05 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 23:28:03 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
 
-int	match(char *txt, char *pat)
+int	foo(char *pat, t_wildcard w, char *txt)
 {
-	t_wildcard	w;
-
-	ft_bzero(&w, sizeof(t_wildcard));
-	w.start_index = -1;
-	w.txt_len = ft_strlen(txt);
-	w.pat_len = ft_strlen(pat);
 	while (w.i < w.txt_len)
 	{
 		if (w.j < w.pat_len && pat[w.j] == txt[w.i])
@@ -29,7 +23,7 @@ int	match(char *txt, char *pat)
 		}
 		else if (w.j < w.pat_len && (pat[w.j] == '*'))
 		{
-			w.start_index = w.j; 
+			w.start_index = w.j;
 			w.match = w.i;
 			w.j++;
 		}
@@ -45,6 +39,17 @@ int	match(char *txt, char *pat)
 	while (w.j < w.pat_len && pat[w.j] == '*')
 		w.j++;
 	return (w.j == w.pat_len);
+}
+
+int	match(char *txt, char *pat)
+{
+	t_wildcard	w;
+
+	ft_bzero(&w, sizeof(t_wildcard));
+	w.start_index = -1;
+	w.txt_len = ft_strlen(txt);
+	w.pat_len = ft_strlen(pat);
+	return (foo(pat, w, txt));
 }
 
 char	**wildcard(char *pat)
@@ -72,45 +77,6 @@ char	**wildcard(char *pat)
 	closedir(dp);
 	if (!res)
 		return (NULL);
-	return (res);
-}
-
-char	*get_pattren(char *arg, int start)
-{
-	char	*pattren;
-	int		j;
-	int		i;
-
-	j = 0;
-	i = start;
-	while (arg[i] && (arg[i] == '*' || !isspace(arg[i])))
-	{
-		i++;
-		j++;
-	}
-	i = start;
-	while (i && (arg[i] == '*' || !isspace(arg[i])))
-	{
-		i--;
-		j++;
-	}
-	if (i < start && !start)
-		pattren = ft_substr(arg, i + 1, j);
-	else
-		pattren = ft_substr(arg, start, j);
-	return (pattren);
-}
-
-char	**voo(char **res, int j)
-{
-	char	**wc;
-
-	wc = wildcard(res[j]);
-	if (wc)
-	{
-		res[j] = 0;
-		res = ft_arrjoin(res, wc);
-	}
 	return (res);
 }
 

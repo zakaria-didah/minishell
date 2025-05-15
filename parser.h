@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:56 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:25:57 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 21:15:23 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSE_H
-# define PARSE_H
+#ifndef PARSER_H
+# define PARSER_H
 
 # include "main.h"
 

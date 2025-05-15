@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:35:13 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 11:40:53 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 21:10:58 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 static t_builtins	*get_builtin(void)
 {
 	static t_builtins	builtin[] = {{"cd", ft_cd}, {"pwd", ft_pwd}, {"export",
-			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-			{"echo", ft_echo}, {NULL, NULL}};
+		ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
+	{"echo", ft_echo}, {NULL, NULL}};
 
 	return (builtin);
 }

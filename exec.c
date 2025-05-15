@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:26 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 19:55:20 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 23:20:12 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ pid_t	fork_cmd(void)
 	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
-		return (throw_error("fork failed\n"), exit(-1), -1);
+		return (throw_error("fork failed\n"), -1);
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
@@ -30,28 +30,29 @@ pid_t	fork_cmd(void)
 	return (pid);
 }
 
-/*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
-void	parr(char **arr)
-{
-	int	i;
+// /*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
+// void	parr(char **arr)
+// {
+// 	int	i;
 
-	i = 0;
-	if (!arr)
-		return (void)printf("[null]\n");
-	printf("{");
-	while (arr[i])
-	{
-		printf("[%s]", arr[i++]);
-		if (arr[i])
-			printf(", ");
-		else
-			printf("}\n");
-	}
-}
+// 	i = 0;
+// 	if (!arr)
+// 		return ((void)printf("[null]\n"));
+// 	printf("{");
+// 	while (arr[i])
+// 	{
+// 		printf("[%s]", arr[i++]);
+// 		if (arr[i])
+// 			printf(", ");
+// 		else
+// 			printf("}\n");
+// 	}
+// }
 
 int	exec_child(char **args)
 {
 	char	*path;
+	int		stat ;
 
 	if (!args || !args[0])
 	{
@@ -62,7 +63,7 @@ int	exec_child(char **args)
 	path = find_cmd(args[0]);
 	if (!path)
 	{
-		int stat = g_var->exit_s;
+		stat = g_var->exit_s;
 		ft_free();
 		exit(stat);
 	}

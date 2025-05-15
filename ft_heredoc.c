@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_heredoc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:03 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:25:04 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 20:47:20 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,10 @@ char	*heredoc(char *delemiter)
 	file = NULL;
 	expand = 1;
 	if (is_quoted(delemiter))
-		(delemiter = remove_quotes(delemiter), expand = 0);
+	{
+		delemiter = remove_quotes(delemiter);
+		expand = 0;
+	}
 	fd = open_heredoc(&file);
 	if (fd < 0)
 		return (NULL);
