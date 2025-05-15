@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:14:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 21:02:21 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 12:39:42 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,8 @@ bool	is_balanced(char *input)
 		}
 		i++;
 	}
-	return (j == 0);
+	return (gc_mode(0), j == 0);
 }
-
-
 
 char	*join_args(char **args)
 {

@@ -1,11 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:25:23 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 10:25:24 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
 
-bool is_valid_value(char *arg)
+bool	is_valid_value(char *arg)
 {
 	int	i;
 
 	i = 0;
-
 	while (arg[i] && arg[i] != '=')
 	{
 		if (!ft_isalnum(arg[i]) && arg[i] != '_')
@@ -46,7 +57,7 @@ int	export_asign(char *arg, int i)
 
 	if (arg[i] == '=')
 	{
-		value = arg + (i+1);
+		value = arg + (i + 1);
 		name = ft_substr(arg, 0, i);
 		return (ft_setenv(name, value), SUCCESS);
 	}
@@ -62,12 +73,12 @@ int	export_asign(char *arg, int i)
 	return (SUCCESS);
 }
 
-char *name_of_var(char *arg, int *i)
+char	*name_of_var(char *arg, int *i)
 {
 	char	*name;
 
 	if (ft_isdigit(arg[*i]))
-		return NULL;
+		return (NULL);
 	while (arg[*i] && ft_isalnum(arg[*i]))
 		(*i)++;
 	name = ft_substr(arg, 0, *i);
@@ -94,7 +105,7 @@ int	ft_export(char **args)
 			return (throw_error("there is an invalid identifier"), ERROR);
 		if (args[i][j] == '+')
 			export_append(args[i], ++j);
-		else 
+		else
 			export_asign(args[i], j);
 		j = 0;
 		i++;

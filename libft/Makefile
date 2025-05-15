@@ -6,7 +6,7 @@ SRC	= garb.c	garb_utils.c	garb_arena.c	ft_putnbr_fd.c	ft_putendl_fd.c	ft_putstr_
 	ft_split.c	ft_strlcpy.c	ft_strrchr.c	ft_arradd.c	ft_strtok.c	ft_itoa.c	ft_memset.c \
 	ft_strinsert.c ft_arrjoin.c ft_arrdup.c ft_arrdel.c
 bonus_SRC = ft_lstnew_bonus.c	ft_lstadd_front_bonus.c	ft_lstsize_bonus.c	ft_lstlast_bonus.c	ft_lstadd_back_bonus.c	\
-	ft_lstdelone_bonus.c	ft_lstclear_bonus.c	ft_lstiter_bonus.c	ft_lstmap_bonus.c
+	ft_lstdelone_bonus.c	ft_lstclear_bonus.c	ft_lstiter_bonus.c	ft_lstmap_bonus.c ft_lstremove.c	
 OBJS:=	$(SRC:%.c=%.o)
 bonus_OBJ = $(bonus_SRC:%.c=%.o)
 FLAGS	=	-Wall	-Werror	-Wextra	-g3

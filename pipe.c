@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipe.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:25:59 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 10:26:00 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
 
 void	wait_for_it(pid_t pid, pid_t lastpid, int count)
@@ -48,7 +60,6 @@ void	pipe_it(int prev_fd, t_list *head, int fd[2])
 	else
 		exit(g_var->exit_s);
 }
-
 
 int	check_next_pipe(t_list *head)
 {

@@ -1,10 +1,8 @@
-#include <stdio.h>
+#include "main.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "main.h"
-
-
 
 void	pl(t_list *head, int f)
 {
@@ -33,7 +31,6 @@ void	pl(t_list *head, int f)
 
 /*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
 
-
 /*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
 void	parr(char **arr)
 {
@@ -53,11 +50,20 @@ void	parr(char **arr)
 	}
 }
 
-int main(int ac, char **av, char **env)
+int	gc_mode(int mode)
 {
-	uint64_t i = 9223372036854775807;
-	i+=5;
-	printf("%lu\n", i);
+	static int	gc_mode[127] = {0};
+	static int	i = 1;
 
-    
+	if (mode >= 0)
+	{
+		if (mode == 0)
+		{
+			if (i != 0)
+				i--;
+		}
+		else
+			gc_mode[i++] = mode;
+	}
+	return (gc_mode[i - 1]);
 }

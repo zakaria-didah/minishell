@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:06:33 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 11:34:37 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 10:59:21 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+
 typedef struct s_list
 {
 	void			*content;
@@ -57,6 +58,7 @@ void				*ft_memset(void *b, int c, size_t len);
 char				**ft_split(const char *s, char *charset);
 char				*ft_strtok(char *str, const char *delim);
 void				ft_lstadd_back(t_list **lst, t_list *new);
+void				ft_lstremove(t_list **head, t_list *node);
 void				*ft_memchr(const void *s, int c, size_t n);
 void				ft_lstiter(t_list *lst, void (*f)(void *));
 void				ft_lstadd_front(t_list **lst, t_list *new);

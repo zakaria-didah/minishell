@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:25:52 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 10:25:53 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 // #include "parser.h"
 #include "main.h"
 #include "parser.h"
@@ -86,8 +98,6 @@ int	parse_append(t_list **tokens, t_cmd *cmd)
 	return (true);
 }
 
-
-
 int	parse_(t_list **tokens, t_cmd *cmd)
 {
 	t_token	*token;
@@ -147,9 +157,3 @@ t_list	*parse(t_list *tokens)
 	}
 	return (cmd_lst);
 }
-
-
-
-
-
-

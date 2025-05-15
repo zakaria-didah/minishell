@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:21:18 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 12:45:09 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "exec.h"
 #include "main.h"
 #include "parser.h"
 #include "signals.h"
-#include "exec.h"
 
 t_var	*g_var = NULL;
 
@@ -33,7 +45,6 @@ char	*get_prompt(void)
 	return (prompt);
 }
 
-
 int	pass_the_input(char *line)
 {
 	t_list	*head;
@@ -55,8 +66,10 @@ int	pass_the_input(char *line)
 int	init(char **env)
 {
 	fill_bucket(env);
-	__attribute__((cleanup(cleanup))) char *tmp = getcwd(NULL, 0);
-	if (tmp){
+	__attribute__((cleanup(cleanup))) char *tmp;
+	tmp = getcwd(NULL, 0);
+	if (tmp)
+	{
 		ft_setenv("PWD", tmp);
 		g_var->pwd = ft_strdup(tmp);
 	}
@@ -71,8 +84,8 @@ int	init(char **env)
 int	main(int ac, char **av, char **env)
 {
 	char	*line;
-	(void)av;
 
+	(void)av;
 	if (ac != 1)
 		return (ft_putendl_fd("minishell: no arguments", 2), FAILURE);
 	g_var = ft_calloc(sizeof(t_var), C_TRACK);

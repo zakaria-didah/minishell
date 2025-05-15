@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:25:13 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 10:25:18 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
 
 char	*check_path(char **args)
@@ -14,7 +26,6 @@ char	*check_path(char **args)
 	return (path);
 }
 
-
 int	ft_pwd(char **argv)
 {
 	char	*pwd;
@@ -27,7 +38,6 @@ int	ft_pwd(char **argv)
 	{
 		pwd = ft_strdup(fre);
 		free(fre);
-		// edit_env("PWD", pwd, FALSE);
 		ft_setenv("PWD", pwd);
 	}
 	else

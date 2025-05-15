@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_heredoc.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:25:03 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 10:25:04 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
 #include "parser.h"
 #include "signals.h"
@@ -57,9 +69,7 @@ int	is_quoted(char *input)
 	return (0);
 }
 
-
-
-void read_heredoc(int fd, char *delemiter, bool expand)
+void	read_heredoc(int fd, char *delemiter, bool expand)
 {
 	char	*line;
 	size_t	len;
@@ -80,7 +90,7 @@ void read_heredoc(int fd, char *delemiter, bool expand)
 		if (!expand)
 			free(line);
 	}
-	(close(fd),exit(g_var->hdoc));
+	(close(fd), exit(g_var->hdoc));
 }
 
 char	*heredoc(char *delemiter)
@@ -103,5 +113,5 @@ char	*heredoc(char *delemiter)
 		(signal(SIGINT, sig_heredoc), signal(SIGQUIT, SIG_IGN));
 		read_heredoc(fd, delemiter, expand);
 	}
-	return (wait_for_it(pid,pid, 1), close(fd), file);
+	return (wait_for_it(pid, pid, 1), close(fd), file);
 }

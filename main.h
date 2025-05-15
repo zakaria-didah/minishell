@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 19:22:38 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 10:20:01 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ typedef struct s_env
 typedef struct t_var
 {
 	t_list					*env;
-	t_list					*bucket[BUCKET_SIZE+1];
+	t_list					*bucket[BUCKET_SIZE + 1];
 	char					*pwd;
 	char					*oldpwd;
 	char					*curr_cmd;
@@ -179,9 +179,8 @@ void						ft_strerror(char *s);
 void						ft_error(char *s);
 int							check_is_in(char c, const char *s);
 
-
-void	fill_bucket(char **env);
-void unset_env(char *name);
-char	**envtoarr(void);
+void						fill_bucket(char **env);
+void						unset_env(char *name);
+char						**envtoarr(void);
 
 #endif

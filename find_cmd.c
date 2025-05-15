@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   find_cmd.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/15 10:25:20 by zdidah            #+#    #+#             */
+/*   Updated: 2025/05/15 11:30:44 by zdidah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main.h"
 
 void	add_slash_to_path(char **path)
@@ -18,7 +30,6 @@ char	**get_path(void)
 	char	*tmp;
 
 	tmp = ft_getenv("PATH");
-	printf("tmp = %s\n", tmp);
 	if (!tmp)
 		return (ft_strerror("command not found\n"), NULL);
 	path = ft_split(tmp, ":");

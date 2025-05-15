@@ -4,7 +4,7 @@ SRC= main.c parser.c signals.c utiles.c exec.c echo.c ft_unset.c pipe.c\
 	wildcard.c	tokenize.c
 OBJ= $(SRC:.c=.o)
 CC=cc
-CFLAGS=  -g3 -Wall -Wextra -Werror
+CFLAGS=  -g3 -Wall -Wextra -Werror #-fsanitize=address 
 LDFLAGS= -lreadline 
 lib= libft/libft.a
 NAME= minishell

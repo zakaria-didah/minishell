@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:41:16 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 12:41:44 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/15 12:45:44 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,20 @@
 
 int	gc_mode(int mode)
 {
-	static int	gc_mode = 0;
+	static int	gc_mode[127] = {0};
+	static int	i = 1;
 
 	if (mode >= 0)
-		gc_mode = mode;
-	return (gc_mode);
+	{
+		if (mode == 0)
+		{
+			if (i != 0)
+				i--;
+		}
+		else
+			gc_mode[i++] = mode;
+	}
+	return (gc_mode[i - 1]);
 }
 
 void	ft_remove(void *ptr)
@@ -85,14 +94,19 @@ void	*if_need_to_realloc(t_list **head, size_t size)
 void	*ft_calloc(size_t size, int cflags)
 {
 	void	*ptr;
+	static int	i = 0;
+	i++;
 
 	ptr = NULL;
 	if (!(cflags & C_PARENA) && gc_mode(-1))
 		cflags = gc_mode(-1);
+	if ((cflags & C_MALLOC)){
+		// printf("FUCKED i=%d size=%zu cflags=%d\n", i, size, cflags);
+	}
 	if (cflags & C_ARENA)
 	{
 		if (size <= CHUNK)
-			return (if_need_to_realloc(arena_head(),size));
+			return (if_need_to_realloc(arena_head(), size));
 		else
 			cflags = C_TRACK;
 	}
