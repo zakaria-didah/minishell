@@ -6,7 +6,7 @@
 /*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:26 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 23:20:12 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:49:14 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,7 @@ void	execute(t_list *cmd_lst)
 		pipex(cmd_lst);
 	else
 	{
-		if (((t_cmd *)cmd_lst->content)->args && !exec_builtin(cmd_lst))
-		{
+		if (((t_cmd *)cmd_lst->content)->args && !exec_builtin(cmd_lst, 1))
 			exec_cmd(cmd_lst);
-		}
 	}
 }

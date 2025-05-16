@@ -6,7 +6,7 @@
 /*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 23:57:04 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:48:58 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ void						ft_error(char *error);
 void						ft_strerror(char *s);
 int							exec_cmd(t_list *cmd);
 int							exec_child(char **args);
-bool						exec_builtin(t_list *cmdlst);
+bool						exec_builtin(t_list *cmdlst, int apply_red);
 void						execute(t_list *cmd_lst);
 char						*heredoc(char *head);
 int							pipex(t_list *head);
@@ -186,6 +186,10 @@ void						ft_error(char *s);
 int							check_is_in(char c, const char *s);
 char						*get_pattren(char *arg, int start);
 char						**voo(char **res, int j);
+char						*compine_name_value(t_env *env);
+size_t						calucate_len(void);
+t_env						*add_env(char *var);
+char	**wildcard(char *pat);
 
 void						fill_bucket(char **env);
 void						unset_env(char *name);

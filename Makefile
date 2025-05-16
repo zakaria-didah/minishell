@@ -1,7 +1,7 @@
 SRC= main.c parser.c signals.c utiles.c exec.c echo.c ft_unset.c pipe.c\
 	redirections.c ft_env.c error.c  export.c	ft_exit.c find_cmd.c\
 	ft_heredoc.c expand/expand_utils.c expand/expand.c ft_cd.c exec_builtin.c \
-	wildcard.c	tokenize.c
+	wildcard.c	tokenize.c wildcard_utils.c ft_env_utils.c
 OBJ= $(SRC:.c=.o)
 CC=cc
 CFLAGS=  -g3 #-fsanitize=address #-Wall -Wextra -Werror  

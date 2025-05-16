@@ -6,7 +6,7 @@
 /*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:59 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 23:55:33 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:47:54 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,20 @@ void	pipe_it(int prev_fd, t_list *head, int fd[2])
 {
 	if (prev_fd != -1)
 	{
-		dup2(prev_fd, STDIN_FILENO);
+		if (dup2(prev_fd, STDIN_FILENO) == -1)
+			ft_free(), perror("minishell"), exit(1);
 		close(prev_fd);
 	}
 	if (head->next)
 	{
 		close(fd[0]);
-		dup2(fd[1], STDOUT_FILENO);
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
+			ft_free(), perror("minishell"), exit(1);
 		close(fd[1]);
 	}
 	if (redirect(head) < 0)
 		exit(ERROR);
-	if (!exec_builtin(head))
+	if (!exec_builtin(head, 0))
 		exec_child(((t_cmd *)head->content)->args);
 	else
 		exit(g_var->exit_s);

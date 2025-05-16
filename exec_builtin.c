@@ -6,7 +6,7 @@
 /*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:35:13 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 21:10:58 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 14:47:33 by obendaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static t_builtins	*get_builtin(void)
 	return (builtin);
 }
 
-bool	exec_builtin(t_list *cmdlst)
+bool	exec_builtin(t_list *cmdlst, int apply_red)
 {
 	t_builtins	*builtin;
 	char		*cmd;
@@ -39,10 +39,12 @@ bool	exec_builtin(t_list *cmdlst)
 			&& len == ft_strlen(builtin[i].name))
 		{
 			g_var->curr_cmd = cmd;
-			if (red_builtin(cmdlst) < 0)
+			if ( apply_red == 1 &&  red_builtin(cmdlst) < 0)
 				return (g_var->exit_s = 1, red_builtin(NULL), true);
 			g_var->exit_s = builtin[i].func(++((t_cmd *)cmdlst->content)->args);
-			return (red_builtin(NULL), true);
+			if (apply_red == 1 && red_builtin(NULL) < 0)
+				return (g_var->exit_s = 1, true);
+			return (true);
 		}
 		i++;
 	}
