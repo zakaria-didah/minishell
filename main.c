@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:21:18 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 12:45:09 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 17:15:40 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	main(int ac, char **av, char **env)
 	while (true)
 	{
 		default_signal();
-		line = readline("\033[92mminishell$>\033[0m ");
+		line = readline(get_prompt());
 		if (!line)
 		{
 			return (ft_exit(0), 0);

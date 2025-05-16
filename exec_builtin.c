@@ -16,8 +16,8 @@
 static t_builtins	*get_builtin(void)
 {
 	static t_builtins	builtin[] = {{"cd", ft_cd}, {"pwd", ft_pwd}, {"export",
-		ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-	{"echo", ft_echo}, {NULL, NULL}};
+			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
+			{"echo", ft_echo}, {NULL, NULL}};
 
 	return (builtin);
 }
@@ -39,7 +39,7 @@ bool	exec_builtin(t_list *cmdlst, int apply_red)
 			&& len == ft_strlen(builtin[i].name))
 		{
 			g_var->curr_cmd = cmd;
-			if ( apply_red == 1 &&  red_builtin(cmdlst) < 0)
+			if (apply_red == 1 && red_builtin(cmdlst) < 0)
 				return (g_var->exit_s = 1, red_builtin(NULL), true);
 			g_var->exit_s = builtin[i].func(++((t_cmd *)cmdlst->content)->args);
 			if (apply_red == 1 && red_builtin(NULL) < 0)

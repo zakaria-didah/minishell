@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:34 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 11:12:42 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 17:53:03 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,6 @@ void	ft_strerror(char *s)
 		ft_putendl_fd(strerror(errno), STDERR_FILENO);
 }
 
-void	ft_error(char *s)
-{
-	if (!s)
-		s = strerror(errno);
-	dealloc_arena();
-	ft_free();
-	ft_putendl_fd(s, STDERR_FILENO);
-	exit(1);
-}
 
 void	throw_error(char *line)
 {

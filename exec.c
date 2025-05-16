@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:26 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 14:49:14 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:12:04 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
+#include "exec.h"
 
 pid_t	fork_cmd(void)
 {
@@ -26,33 +27,13 @@ pid_t	fork_cmd(void)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 	}
-	g_var->child = true;
 	return (pid);
 }
-
-// /*⇓⇓⇓⇓ print_array ⇓⇓⇓⇓*/
-// void	parr(char **arr)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	if (!arr)
-// 		return ((void)printf("[null]\n"));
-// 	printf("{");
-// 	while (arr[i])
-// 	{
-// 		printf("[%s]", arr[i++]);
-// 		if (arr[i])
-// 			printf(", ");
-// 		else
-// 			printf("}\n");
-// 	}
-// }
 
 int	exec_child(char **args)
 {
 	char	*path;
-	int		stat ;
+	int		stat;
 
 	if (!args || !args[0])
 	{
@@ -84,7 +65,7 @@ pid_t	exec_cmd(t_list *cmd)
 	if (pid == 0)
 	{
 		if (redirect(cmd) < 0)
-			exit(ERROR);
+			(ft_free(), exit(ERROR));
 		exec_child(((t_cmd *)cmd->content)->args);
 	}
 	else

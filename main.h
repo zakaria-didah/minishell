@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 14:48:58 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 16:49:56 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ typedef struct t_var
 	char					*curr_cmd;
 	volatile sig_atomic_t	hdoc;
 	int						exit_s;
-	volatile sig_atomic_t	child;
 
 }							t_var;
 
@@ -167,7 +166,6 @@ void						ft_error(char *error);
 void						ft_strerror(char *s);
 int							exec_cmd(t_list *cmd);
 int							exec_child(char **args);
-bool						exec_builtin(t_list *cmdlst, int apply_red);
 void						execute(t_list *cmd_lst);
 char						*heredoc(char *head);
 int							pipex(t_list *head);

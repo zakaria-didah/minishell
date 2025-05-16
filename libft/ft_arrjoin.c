@@ -6,12 +6,12 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 10:57:12 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 11:38:00 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 18:00:04 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "garb.h"
 #include "libft.h"
+#include "garb.h"
 
 char	**ft_arrjoin(char **arr1, char **arr2)
 {
@@ -27,7 +27,7 @@ char	**ft_arrjoin(char **arr1, char **arr2)
 	len2 = ft_arrlen(arr2);
 	if ((!arr1 && !arr2) || (!len1 && !len2))
 		return (NULL);
-	res = ft_calloc((len1 + len2 + 1) * sizeof(char *), C_TRACK);
+	res = ft_calloc((len1 + len2 + 1) * sizeof(char *), C_ARENA);
 	if (arr1)
 		while (arr1[i])
 			res[j++] = ft_strdup(arr1[i++]);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:26:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 15:01:30 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 16:59:14 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,36 +27,13 @@ int	open_file(char *file, int flag)
 	return (fd);
 }
 
-// int	red(t_list *head)
-// {
-// 	int		fd;
-// 	t_red	*red;
-
-// 	while (head)
-// 	{
-// 		red = (t_red *)head->content;
-// 		if (!red->file)
-// 			return (throw_error("ambiguous redirect"), -1);
-// 		fd = open_file(red->file, red->type);
-// 		if (fd < 0)
-// 			return (fd);
-// 		if (red->type == RED_OUT || red->type == APPEND)
-// 			dup2(fd, STDOUT_FILENO);
-// 		else if (red->type == RED_IN || red->type == HDOC)
-// 			dup2(fd, STDIN_FILENO);
-// 		close(fd);
-// 		head = head->next;
-// 	}
-// 	return (SUCCESS);
-// }
-
 int	redirect(t_list *head)
 {
 	t_list	*rdc_lst;
 	int		fd;
 	t_red	*red;
 
-	rdc_lst = ((t_cmd *) head->content)->red;
+	rdc_lst = ((t_cmd *)head->content)->red;
 	while (rdc_lst)
 	{
 		red = (t_red *)rdc_lst->content;
@@ -65,11 +42,11 @@ int	redirect(t_list *head)
 		fd = open_file(red->file, red->type);
 		if (fd < 0)
 			return (fd);
-		if ((red->type == RED_OUT || red->type == APPEND) \
-			&& dup2(fd, STDOUT_FILENO) == -1)
+		if ((red->type == RED_OUT || red->type == APPEND) && dup2(fd,
+				STDOUT_FILENO) == -1)
 			return (perror("minishell"), -1);
-		else if ((red->type == RED_IN || red->type == HDOC) \
-				&& dup2(fd, STDIN_FILENO) == -1)
+		else if ((red->type == RED_IN || red->type == HDOC) && dup2(fd,
+				STDIN_FILENO) == -1)
 			return (perror("minishell"), -1);
 		close(fd);
 		rdc_lst = rdc_lst->next;
@@ -96,7 +73,7 @@ int	red_builtin(t_list *head)
 	{
 		fd = dup(STDOUT_FILENO);
 		fd2 = dup(STDIN_FILENO);
-		if (redirect(head) < 0)
+		if ((fd < 0 || fd2 < 0) || redirect(head) < 0)
 			return (-1);
 	}
 	else

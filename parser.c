@@ -55,8 +55,8 @@ int	parse_redout(t_list **tokens, t_cmd *cmd)
 		{
 			tmp = expand(token->value);
 			if (ft_arrlen(tmp) > 1 || (!tmp[0] || !tmp[0][0]))
-				ft_lstadd_back(&cmd->red, \
-				ft_lstnew(new_red(NULL, token->type)));
+				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(NULL,
+							token->type)));
 			else
 				ft_lstadd_back(&cmd->red, ft_lstnew(new_red(tmp[0], RED_OUT)));
 		}

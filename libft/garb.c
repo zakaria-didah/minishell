@@ -6,11 +6,19 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:41:16 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 20:19:49 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 18:16:05 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "garb.h"
+
+void pl(int f[]){
+	int i = 0;
+	while(i< 127){
+		printf("%d ", f[i++]);
+	}
+	printf("\n");
+}
 
 int	gc_mode(int mode)
 {
@@ -21,12 +29,15 @@ int	gc_mode(int mode)
 	{
 		if (mode == 0)
 		{
-			if (i != 0)
+			if (i != 0){
+				gc_mode[i] = 0;
 				i--;
+			}
 		}
 		else
 			gc_mode[i++] = mode;
 	}
+	// pl(gc_mode);
 	return (gc_mode[i - 1]);
 }
 

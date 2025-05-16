@@ -3,15 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:26:05 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 13:04:57 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:23:10 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
 #include "signals.h"
+
+void	sig_pipe(int sig)
+{
+	write(2, "we are fucked\n", 15);
+}
 
 void	signal_handler(int sig)
 {
@@ -27,6 +32,7 @@ void	default_signal(void)
 {
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
+	signal(SIGPIPE, sig_pipe);
 }
 
 void	sig_heredoc(int sig)
@@ -36,3 +42,4 @@ void	sig_heredoc(int sig)
 	g_var->exit_s = 130;
 	close(STDIN_FILENO);
 }
+

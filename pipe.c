@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:59 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 14:47:54 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 18:19:06 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
-
+#include "exec.h"
 void	wait_for_it(pid_t pid, pid_t lastpid, int count)
 {
 	int		i;
@@ -33,7 +33,6 @@ void	wait_for_it(pid_t pid, pid_t lastpid, int count)
 		}
 		i++;
 	}
-	g_var->child = false;
 	if (g_var->exit_s == 130)
 		write(1, "\n", 1);
 	else if (g_var->exit_s == 131)
@@ -45,22 +44,22 @@ void	pipe_it(int prev_fd, t_list *head, int fd[2])
 	if (prev_fd != -1)
 	{
 		if (dup2(prev_fd, STDIN_FILENO) == -1)
-			ft_free(), perror("minishell"), exit(1);
+			(ft_free(), perror("minishell"), exit(1));
 		close(prev_fd);
 	}
 	if (head->next)
 	{
 		close(fd[0]);
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
-			ft_free(), perror("minishell"), exit(1);
+			(ft_free(), perror("minishell"), exit(1));
 		close(fd[1]);
 	}
 	if (redirect(head) < 0)
-		exit(ERROR);
+		(ft_free(), exit(ERROR));
 	if (!exec_builtin(head, 0))
 		exec_child(((t_cmd *)head->content)->args);
 	else
-		exit(g_var->exit_s);
+		(ft_free(), exit(g_var->exit_s));
 }
 
 int	check_next_pipe(t_list *head)

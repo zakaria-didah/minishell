@@ -68,12 +68,11 @@ int	gc_mode(int mode)
 	return (gc_mode[i - 1]);
 }
 
-
-int main(){
-
+int	main(void)
+{
 	char *str = strdup("hello");
 
-	pid_t	pid = fork();
-	
-	return 0;
+	pid_t pid = fork();
+
+	return (0);
 }

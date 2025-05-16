@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:13 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:25:18 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 17:20:42 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,9 @@ int	ft_cd(char **args)
 	char	*path;
 
 	__attribute__((cleanup(cleanup))) char *tmp;
-	tmp = NULL;
 	tmp = getcwd(NULL, 0);
 	if (!tmp)
-		(perror("getcwd"), g_var->oldpwd = g_var->pwd);
+		perror("getcwd");
 	else
 	{
 		g_var->oldpwd = ft_strdup(tmp);
