@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:35:13 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 22:19:59 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/17 00:17:45 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 static t_builtins	*get_builtin(void)
 {
 	static t_builtins	builtin[] = {{"cd", ft_cd}, {"pwd", ft_pwd}, {"export",
-			ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
-			{"echo", ft_echo}, {NULL, NULL}};
+		ft_export}, {"unset", ft_unset}, {"env", ft_env}, {"exit", ft_exit},
+	{"echo", ft_echo}, {NULL, NULL}};
 
 	return (builtin);
 }

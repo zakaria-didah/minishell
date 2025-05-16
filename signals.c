@@ -42,4 +42,3 @@ void	sig_heredoc(int sig)
 	g_var.exit_s = 130;
 	close(STDIN_FILENO);
 }
-

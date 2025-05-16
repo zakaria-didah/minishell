@@ -6,37 +6,11 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 19:01:17 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 22:21:10 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/17 00:19:36 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main.h"
-
-// char	*ft_getenv(char *name)
-// {
-// 	int		i;
-// 	char	*env;
-// 	size_t	len;
-
-// 	i = 0;
-// 	if (!g_var.env || !name)
-// 		return (NULL);
-// 	len = ft_strlen(name);
-// 	while (g_var.env[i])
-// 	{
-// 		if (ft_memcmp(g_var.env[i], name, len) == 0)
-// 		{
-// 			if (g_var.env[i][len] == '=')
-// 			{
-// 				env = ft_strchr(g_var.env[i], '=');
-// 				if (env)
-// 					return (ft_strdup(env + 1));
-// 			}
-// 		}
-// 		i++;
-// 	}
-// 	return (NULL);
-// }
 
 char	**envtoarr(void)
 {
@@ -67,20 +41,6 @@ char	**envtoarr(void)
 	return (env[j] = NULL, gc_mode(0), env);
 }
 
-// void	fill_env(char **env)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	gc_mode(C_PARENA | C_TRACK);
-// 	while (env[i])
-// 	{
-// 		ft_lstadd_back(&g_var.env, ft_lstnew(add_env(env[i])));
-// 		i++;
-// 	}
-// 	gc_mode(0);
-// }
-
 void	fill_bucket(char **env)
 {
 	int		i;
@@ -91,11 +51,9 @@ void	fill_bucket(char **env)
 	i = 0;
 	while (env[i])
 	{
-		flag__ = 1;
 		while (env[i][len] != '=')
 			len++;
 		gc_mode(C_PARENA);
-		flag__ = 0;
 		if (len > BUCKET_SIZE - 1)
 			len = BUCKET_SIZE;
 		ft_lstadd_back(&g_var.bucket[len], ft_lstnew(add_env(env[i])));
@@ -181,76 +139,3 @@ int	ft_env(char **args)
 	}
 	return (SUCCESS);
 }
-/*
-int	ft_env(char **args)
-{
-	int	i;
-
-	i = 0;
-	(void)args;
-	while (g_var.env[i])
-	{
-		if (ft_strchr(g_var.env[i], '='))
-		{
-			ft_putendl_fd(g_var.env[i], STDOUT_FILENO);
-		}
-		i++;
-	}
-	return (SUCCESS);
-}
-
-int	edit_env(char *name, char *value, t_bool APPEND)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
-	while (g_var.env[i])
-	{
-		if (ft_strncmp(g_var.env[i], name, ft_strlen(name)) == 0)
-		{
-			gc_mode(C_TRACK);
-			g_var.env[i] = ft_strjoin(name, value);
-			return (gc_mode(0), SUCCESS);
-		}
-		i++;
-	}
-	if (APPEND)
-		return (ft_setenv(name, value));
-	return (gc_mode(0), FAILURE);
-}
-
-char	*insert_env(char *name, char *value)
-{
-	if (!name || !value)
-		return (NULL);
-	if (!ft_strchr(name, '=') && value)
-		name = ft_strjoin(name, "=");
-	name = ft_strjoin(name, value);
-	return (name);
-}
-
-int	ft_setenv(char *name, char *value)
-{
-	int		i;
-	size_t	len;
-
-	if (!name)
-		return (FAILURE);
-	gc_mode(C_TRACK);
-	i = 0;
-	len = ft_strlen(name);
-	while (g_var.env[i])
-	{
-		if (ft_memcmp(g_var.env[i], name, len) == 0)
-		{
-			g_var.env[i] = insert_env(name, value);
-			return (gc_mode(0), SUCCESS);
-		}
-		i++;
-	}
-	g_var.env = ft_arradd(g_var.env, ft_strjoin(name, value));
-	return (gc_mode(0), SUCCESS);
-}
-*/

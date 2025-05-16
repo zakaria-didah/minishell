@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:32:49 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 20:54:01 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/17 00:11:15 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,12 @@
 # include <errno.h>
 
 # define CHUNK 64
-# define ARENA_SIZE 1024
+# define ARENA_SIZE 10240
 
 # define C_ARENA 0x01
 # define C_PARENA 0x02
 # define C_MALLOC 0x04
 # define C_TRACK 0x08
-
-
 
 typedef struct s_mem
 {
@@ -55,7 +53,5 @@ int					clear_arena(t_list *alloc);
 int					gc_mode(int mode);
 t_list				**parena_head(void);
 
-
-
-void vii();
+void				vii(void);
 #endif

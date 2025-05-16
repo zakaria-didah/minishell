@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 22:20:19 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/17 00:21:11 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ typedef struct s_pipeline
 }							t_pipeline;
 
 extern t_var				g_var;
-extern int flag__;
 
 typedef enum t_token_type
 {
@@ -144,7 +143,6 @@ typedef struct s_cmd
 }							t_cmd;
 
 uint64_t					ft_atos(char *num);
-char						**split_(const char *s);
 bool						is_balanced(char *input);
 int							ft_exit(char **args);
 char						*get_prompt(void);
@@ -161,9 +159,7 @@ char						*find_cmd(char *cmd);
 int							ft_setenv(char *name, char *value);
 void						cleanup(void *ptr);
 char						*ft_getenv(const char *name);
-int							edit_env(char *name, char *value, t_bool APPEND);
 int							redirect(t_list *head);
-void						ft_error(char *error);
 void						ft_strerror(char *s);
 int							exec_cmd(t_list *cmd);
 int							exec_child(char **args);
@@ -173,25 +169,20 @@ int							pipex(t_list *head);
 int							open_file(char *file, int append_redout_redin);
 pid_t						fork_cmd(void);
 int							check_next_pipe(t_list *head);
-void						sort_alpha(char **arr);
 t_red						*new_red(char *file, t_token_type type);
 void						parr(char **arr);
-void						pl(t_list *head, int f);
 void						default_signal(void);
 int							ft_pwd(char **args);
 void						wait_for_it(pid_t pid, pid_t lastpid, int count);
 void						ft_strerror(char *s);
-void						ft_error(char *s);
 int							check_is_in(char c, const char *s);
 char						*get_pattren(char *arg, int start);
 char						**voo(char **res, int j);
 char						*compine_name_value(t_env *env);
 size_t						calucate_len(void);
 t_env						*add_env(char *var);
-char	**wildcard(char *pat);
-
+char						**wildcard(char *pat);
 void						fill_bucket(char **env);
-void						unset_env(char *name);
 char						**envtoarr(void);
 char						*compine_name_value(t_env *env);
 size_t						calucate_len(void);

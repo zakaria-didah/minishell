@@ -6,19 +6,11 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:41:16 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 21:49:36 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/17 00:10:26 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "garb.h"
-
-void pl(int f[]){
-	int i = 0;
-	while(i< 127){
-		printf("%d ", f[i++]);
-	}
-	printf("\n");
-}
 
 int	gc_mode(int mode)
 {
@@ -29,7 +21,8 @@ int	gc_mode(int mode)
 	{
 		if (mode == 0)
 		{
-			if (i != 0){
+			if (i != 0)
+			{
 				i--;
 				gc_mode[i] = 0;
 			}
@@ -37,7 +30,6 @@ int	gc_mode(int mode)
 		else
 			gc_mode[i++] = mode;
 	}
-	// pl(gc_mode);
 	return (gc_mode[i - 1]);
 }
 
@@ -100,12 +92,6 @@ void	*if_need_to_realloc(t_list **head, size_t size)
 	ptr = alloc->mempool + alloc->offset;
 	alloc->offset += size;
 	return (ptr);
-}
-	static size_t kk = 0;
-int flag__ = 0;
-
-void vii(){
-	printf("%zu\n", kk);
 }
 
 void	*ft_calloc(size_t size, int cflags)

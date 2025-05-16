@@ -28,7 +28,6 @@ void	ft_strerror(char *s)
 		ft_putendl_fd(strerror(errno), STDERR_FILENO);
 }
 
-
 void	throw_error(char *line)
 {
 	char	prefix[12];

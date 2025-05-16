@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 10:55:54 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 21:53:03 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/17 00:18:19 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,7 @@ void	dealloc_arena(void)
 {
 	t_list	*alloc;
 	t_list	*tmp;
-	
-	
+
 	alloc = *arena_head();
 	while (alloc)
 	{

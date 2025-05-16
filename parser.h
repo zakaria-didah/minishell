@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:56 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 21:15:23 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/17 00:24:30 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,9 @@ int		parse_heredoc(t_list **tokens, t_cmd *cmd);
 t_red	*new_red(char *file, t_token_type type);
 void	handel_redin(char *input, int *i, t_token *token);
 void	handel_redout(char *input, int *i, t_token *token);
-void	handel_append(char *input, int *i, t_token *token);
-void	handel_heredoc(char *input, int *i, t_token *token);
 void	handel_word(char *input, int *i, t_token *token);
 int		red_builtin(t_list *head);
-int		red_in(t_list *head);
-int		red_out(t_list *head);
 t_list	*tokenize(char *input);
-
 void	skip_quote(char *arg, int *i);
 char	*get_ifs(void);
 char	**quet_remove(char **arg);

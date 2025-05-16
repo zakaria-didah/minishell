@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "main.h"
 #include "exec.h"
+#include "main.h"
+
 void	wait_for_it(pid_t pid, pid_t lastpid, int count)
 {
 	int		i;

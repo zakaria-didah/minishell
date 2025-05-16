@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:21:18 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 22:22:03 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/17 00:20:45 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 
 t_var	g_var = {0};
 
-/*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
 {
 	char	*prompt;
@@ -65,7 +64,6 @@ int	pass_the_input(char *line)
 
 int	init(char **env)
 {
-	atexit(vii);
 	fill_bucket(env);
 	__attribute__((cleanup(cleanup))) char *tmp;
 	tmp = getcwd(NULL, 0);
