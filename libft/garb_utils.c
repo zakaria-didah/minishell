@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:20:55 by zdidah            #+#    #+#             */
-/*   Updated: 2025/04/19 12:04:28 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 21:51:38 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	*add_garb(void *ptr)
 {
 	t_garb	*node;
 
-	node = ft_calloc(sizeof(t_garb), C_PARENA);
+	node = malloc(sizeof(t_garb));
 	node->ptr = ptr;
 	node->prev = NULL;
 	node->next = NULL;
@@ -48,6 +48,7 @@ void	ft_free(void)
 		tmp = head;
 		head = head->next;
 		free(tmp->ptr);
+		free(tmp);
 	}
 	dealloc_arena();
 }

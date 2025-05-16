@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 09:35:13 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 14:47:33 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 22:19:59 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ bool	exec_builtin(t_list *cmdlst, int apply_red)
 		if (!ft_strncmp(cmd, builtin[i].name, len)
 			&& len == ft_strlen(builtin[i].name))
 		{
-			g_var->curr_cmd = cmd;
+			g_var.curr_cmd = cmd;
 			if (apply_red == 1 && red_builtin(cmdlst) < 0)
-				return (g_var->exit_s = 1, red_builtin(NULL), true);
-			g_var->exit_s = builtin[i].func(++((t_cmd *)cmdlst->content)->args);
+				return (g_var.exit_s = 1, red_builtin(NULL), true);
+			g_var.exit_s = builtin[i].func(++((t_cmd *)cmdlst->content)->args);
 			if (apply_red == 1 && red_builtin(NULL) < 0)
-				return (g_var->exit_s = 1, true);
+				return (g_var.exit_s = 1, true);
 			return (true);
 		}
 		i++;

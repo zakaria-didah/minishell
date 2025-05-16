@@ -68,11 +68,20 @@ int	gc_mode(int mode)
 	return (gc_mode[i - 1]);
 }
 
+char	*g = NULL;
+
 int	main(void)
 {
-	char *str = strdup("hello");
+	pid_t	pid;
 
-	pid_t pid = fork();
-
+	g = strdup("hhhhh\n");
+	pid = fork();
+	if (pid == 0)
+		free(g);
+	else
+	{
+		wait(NULL);
+		printf("%s\n", g);
+	}
 	return (0);
 }

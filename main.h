@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 11:07:02 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 16:49:56 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:20:19 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,8 @@ typedef struct s_pipeline
 	int						prev_fd;
 }							t_pipeline;
 
-extern t_var				*g_var;
+extern t_var				g_var;
+extern int flag__;
 
 typedef enum t_token_type
 {

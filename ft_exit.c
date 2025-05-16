@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:07 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 10:25:08 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:21:19 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	ft_exit(char **args)
 	uint64_t	status;
 	char		*arg;
 
-	status = g_var->exit_s;
+	status = g_var.exit_s;
 	if (args && args[0])
 	{
 		arg = args[0];

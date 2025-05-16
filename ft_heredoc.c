@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:03 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 18:16:47 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:21:29 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	read_heredoc(int fd, char *delemiter, bool expand)
 	size_t	len;
 
 	len = ft_strlen(delemiter);
-	while (!g_var->hdoc)
+	while (!g_var.hdoc)
 	{
 		line = readline("> ");
 		if (!line || (!ft_strncmp(line, delemiter, len)
@@ -90,7 +90,7 @@ void	read_heredoc(int fd, char *delemiter, bool expand)
 		if (!expand)
 			free(line);
 	}
-	(close(fd), exit(g_var->hdoc));
+	(close(fd), ft_free(), exit(g_var.hdoc));
 }
 
 char	*heredoc(char *delemiter)

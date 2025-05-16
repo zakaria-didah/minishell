@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 10:43:58 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 11:43:06 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:23:06 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ char	*expand_vars(char *arg, bool here_doc)
 				arg = field_spliting(arg);
 		}
 		else if (arg[i] == '$' && arg[i + 1] == '?')
-			arg = ft_strinsert(arg, ft_itoa(g_var->exit_s), i + 1, i + 2);
+			arg = ft_strinsert(arg, ft_itoa(g_var.exit_s), i + 1, i + 2);
 		i++;
 	}
 	return (arg);

@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:20 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/15 11:30:44 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:16:13 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char	*absolute_path(char *cmd)
 	if (access(cmd, F_OK | X_OK))
 		return (perror(cmd), NULL);
 	else if (is_directory(cmd))
-		return (ft_strerror("is a directory\n"), g_var->exit_s = 126, NULL);
+		return (ft_strerror("is a directory\n"), g_var.exit_s = 126, NULL);
 	return (cmd);
 }
 
@@ -68,7 +68,7 @@ char	*find_cmd(char *cmd)
 	{
 		path = get_path();
 		if (!path || !cmd || !*cmd)
-			return (g_var->exit_s = 127, NULL);
+			return (g_var.exit_s = 127, NULL);
 		j = 0;
 		while (path[j])
 		{
@@ -81,5 +81,5 @@ char	*find_cmd(char *cmd)
 			j++;
 		}
 	}
-	return (ft_strerror("command not found\n"), g_var->exit_s = 127, NULL);
+	return (ft_strerror("command not found\n"), g_var.exit_s = 127, NULL);
 }

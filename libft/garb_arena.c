@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 10:55:54 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/14 10:56:35 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 21:53:03 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,13 @@ int	clear_arena(t_list *alloc)
 	return (1);
 }
 
-t_mem	*realloc_arena(t_list *head)
+t_mem	*realloc_arena(t_list **head)
 {
 	t_list	*arena;
 	t_mem	*new;
 
 	new = malloc(sizeof(t_mem));
-	arena = ft_lstlast(head);
+	arena = ft_lstlast(*head);
 	new->size = ((t_mem *)arena->content)->size * 2;
 	new->mempool = malloc(new->size);
 	ft_bzero(new->mempool, new->size);
@@ -91,7 +91,8 @@ void	dealloc_arena(void)
 {
 	t_list	*alloc;
 	t_list	*tmp;
-
+	
+	
 	alloc = *arena_head();
 	while (alloc)
 	{

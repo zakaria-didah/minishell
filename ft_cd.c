@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:13 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 17:20:42 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:20:50 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	ft_cd(char **args)
 		perror("getcwd");
 	else
 	{
-		g_var->oldpwd = ft_strdup(tmp);
+		g_var.oldpwd = ft_strdup(tmp);
 		free(tmp);
 		tmp = NULL;
 	}
@@ -73,7 +73,7 @@ int	ft_cd(char **args)
 	if (!tmp)
 		(perror("cd: error retrieving current directory"));
 	else
-		g_var->pwd = ft_strdup(tmp);
-	ft_setenv("OLDPWD", g_var->oldpwd);
-	return (ft_setenv("PWD", g_var->pwd), SUCCESS);
+		g_var.pwd = ft_strdup(tmp);
+	ft_setenv("OLDPWD", g_var.oldpwd);
+	return (ft_setenv("PWD", g_var.pwd), SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 22:41:16 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 18:16:05 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 21:49:36 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ int	gc_mode(int mode)
 		if (mode == 0)
 		{
 			if (i != 0){
-				gc_mode[i] = 0;
 				i--;
+				gc_mode[i] = 0;
 			}
 		}
 		else
@@ -96,10 +96,16 @@ void	*if_need_to_realloc(t_list **head, size_t size)
 	ptr = NULL;
 	alloc = (t_mem *)ft_lstlast(*head)->content;
 	if (alloc->offset + size > alloc->size)
-		alloc = realloc_arena(*head);
+		alloc = realloc_arena(head);
 	ptr = alloc->mempool + alloc->offset;
 	alloc->offset += size;
 	return (ptr);
+}
+	static size_t kk = 0;
+int flag__ = 0;
+
+void vii(){
+	printf("%zu\n", kk);
 }
 
 void	*ft_calloc(size_t size, int cflags)
@@ -107,7 +113,7 @@ void	*ft_calloc(size_t size, int cflags)
 	void	*ptr;
 
 	ptr = NULL;
-	if (!(cflags & C_PARENA) && gc_mode(-1))
+	if (gc_mode(-1))
 		cflags = gc_mode(-1);
 	if (cflags & C_ARENA)
 	{

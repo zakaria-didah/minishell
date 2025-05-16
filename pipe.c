@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:59 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 18:19:06 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:24:20 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,17 @@ void	wait_for_it(pid_t pid, pid_t lastpid, int count)
 		if (res == lastpid)
 		{
 			if (WIFEXITED(stat))
-				g_var->exit_s = WEXITSTATUS(stat);
+				g_var.exit_s = WEXITSTATUS(stat);
 			else if (WIFSIGNALED(stat))
-				g_var->exit_s = WTERMSIG(stat) + 128;
+				g_var.exit_s = WTERMSIG(stat) + 128;
 			else
-				g_var->exit_s = ERROR;
+				g_var.exit_s = ERROR;
 		}
 		i++;
 	}
-	if (g_var->exit_s == 130)
+	if (g_var.exit_s == 130)
 		write(1, "\n", 1);
-	else if (g_var->exit_s == 131)
+	else if (g_var.exit_s == 131)
 		write(1, "Quit (core dumped)\n", 20);
 }
 
@@ -59,7 +59,7 @@ void	pipe_it(int prev_fd, t_list *head, int fd[2])
 	if (!exec_builtin(head, 0))
 		exec_child(((t_cmd *)head->content)->args);
 	else
-		(ft_free(), exit(g_var->exit_s));
+		(ft_free(), exit(g_var.exit_s));
 }
 
 int	check_next_pipe(t_list *head)
@@ -92,10 +92,10 @@ int	pipex(t_list *head)
 	while (head)
 	{
 		if (head->next && pipe(data.fds) < 0)
-			return (perror("pipe"), g_var->exit_s = -1, -1);
+			return (perror("pipe"), g_var.exit_s = -1, -1);
 		data.pid = fork_cmd();
 		if (data.pid < 0)
-			return (g_var->exit_s = -1, -1);
+			return (g_var.exit_s = -1, -1);
 		else if (data.pid == 0)
 			pipe_it(data.prev_fd, head, data.fds);
 		if (data.prev_fd != -1)

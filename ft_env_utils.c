@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: obendaou <obendaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 21:01:18 by obendaou          #+#    #+#             */
-/*   Updated: 2025/05/15 21:05:24 by obendaou         ###   ########.fr       */
+/*   Updated: 2025/05/16 22:20:58 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ size_t	calucate_len(void)
 	len = 0;
 	while (i <= BUCKET_SIZE)
 	{
-		len += ft_lstsize(g_var->bucket[i]);
+		len += ft_lstsize(g_var.bucket[i]);
 		i++;
 	}
 	return (len);

@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:25:34 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 17:53:03 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:23:28 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ void	ft_strerror(char *s)
 	size_t	len;
 	char	*prefix;
 
-	len = ft_strlen(g_var->curr_cmd) + 3;
+	len = ft_strlen(g_var.curr_cmd) + 3;
 	prefix = ft_calloc(sizeof(char) * len, C_ARENA);
-	ft_strlcpy(prefix, g_var->curr_cmd, len);
+	ft_strlcpy(prefix, g_var.curr_cmd, len);
 	ft_strlcat(prefix, ": ", len);
 	ft_putstr_fd(prefix, STDERR_FILENO);
 	if (s)

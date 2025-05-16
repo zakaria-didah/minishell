@@ -6,7 +6,7 @@
 /*   By: zdidah <zdidah@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 10:21:18 by zdidah            #+#    #+#             */
-/*   Updated: 2025/05/16 17:15:40 by zdidah           ###   ########.fr       */
+/*   Updated: 2025/05/16 22:22:03 by zdidah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "parser.h"
 #include "signals.h"
 
-t_var	*g_var = NULL;
+t_var	g_var = {0};
 
 /*to get a prompt with the current working dir.*/
 char	*get_prompt(void)
@@ -52,31 +52,32 @@ int	pass_the_input(char *line)
 
 	line = ft_strtrim(line, " ");
 	if (!*line)
-		return (g_var->exit_s = SUCCESS);
+		return (g_var.exit_s = SUCCESS);
 	if (!is_balanced(line))
-		return (throw_error(NULL), g_var->exit_s = FAILURE);
+		return (throw_error(NULL), g_var.exit_s = FAILURE);
 	head = tokenize(line);
 	cmd_lst = parse(head);
 	if (!cmd_lst)
-		return (g_var->exit_s = FAILURE);
+		return (g_var.exit_s = FAILURE);
 	execute(cmd_lst);
 	return (0);
 }
 
 int	init(char **env)
 {
+	atexit(vii);
 	fill_bucket(env);
 	__attribute__((cleanup(cleanup))) char *tmp;
 	tmp = getcwd(NULL, 0);
 	if (tmp)
 	{
 		ft_setenv("PWD", tmp);
-		g_var->pwd = ft_strdup(tmp);
+		g_var.pwd = ft_strdup(tmp);
 	}
 	else
 	{
 		perror("minishell: error retrieving current directory");
-		g_var->pwd = ft_getenv("PWD");
+		g_var.pwd = ft_getenv("PWD");
 	}
 	return (0);
 }
@@ -88,7 +89,6 @@ int	main(int ac, char **av, char **env)
 	(void)av;
 	if (ac != 1)
 		return (ft_putendl_fd("minishell: no arguments", 2), FAILURE);
-	g_var = ft_calloc(sizeof(t_var), C_TRACK);
 	init(env);
 	line = NULL;
 	while (true)
